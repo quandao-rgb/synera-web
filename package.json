@@ -14,7 +14,10 @@
     "test": "node --test tests/domain.test.mjs",
     "test:http": "node tests/http-check.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "build:render": "vite build --config vite.render.config.mjs",
+    "start:render": "node server/render.mjs",
+    "test:render": "node --test tests/render.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

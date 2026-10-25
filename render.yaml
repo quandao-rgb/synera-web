@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: synera-web
+    runtime: node
+    plan: free
+    region: singapore
+    repo: https://github.com/quandao-rgb/synera-web
+    branch: main
+    buildCommand: npm ci --include=dev --no-audit --no-fund && npm run build:render
+    startCommand: npm run start:render
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.1
+      - key: NODE_ENV
+        value: production

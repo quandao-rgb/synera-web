@@ -43,3 +43,7 @@ yarn-error.log*
 
 # OS metadata
 .DS_Store
+
+# Render build and local demo sessions
+/dist-render/
+/.data/

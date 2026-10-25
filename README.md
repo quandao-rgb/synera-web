@@ -4,6 +4,10 @@ Prototype để đánh giá hướng cá nhân hóa từ bản quản trị Sapo
 
 Bản giao diện v0.2 theo yêu cầu mới: khung quản trị gần Sapo với sidebar xanh đậm, header tìm kiếm, nền xám, bảng/form trắng và nút xanh dương. Có màn Xử lý đơn hàng với bốn hàng đợi; tìm nhanh mở mặt hàng/khách kèm bộ lọc; sidebar thu gọn được. Chi tiết tại [ghi chú v0.2](docs/UI-V0.2.md).
 
+## Render
+
+Đã bổ sung profile Node cho Render: `npm run build:render` và `npm run start:render`. Xem [hướng dẫn Render](docs/RENDER.md). Mỗi trình duyệt có dữ liệu minh họa riêng; filesystem gói Free không đảm bảo giữ dữ liệu qua deploy/restart.
+
 ## Mở bản demo
 
 - Online: chưa xuất bản. Sites trả về `Sites project not found` khi đọc lại ID đã cấp ở phiên trước. URL dự kiến không phải bằng chứng đã deploy. Giữ nguyên ID trong `.openai/hosting.json` để khôi phục, không đăng ký dự án trùng.

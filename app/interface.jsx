@@ -561,7 +561,7 @@ export default function Interface() {
                 <span>
                   Prototype v0.2 <span className="footer-dot">·</span> SRS v0.2
                 </span>
-              </footer>
+              {data.runtime === 'render' && <span>Dữ liệu demo có thể đặt lại khi máy chủ khởi động.</span>}</footer>
             </>
           )}
         </main>
