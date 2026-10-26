@@ -6,7 +6,7 @@ import "./motion.css";
 export const metadata: Metadata = {
   title: "SYNERA — Không gian vận hành",
   description:
-    "Kho, khách hàng và giao nhận trong cùng một nhịp vận hành. Prototype dữ liệu minh họa.",
+    "Quản lý đơn hàng, kho, khách hàng và giao nhận.",
   icons: {
     icon: "/favicon-synera.svg",
     shortcut: "/favicon-synera.svg",

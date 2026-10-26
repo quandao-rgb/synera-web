@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import {
   Icon,
+  displayText,
   statuses,
   navGroups,
   titles,
@@ -231,7 +232,7 @@ export default function Interface() {
     <MotionShell
       className={"app" + (navCollapsed ? " nav-collapsed" : "")}
       routeKey={route + "?" + routeSearch}
-      ready={Boolean(data)} role={data?.role}
+      role={data?.role}
       collapsed={navCollapsed} mobile={mobile}
     >
       <a
@@ -297,12 +298,12 @@ export default function Interface() {
         <a
           className="workspace"
           href="#/settings"
-          title="Cơ sở Tân Bình — dữ liệu minh họa"
+          title="Cơ sở Tân Bình"
         >
           <span className="workspace-avatar">TB</span>
           <span className="workspace-label">
             <strong>Cơ sở Tân Bình</strong>
-            <small>Không gian minh họa</small>
+
           </span>
           <ChevronsUpDown size={14} aria-hidden="true" />
         </a>
@@ -352,39 +353,7 @@ export default function Interface() {
             <Icon name="settings" />
             <span>Thiết lập</span>
           </a>
-          <button
-            onClick={() =>
-              setModel({
-                title: "Về bản prototype",
-                tag: "TRỢ GIÚP",
-                content: (
-                  <>
-                    <p>
-                      SYNERA kết nối kho, khách hàng và đơn giao để hỗ trợ quyết
-                      định vận hành.
-                    </p>
-                    <Note>
-                      Bản này dùng dữ liệu minh họa, hãng giả lập và quy tắc gợi
-                      ý chưa chốt. Các thao tác không gửi SMS, không đặt giao
-                      thật và không thanh toán.
-                    </Note>
-                    <p className="muted">
-                      SRS v0.2 · 25/10/2026. Chuyển vai trò ở góc phải để xem
-                      trải nghiệm kho.
-                    </p>
-                  </>
-                ),
-              })
-            }
-            title="Trợ giúp"
-          >
-            <Icon name="help" />
-            <span>Trợ giúp & hướng dẫn</span>
-          </button>
-          <div className="sidebar-caption">
-            <span className="live-dot" />
-            <span>Không gian demo riêng tư</span>
-          </div>
+
         </div>
       </aside>
       <div
@@ -414,7 +383,7 @@ export default function Interface() {
             <kbd>Ctrl K</kbd>
           </button>
           <div className="topbar-actions">
-            <span className="demo-label">Dữ liệu minh họa</span>
+
             <button
               className="icon-button"
               title="Việc cần xử lý"
@@ -427,24 +396,7 @@ export default function Interface() {
               {packing > 0 && <span className="notification-dot" />}
             </button>
             <span className="topbar-divider" />
-            <label className="role-picker">
-              <span className="user-avatar">{owner ? "LA" : "NV"}</span>
-              <span className="sr-only">Chuyển vai trò demo</span>
-              <select
-                value={data?.role || "owner"}
-                disabled={!data || busy}
-                onChange={(e) =>
-                  run(
-                    "role",
-                    { role: e.target.value },
-                    "Đã chuyển vai trò demo",
-                  )
-                }
-              >
-                <option value="owner">Chủ cơ sở</option>
-                <option value="warehouse">Nhân viên kho</option>
-              </select>
-            </label>
+            {data && <a className="account-link" href="#/settings" aria-label={"Thiết lập · " + (owner ? "Chủ cơ sở" : "Nhân viên kho")}>{owner ? "Chủ cơ sở" : "Nhân viên kho"}</a>}
           </div>
         </header>
         <main
@@ -456,8 +408,9 @@ export default function Interface() {
           {!data ? (
             error ? (
               <Empty
+                page
                 title="Chưa tải được không gian"
-                text={error}
+                text={displayText(error)}
                 action={
                   error.includes("đăng nhập") ? (
                     <a
@@ -465,7 +418,7 @@ export default function Interface() {
                       href="/signin-with-chatgpt?return_to=/"
                       target="_top"
                     >
-                      Đăng nhập để mở demo
+                      Đăng nhập
                     </a>
                   ) : (
                     <Button onClick={read} icon="refresh">
@@ -476,7 +429,7 @@ export default function Interface() {
               />
             ) : (
               <div className="loading" role="status">
-                <div className="skeleton heading" />
+                <h1>{currentTitle}</h1>
                 <div className="skeleton kpis" />
                 <div className="skeleton content" />
                 <span>Đang tải không gian vận hành…</span>
@@ -486,7 +439,7 @@ export default function Interface() {
             <>
               {error && (
                 <Note tone="warning">
-                  {error} <button onClick={read}>Tải lại</button>
+                  {displayText(error)} <button onClick={read}>Tải lại</button>
                 </Note>
               )}
               {route === "/" ? (
@@ -558,20 +511,13 @@ export default function Interface() {
                 <SettingsView {...ctx} />
               ) : (
                 <Empty
+                  page
                   title="Không tìm thấy trang"
                   text="Đường dẫn này không thuộc không gian Synera."
                   action={<LinkButton to="/">Về tổng quan</LinkButton>}
                 />
               )}
-              <footer className="page-footer">
-                <span>
-                  SYNERA <span className="footer-dot">·</span> Cùng nhịp vận
-                  hành.
-                </span>
-                <span>
-                  Prototype v0.2 <span className="footer-dot">·</span> SRS v0.2
-                </span>
-              {data.runtime === 'render' && <span>Dữ liệu demo có thể đặt lại khi máy chủ khởi động.</span>}</footer>
+
             </>
           )}
         </main>
@@ -584,14 +530,14 @@ export default function Interface() {
         {toast && (
           <>
             <CircleCheck size={18} aria-hidden="true" />
-            {toast}
+            {displayText(toast)}
             <button aria-label="Đóng thông báo" onClick={() => setToast("")}>
               <X size={15} />
             </button>
           </>
         )}
       </div>
-      <Modal model={model} onClose={() => setModel(null)} busy={busy} />
+      <Modal model={model} onClose={() => setModel(null)} />
       {cmd && <CommandMenu data={data} close={() => setCmd(false)} />}
     </MotionShell>
   );

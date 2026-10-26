@@ -32,60 +32,60 @@ function Dashboard({ data }) {
         {
           label: "Đơn cần xử lý",
           value: pending.length,
-          icon: "orders",
+
           to: "/packing",
-          hint: "Đóng kiện, đặt giao và bàn giao",
+
         },
         {
           label: "Đơn đang giao",
           value: data.orders.filter((o) => o.status === "transit").length,
-          icon: "shipping",
+
           to: "/shipments",
-          hint: "Theo dõi từng mốc hành trình",
+
         },
         {
           label: "Mặt hàng cần bổ sung",
           value: low.length,
-          icon: "inventory",
+
           to: "/inventory",
-          hint: "Theo nhu cầu và tồn khả dụng",
+
         },
         {
           label: "Khách đến kỳ mua lại",
           value: repeat.length,
-          icon: "customers",
+
           to: "/repeat",
-          hint: "Chủ động liên hệ xác nhận nhu cầu",
+
         },
       ]
     : [
         {
           label: "Chờ đóng kiện",
           value: data.orders.filter((o) => o.status === "packing").length,
-          icon: "products",
+
           to: "/packing",
-          hint: "Kiểm tra và xác nhận từng kiện",
+
         },
         {
           label: "Chờ bàn giao",
           value: data.orders.filter((o) => o.status === "booked").length,
-          icon: "shipping",
+
           to: "/packing",
-          hint: "Chỉ xuất thực khi đã bàn giao",
+
         },
         {
           label: "Tồn khả dụng",
           value: data.products.reduce((n, p) => n + p.available, 0),
-          icon: "inventory",
+
           to: "/inventory",
-          hint: "Đã trừ hàng giữ và cách ly",
+
         },
         {
           label: "Đơn đang hoàn",
           value: data.orders.filter((o) => o.status === "returning").length,
-          icon: "return",
+
           to: "/returns",
-          hint: "Chưa nhập kho khi chưa nhận thực",
+
         },
       ];
   const tasks = [
@@ -93,64 +93,46 @@ function Dashboard({ data }) {
       label: "Đơn chờ đóng kiện",
       count: data.orders.filter((o) => o.status === "packing").length,
       to: "/packing/packing",
-      icon: "products",
+
     },
     {
       label: "Đơn chờ đặt giao",
       count: ready.length,
       to: "/packing/ready",
-      icon: "shipping",
+
     },
     {
       label: "Đơn chờ bàn giao",
       count: data.orders.filter((o) => o.status === "booked").length,
       to: "/packing/booked",
-      icon: "packing",
+
     },
     {
       label: "Đơn cần kiểm tra đặt giao",
       count: data.orders.filter((o) => o.status === "verification").length,
       to: "/packing/verification",
-      icon: "alert",
+
     },
   ];
   return (
     <>
       <PageHead
         title="Tổng quan"
-        description="Theo dõi kho, khách hàng và giao nhận trong cùng một không gian."
+
       >
-        <span className="date-chip">
-          <Icon name="calendar" size={16} />
-          25/10/2026 · Dữ liệu minh họa
-        </span>
+
         {owner && (
           <LinkButton to="/orders/new" kind="primary" icon="plus">
             Tạo đơn hàng
           </LinkButton>
         )}
       </PageHead>
-      <section className="overview-welcome">
-        <span className="overview-mark">
-          <Icon name={owner ? "dashboard" : "inventory"} size={25} />
-        </span>
-        <div>
-          <h2>Xin chào, {owner ? "Chủ cơ sở" : "Nhân viên kho"}</h2>
-          <p>
-            {owner
-              ? "Cùng SYNERA chủ động bổ sung hàng, chăm sóc khách và lựa chọn vận chuyển."
-              : "Kiểm tra hàng, xác nhận kiện và bàn giao theo công việc của cơ sở."}
-          </p>
-        </div>
-        <LinkButton to="/packing" icon="arrow">
-          Xem việc cần xử lý
-        </LinkButton>
-      </section>
+
       <div className="overview-grid">
         <div className="overview-main">
           <Panel
             title="Tình hình hoạt động"
-            meta="Toàn bộ dữ liệu minh họa của cơ sở"
+
             action={
               <span className="period-label">
                 {data.orders.length} đơn hàng
@@ -162,10 +144,10 @@ function Dashboard({ data }) {
                 <a key={m.label} href={"#" + m.to} className="metric">
                   <span className="metric-label">
                     {m.label}
-                    <Icon name={m.icon} size={17} />
+
                   </span>
                   <strong className="metric-value">{num(m.value)}</strong>
-                  <span className="metric-hint">{m.hint}</span>
+
                 </a>
               ))}
             </div>
@@ -206,14 +188,11 @@ function Dashboard({ data }) {
               rows={(tab === "pending" ? pending : data.orders).slice(0, 5)}
               compact
             />
-            <div className="panel-foot">
-              <Icon name="shield" size={15} />
-              Xác nhận đơn chỉ giữ hàng. Bàn giao thực tế mới xuất kho.
-            </div>
+
           </Panel>
           <Panel
             title="Theo dõi tồn kho"
-            meta="Khả dụng = tồn thực − hàng cách ly − hàng đang giữ"
+
             action={
               <a href="#/inventory" className="text-link">
                 Quản lý kho
@@ -232,9 +211,7 @@ function Dashboard({ data }) {
                   label: "Mặt hàng",
                   render: (p) => (
                     <div className="inventory-name">
-                      <span className="inventory-product-icon">
-                        <Icon name="products" size={19} />
-                      </span>
+
                       <div>
                         <strong>{p.name}</strong>
                         <small className="cell-sub">{p.sku}</small>
@@ -289,14 +266,11 @@ function Dashboard({ data }) {
           {owner && (
             <Panel
               title="Gợi ý SYNERA"
-              meta="Bạn xem căn cứ và xác nhận quyết định"
-              action={<Icon name="sparkles" size={18} />}
+
             >
               <div className="smart-list">
                 <a href="#/inventory">
-                  <span className="smart-icon">
-                    <Icon name="inventory" size={19} />
-                  </span>
+
                   <div>
                     <h3>Bổ sung hàng</h3>
                     <strong>{low.length} mặt hàng cần xem xét</strong>
@@ -311,9 +285,7 @@ function Dashboard({ data }) {
                   </div>
                 </a>
                 <a href="#/repeat">
-                  <span className="smart-icon">
-                    <Icon name="customers" size={19} />
-                  </span>
+
                   <div>
                     <h3>Liên hệ mua lại</h3>
                     <strong>{repeat.length} khách đến kỳ liên hệ</strong>
@@ -328,16 +300,11 @@ function Dashboard({ data }) {
                   </div>
                 </a>
                 <a href={ready[0] ? "#/orders/" + ready[0].id : "#/packing"}>
-                  <span className="smart-icon">
-                    <Icon name="shipping" size={19} />
-                  </span>
+
                   <div>
                     <h3>Lựa chọn vận chuyển</h3>
                     <strong>{ready.length} đơn đã xác nhận kiện</strong>
-                    <p>
-                      So sánh điều kiện, chi phí và bằng chứng giao nhận cùng
-                      nhóm.
-                    </p>
+
                     <span className="smart-action">
                       Xem phương án giao
                       <ArrowRight size={13} />
@@ -372,24 +339,11 @@ function Dashboard({ data }) {
               <Badge status={active.status} />
             </div>
             <Timeline events={active.events.slice(-3)} />
-            <div className="journey-bottom">
-              <Icon name="pin" size={15} />
-              <span>
-                Vùng nội thành
-                <ArrowRight size={12} />
-                {active.zone}
-              </span>
-            </div>
+
           </Panel>
         </aside>
       </div>
-      <div className="bottom-note">
-        <Icon name="shield" size={16} />
-        <p>
-          Dữ liệu và bảng giá đang được minh họa. Gợi ý hỗ trợ quyết định; không
-          tự tạo giao dịch mua, bán hoặc đặt giao.
-        </p>
-      </div>
+
     </>
   );
 }

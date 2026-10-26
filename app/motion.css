@@ -13,8 +13,8 @@
     right: 10px;
     height: 39px;
     border-radius: 5px;
-    background: linear-gradient(100deg, #2567a9, #1f5996);
-    box-shadow: inset 2px 0 #83c4ff, 0 2px 7px #081d3226;
+    background: #1f5996;
+
     pointer-events: none;
     opacity: 0;
     visibility: hidden;

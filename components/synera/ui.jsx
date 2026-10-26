@@ -81,6 +81,18 @@ function Icon({ name, ...props }) {
 }
 const money = (n) => new Intl.NumberFormat("vi-VN").format(n || 0) + " ₫";
 const num = (n) => new Intl.NumberFormat("vi-VN").format(n || 0);
+function displayText(value) {
+  return String(value ?? "")
+    .replace(/Phiên demo/gi, "Phiên")
+    .replace(/đặt lại demo/gi, "đặt lại dữ liệu")
+    .replace(/ · minh họa/g, "")
+    .replace(/\s+(?:demo|minh họa|giả lập)(?=[.,;:]|$)/gi, "")
+    .replace(/bộ quy tắc minh họa/gi, "điều kiện dịch vụ")
+    .replace(/dịch vụ minh họa/gi, "dịch vụ")
+    .replace(/dữ liệu minh họa/gi, "dữ liệu")
+    .trim();
+}
+const numericColumns = new Set(["total","price","available","physical","reserved","quarantine","incoming","suggested","qty","remaining","count","debt","parcels","allocation"]);
 const statuses = {
   packing: ["Chờ đóng kiện", "warning"],
   ready: ["Chờ đặt giao", "info"],
@@ -94,7 +106,7 @@ const statuses = {
 };
 const navGroups = [
   {
-    label: "QUẢN LÝ CƠ SỞ",
+    label: "Quản lý cơ sở",
     items: [
       ["/", "Tổng quan", "dashboard"],
       ["/orders", "Đơn hàng", "orders"],
@@ -109,7 +121,7 @@ const navGroups = [
     ],
   },
   {
-    label: "GỢI Ý SYNERA",
+    label: "Gợi ý SYNERA",
     items: [
       ["/suggestions", "Tổng hợp gợi ý", "sparkles", "owner"],
       ["/repeat", "Nhắc mua lại", "history", "owner"],
@@ -179,14 +191,13 @@ function Panel({ title, meta, action, children, className = "" }) {
     </section>
   );
 }
-function Empty({ title = "Chưa có dữ liệu", text, action }) {
+function Empty({ title = "Chưa có dữ liệu", text, action, page = false }) {
+  const Heading = page ? "h1" : "h3";
   return (
     <div className="empty">
-      <span className="empty-icon">
-        <Icon name="products" size={28} />
-      </span>
-      <h3>{title}</h3>
-      <p className="muted">{text}</p>
+
+      <Heading>{title}</Heading>
+      {text && <p className="muted">{displayText(text)}</p>}
       {action}
     </div>
   );
@@ -227,6 +238,7 @@ function Table({
               <th
                 key={c.key}
                 scope="col"
+                className={numericColumns.has(c.key) ? "number" : undefined}
                 aria-sort={
                   sort.key === c.key
                     ? sort.asc
@@ -246,7 +258,7 @@ function Table({
                     }
                   >
                     {c.label}
-                    <ChevronsUpDown size={13} aria-hidden="true" />
+                    {sort.key === c.key && <ChevronsUpDown size={13} aria-hidden="true" />}
                   </button>
                 ) : (
                   c.label
@@ -262,7 +274,7 @@ function Table({
                 <td
                   key={c.key}
                   data-label={c.label}
-                  className={c.className || ""}
+                  className={[c.className, numericColumns.has(c.key) ? "number" : ""].filter(Boolean).join(" ")}
                 >
                   {c.render ? c.render(r) : r[c.key]}
                 </td>
@@ -274,7 +286,7 @@ function Table({
     </div>
   );
 }
-function Modal({ model, onClose, busy }) {
+function Modal({ model, onClose }) {
   const ref = useRef(null),
     prior = useRef(null);
   useDialogMotion(ref, Boolean(model));
@@ -300,7 +312,7 @@ function Modal({ model, onClose, busy }) {
     >
       <div className="dialog-head">
         <div>
-          <p className="eyebrow">SYNERA / {model.tag || "THAO TÁC"}</p>
+
           <h2 id="dialog-title">{model.title}</h2>
         </div>
         <button
@@ -370,7 +382,7 @@ function FormDialog({ fields, submit, label = "Xác nhận", info }) {
       ))}
       {error && (
         <p role="alert" className="field-error">
-          {error}
+          {displayText(error)}
         </p>
       )}
       <div className="form-actions">
@@ -381,7 +393,7 @@ function FormDialog({ fields, submit, label = "Xác nhận", info }) {
     </form>
   );
 }
-function Evidence({ e, compact = false }) {
+function Evidence({ e }) {
   if (!e)
     return <span className="muted small">Chưa đủ bằng chứng cùng nhóm</span>;
   return (
@@ -395,7 +407,7 @@ function Evidence({ e, compact = false }) {
       </span>
       <span className="small muted">{e.group}</span>
       <span className="small muted">
-        {e.window} · {e.source} · chưa xác minh
+        {e.window} · {displayText(e.source)} · chưa xác minh
       </span>
     </div>
   );
@@ -415,7 +427,7 @@ function Timeline({ events }) {
           <div>
             <strong>{e.label}</strong>
             <p>{e.at}</p>
-            <small>{e.source}</small>
+            <small>{displayText(e.source)}</small>
             <small>Ghi nhận: {e.receivedAt}</small>
           </div>
         </li>
@@ -501,27 +513,29 @@ function OrderTable({ data, rows = data.orders, compact = false }) {
 function Forbidden() {
   return (
     <Empty
+      page
       title="Chức năng dành cho chủ cơ sở"
       text="Vai trò kho chỉ truy cập dữ liệu phục vụ chuẩn bị và giao nhận hàng."
       action={<LinkButton to="/">Về tổng quan</LinkButton>}
     />
   );
 }
-function PageHead({ eyebrow, title, description, children }) {
+function PageHead({ title, description, children }) {
   return (
     <div className="page-heading">
       <div>
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+
         <h1>{title}</h1>
         {description && <p className="page-description">{description}</p>}
       </div>
-      <div className="heading-actions">{children}</div>
+      {children && <div className="heading-actions">{children}</div>}
     </div>
   );
 }
 
 export {
   Icon,
+  displayText,
   money,
   num,
   statuses,

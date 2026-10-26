@@ -1,17 +1,7 @@
 "use client";
 import { useState } from "react";
-import { Package, Search, ArrowUpRight, X } from "lucide-react";
-import {
-  Icon,
-  money,
-  Badge,
-  LinkButton,
-  Panel,
-  Note,
-  Table,
-  OrderTable,
-  PageHead,
-} from "../../components/synera/ui";
+import { Search, ArrowUpRight, X } from "lucide-react";
+import { money, Badge, LinkButton, Panel, Note, Table, OrderTable, PageHead } from "../../components/synera/ui";
 function Orders(ctx) {
   const { data } = ctx;
   const [q, setQ] = useState(""),
@@ -31,9 +21,9 @@ function Orders(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="KINH DOANH & KHO"
+
         title="Đơn hàng"
-        description="Từ xác nhận nhu cầu đến chuẩn bị và bàn giao hàng."
+
       >
         {data.role === "owner" && (
           <LinkButton to="/orders/new" kind="primary" icon="plus">
@@ -86,9 +76,9 @@ function Products({ data, initialSearch = "" }) {
   return (
     <>
       <PageHead
-        eyebrow="DỮ LIỆU CHUNG"
+
         title="Hàng hóa"
-        description="Thông tin hàng và quy cách đóng chuẩn được dùng xuyên suốt đơn hàng, kho và giao nhận."
+
       />
       <Panel>
         <div className="toolbar">
@@ -112,9 +102,6 @@ function Products({ data, initialSearch = "" }) {
               sort: true,
               render: (p) => (
                 <div className="product-cell">
-                  <span className={"product-art " + p.color}>
-                    <Package size={23} strokeWidth={1.3} />
-                  </span>
                   <div>
                     <strong>{p.name}</strong>
                     <small className="cell-sub">
@@ -165,10 +152,7 @@ function Products({ data, initialSearch = "" }) {
           ]}
         />
       </Panel>
-      <Note>
-        Quy cách mẫu: mỗi thùng là một kiện độc lập. Dữ liệu thực tế cần được
-        xác nhận theo nhóm hàng pilot; không nhân kích thước thành một kiện lớn.
-      </Note>
+
     </>
   );
 }
@@ -225,9 +209,9 @@ function Inventory(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="KINH DOANH & KHO"
+
         title="Quản lý kho"
-        description="Tách rõ hàng thực có, hàng giữ, cách ly và hàng đang về."
+
       />
       <div className="mini-metrics">
         {[
@@ -320,7 +304,7 @@ function Inventory(ctx) {
                               +{p.suggested} thùng <ArrowUpRight size={14} />
                             </button>
                           ) : (
-                            <span className="muted">Đủ theo giả định</span>
+                            <span className="muted">Chưa cần bổ sung</span>
                           ),
                       },
                     ]
@@ -340,7 +324,7 @@ function Inventory(ctx) {
         ) : tab === "incoming" ? (
           <Table
             rows={data.purchases}
-            empty="Chưa có kế hoạch mới. Chọn gợi ý bổ sung ở tab Tồn kho để thử nhận một phần."
+            empty="Chưa có kế hoạch bổ sung hàng."
             columns={[
               { key: "id", label: "Kế hoạch" },
               {
@@ -396,7 +380,7 @@ function Inventory(ctx) {
         ) : (
           <Table
             rows={data.adjustments}
-            empty="Chưa có yêu cầu kiểm kê. Gửi yêu cầu từ một mặt hàng để thử luồng duyệt."
+            empty="Chưa có yêu cầu kiểm kê."
             columns={[
               {
                 key: "productId",
@@ -442,16 +426,7 @@ function Inventory(ctx) {
           />
         )}
       </Panel>
-      {owner && (
-        <Note tone="warning">
-          Công thức minh họa: max(0, nhu cầu mới + an toàn − khả dụng − hàng về
-          đủ điều kiện). Trà đào: {data.products[0].demand} +{" "}
-          {data.products[0].safety} − {data.products[0].available} −{" "}
-          {data.products[0].incoming} →{" "}
-          <strong>{data.products[0].suggested} thùng</strong>. Công thức đang
-          minh họa; chưa xét đầy đủ số lượng mua tối thiểu và năng lực kho.
-        </Note>
-      )}
+
     </>
   );
 }
@@ -469,13 +444,9 @@ function Customers(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="KHÁCH HÀNG & KẾT NỐI"
-        title={ctx.repeat ? "Liên hệ đúng thời điểm" : "Khách hàng"}
-        description={
-          ctx.repeat
-            ? "Chu kỳ mua giúp bạn chọn lúc hỏi thăm, không cho biết khách còn bao nhiêu hàng."
-            : "Một hồ sơ chung cho đơn hàng, địa chỉ nhận và lịch sử liên hệ."
-        }
+
+        title={ctx.repeat ? "Nhắc mua lại" : "Khách hàng"}
+
       />
       <Panel>
         <div className="toolbar">
@@ -526,7 +497,7 @@ function Customers(ctx) {
               label: "Căn cứ nhắc mua",
               render: (c) => (
                 <div>
-                  {c.cycle ? `Chu kỳ mẫu ${c.cycle} ngày` : "Chưa đủ lịch sử"}
+                  {c.cycle ? `Chu kỳ ${c.cycle} ngày` : "Chưa đủ lịch sử"}
                   <small className="cell-sub">
                     {c.purchases} đơn mua riêng biệt · lần gần nhất {c.lastDays}{" "}
                     ngày trước
@@ -586,10 +557,7 @@ function Customers(ctx) {
           ]}
         />
       </Panel>
-      <Note tone="warning">
-        Chu kỳ trong demo được nhập giả lập từ các đơn riêng biệt, không đếm số
-        lần giao một đơn. Muốn đặt hàng → bạn chủ động tạo đơn mới.
-      </Note>
+
     </>
   );
 }
@@ -598,27 +566,25 @@ function Suggestions(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="HỖ TRỢ QUYẾT ĐỊNH"
+
         title="Gợi ý hôm nay"
-        description="Ba quyết định độc lập trên cùng dữ liệu. Không có giao dịch tự động."
+
       />
       <div className="decision-list">
         {[
           {
-            n: "01",
             title: "Bổ sung hàng",
             to: "/inventory",
-            desc: "Xem tồn khả dụng, nhu cầu mới, mức an toàn và hàng về trước khi lập kế hoạch.",
+
             body: ctx.data.products
               .filter((p) => p.suggested > 0)
               .map((p) => `${p.name}: +${p.suggested} thùng`)
               .join(" · "),
           },
           {
-            n: "02",
             title: "Liên hệ mua lại",
             to: "/repeat",
-            desc: "Đọc chu kỳ và lịch sử đơn; gọi hoặc ghi nhận kết quả trao đổi.",
+
             body:
               ctx.data.customers
                 .filter((c) => c.cycle && c.lastDays >= c.cycle && !c.outcome)
@@ -626,19 +592,18 @@ function Suggestions(ctx) {
                 .join(" · ") || "Đã ghi nhận các lượt liên hệ đến kỳ.",
           },
           {
-            n: "03",
             title: "Chọn vận chuyển",
             to: "/orders",
-            desc: "Đủ điều kiện → so sánh phí, thời gian và bằng chứng cùng nhóm → xác nhận.",
+
             body: `${ctx.data.orders.filter((o) => o.status === "ready").length} đơn đã xác nhận kiện, chờ chọn giao.`,
           },
         ].map((v) => (
-          <Panel key={v.n}>
+          <Panel key={v.to}>
             <div className="decision">
-              <span className="decision-number">{v.n}</span>
+
               <div>
                 <h2>{v.title}</h2>
-                <p className="muted">{v.desc}</p>
+
                 <p>{v.body}</p>
               </div>
               <LinkButton to={v.to} icon="arrow">
@@ -648,10 +613,7 @@ function Suggestions(ctx) {
           </Panel>
         ))}
       </div>
-      <Note tone="warning">
-        Công thức, trọng số và ngưỡng tin cậy cần được xác nhận. Các kết quả ở
-        đây chỉ minh họa cách trình bày căn cứ để nhóm đánh giá.
-      </Note>
+
     </>
   );
 }
@@ -679,16 +641,12 @@ function Processing(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="VẬN HÀNH / XỬ LÝ ĐƠN"
+
         title="Xử lý đơn hàng"
-        description={
-          owner
-            ? "Theo dõi hàng chờ đóng kiện, đặt giao và bàn giao cho đơn vị vận chuyển."
-            : "Kiểm tra từng kiện và xác nhận bàn giao hàng theo phân công."
-        }
+
       />
       <div className="processing-stages">
-        {stages.map(([key, label], i) => (
+        {stages.map(([key, label]) => (
           <button
             key={key}
             className={stage === key ? "selected" : ""}
@@ -698,14 +656,14 @@ function Processing(ctx) {
             }}
             aria-pressed={stage === key}
           >
-            <span className="stage-number">{i + 1}</span>
+
             <span>
               {label}
               <strong>
                 {data.orders.filter((o) => o.status === key).length}
               </strong>
             </span>
-            <Icon name="arrow" size={16} />
+
           </button>
         ))}
       </div>
@@ -726,17 +684,7 @@ function Processing(ctx) {
         </div>
         <OrderTable data={data} rows={rows} />
       </Panel>
-      <Note>
-        {stage === "packing"
-          ? "Kiện chuẩn: xác nhận sau kiểm tra. Kiện khác chuẩn: chỉnh từng kiện và ghi lý do."
-          : stage === "ready"
-            ? owner || data.warehouseShipping
-              ? "Lấy lại giá theo kiện đã xác nhận, kiểm tra điều kiện rồi chủ động đặt giao."
-              : "Kiện đã sẵn sàng. Chủ cơ sở hoặc người được cấp quyền sẽ chọn và đặt giao."
-            : stage === "booked"
-              ? "Chỉ xác nhận bàn giao khi hàng đã được giao thực tế cho hãng. Tồn thực sẽ giảm một lần."
-              : "Kết quả đặt giao chưa rõ: kiểm tra vận đơn cũ trước, tránh gửi lại gây trùng."}
-      </Note>
+      {stage === "verification" && <Note tone="warning">Kết quả đặt giao chưa rõ. Kiểm tra vận đơn hiện có trước khi gửi lại yêu cầu.</Note>}
     </>
   );
 }

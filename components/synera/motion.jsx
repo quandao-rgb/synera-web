@@ -21,7 +21,7 @@ export function useDialogMotion(ref, open) {
   }, { scope: ref, dependencies: [open], revertOnUpdate: true });
 }
 
-export function MotionShell({ children, routeKey, ready, role, collapsed, mobile, ...props }) {
+export function MotionShell({ children, routeKey, role, collapsed, mobile, ...props }) {
   const root = useRef(null);
   const state = useRef({ collapsed, mobile });
   state.current = { collapsed, mobile };
@@ -143,24 +143,7 @@ export function MotionShell({ children, routeKey, ready, role, collapsed, mobile
 
   useGSAP(() => { updateIndicator.current?.(); }, { scope: root, dependencies: [routeKey, role, collapsed] });
 
-  useGSAP(() => {
-    if (!ready) return;
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      const main = root.current.querySelector(".main-content");
-      if (!main) return;
-      const heading = main.querySelector(".page-heading");
-      const sections = [...main.querySelectorAll(".overview-welcome,.metric-grid,.panel,.processing-stages,.empty-state")]
-        .filter((el) => !el.parentElement.closest(".panel") && el.getClientRects().length)
-        .slice(0, 7);
-      const tl = gsap.timeline({ defaults: { duration: 0.3, ease: "power3.out" } });
-      if (heading) tl.fromTo(heading, { y: 7, autoAlpha: 0 }, { y: 0, autoAlpha: 1, clearProps: "transform,opacity,visibility" }, 0);
-      if (sections.length) tl.fromTo(sections, { y: 10, autoAlpha: 0 }, {
-        y: 0, autoAlpha: 1, stagger: { amount: 0.1 }, clearProps: "transform,opacity,visibility",
-      }, 0.035);
-    });
-    return () => mm.revert();
-  }, { scope: root, dependencies: [routeKey, ready, role], revertOnUpdate: true });
+
 
   return <div {...props} ref={root} data-motion="gsap">{children}</div>;
 }

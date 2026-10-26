@@ -8,7 +8,7 @@ Tham khảo bộ skill chính thức [greensock/gsap-skills](https://github.com/
 - Menu điện thoại: mở 320 ms, đóng 240 ms, `power3.out`; lớp nền mờ 220 ms. Khóa cuộn, giữ focus trong menu và trả focus theo cơ chế sẵn có.
 - Nền mục điều hướng đang chọn: 280 ms, không di chuyển chữ. Vị trí cập nhật theo trang, vai trò và kích thước menu.
 - Nút: nhấn xuống scale 0.97 trong 90 ms; trả về trong 200 ms. Hover chỉ nâng nhẹ 1 px khi thiết bị có chuột. Không trì hoãn sự kiện click hay sửa hành vi nghiệp vụ.
-- Nội dung trang: tiêu đề dịch 7 px, khối nội dung dịch 10 px; timeline tối đa khoảng 435 ms. Chỉ chọn tối đa 7 khối, không tạo tween cho từng dòng bảng.
+- Nội dung vận hành hiển thị trực tiếp, không chạy hiệu ứng vào trang trên tiêu đề hoặc các khối dữ liệu. Giữ phản hồi trên nút, menu, sidebar và hộp thoại để thao tác rõ ràng.
 - Hộp thoại và tìm kiếm nhanh: 240 ms, dịch 10 px, scale 0.985 về 1. Nội dung vẫn sử dụng native dialog và cơ chế bàn phím sẵn có.
 - Tôn trọng `prefers-reduced-motion`, đổi breakpoint bằng `gsap.matchMedia()`. Sidebar và mục đang chọn cập nhật tức thời khi giảm chuyển động; bỏ hiệu ứng nhấn, vào trang và hộp thoại.
 - Animation thuộc context của `useGSAP`; media context quản lý cả callback sự kiện. Dọn listener, ResizeObserver, tween và inline style khi unmount hoặc đổi media query.

@@ -1,21 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  Package,
-  ChevronRight,
-  Check,
-  CircleAlert,
-  X,
-  Sparkles,
-  ShieldCheck,
-  MapPin,
-  Phone,
-  Trash2,
-  ArrowLeft,
-} from "lucide-react";
+import { Package, ChevronRight, Check, CircleAlert, X, ShieldCheck, MapPin, Phone, Trash2, ArrowLeft } from "lucide-react";
 import {
   Icon,
   money,
+  displayText,
   Badge,
   Button,
   LinkButton,
@@ -74,7 +63,7 @@ function QuoteList({ q, selected, onSelect, preliminary = false }) {
       ) : q.error ? (
         <div className="empty">
           <p role="alert" className="field-error">
-            {q.error}
+            {displayText(q.error)}
           </p>
           <Button onClick={q.reload} icon="refresh">
             Lấy lại gợi ý
@@ -103,7 +92,7 @@ function QuoteList({ q, selected, onSelect, preliminary = false }) {
                 }
               >
                 <div className="quote-header">
-                  <div className="carrier-avatar">{c.id}</div>
+
                   <div className="grow">
                     <h3>{c.name}</h3>
                     <small>
@@ -118,12 +107,12 @@ function QuoteList({ q, selected, onSelect, preliminary = false }) {
                 </div>
                 <p className="quote-reason">
                   {c.eligible ? <Check size={14} /> : <CircleAlert size={14} />}{" "}
-                  {c.reason}
+                  {displayText(c.reason)}
                 </p>
                 {c.eligible && (
                   <>
                     <div className="quote-evidence">
-                      <Evidence e={c.evidence} compact />
+                      <Evidence e={c.evidence} />
                     </div>
                     {onSelect && (
                       <Button
@@ -140,7 +129,7 @@ function QuoteList({ q, selected, onSelect, preliminary = false }) {
             ))}
           </div>
           <p className="quote-source">
-            {q.result.quotes[0]?.source}. Hiệu lực đến{" "}
+            Hiệu lực đến{" "}
             {new Date(q.result.quotes[0]?.validUntil).toLocaleTimeString(
               "vi-VN",
               { hour: "2-digit", minute: "2-digit" },
@@ -206,13 +195,13 @@ function OrderForm(ctx) {
         <ArrowLeft size={15} /> Danh sách đơn hàng
       </a>
       <PageHead
-        eyebrow="ĐƠN HÀNG MỚI"
+
         title="Tạo đơn hàng"
-        description="Chọn khách hàng và hàng hóa để xem kiện dự kiến, gợi ý vận chuyển và xác nhận đơn."
+
       />
       <form className="order-layout" onSubmit={submit}>
         <div className="form-stack">
-          <Panel title="Khách hàng & nơi nhận" meta="01 / Thông tin giao nhận">
+          <Panel title="Khách hàng & nơi nhận" >
             <div className="panel-body">
               <label className="field">
                 <span>
@@ -251,7 +240,7 @@ function OrderForm(ctx) {
           </Panel>
           <Panel
             title="Hàng hóa"
-            meta="02 / Mỗi thùng theo quy cách là một kiện riêng"
+
           >
             <div className="order-lines">
               {lines.map((l, i) => {
@@ -329,12 +318,12 @@ function OrderForm(ctx) {
               </Button>
             </div>
           </Panel>
-          <Panel title="Tiền hàng & thu hộ" meta="Chỉ chủ cơ sở được truy cập">
+          <Panel title="Tiền hàng & thu hộ" >
             <div className="panel-body finance-fields">
               <div className="total-display">
                 <span>Tổng tiền hàng</span>
                 <strong>{money(total)}</strong>
-                <small>Chưa gồm phí giao giả lập</small>
+                <small>Chưa gồm phí giao</small>
               </div>
               <label className="field">
                 <span>Số tiền COD (₫)</span>
@@ -354,7 +343,7 @@ function OrderForm(ctx) {
           </Panel>
           {error && (
             <p className="field-error error-box" role="alert">
-              {error}
+              {displayText(error)}
             </p>
           )}
           <div className="order-submit">
@@ -374,12 +363,7 @@ function OrderForm(ctx) {
         <aside className="quote-panel">
           <Panel
             title="Gợi ý vận chuyển"
-            meta="03 / Tính ngay từ khách và quy cách hàng"
-            action={
-              <span className="suggestion-icon small-icon">
-                <Sparkles size={17} />
-              </span>
-            }
+
           >
             <div className="panel-body">
               <QuoteList q={q} preliminary />
@@ -413,6 +397,7 @@ function OrderDetail(ctx) {
   if (!o)
     return (
       <Empty
+        page
         title="Không tìm thấy đơn"
         text="Kiểm tra lại mã đơn hoặc mở danh sách."
         action={<LinkButton to="/orders">Danh sách đơn</LinkButton>}
@@ -429,7 +414,6 @@ function OrderDetail(ctx) {
   const custom = () =>
     setModel({
       title: "Chỉnh kiện khác chuẩn",
-      tag: "KHO / KIỆN THỰC TẾ",
       content: (
         <ParcelEditor
           order={o}
@@ -449,7 +433,7 @@ function OrderDetail(ctx) {
         <ArrowLeft size={15} /> Danh sách đơn hàng
       </a>
       <PageHead
-        eyebrow="ĐƠN HÀNG / CHI TIẾT"
+
         title={o.id}
         description={`${o.customerName} · ${o.created}`}
       >
@@ -545,7 +529,7 @@ function OrderDetail(ctx) {
           </Panel>
           <Panel
             title="Kiện hàng"
-            meta="Một kiện tương ứng một thùng theo quy cách mẫu"
+
           >
             <div className="parcel-group">
               {[...new Set(o.parcels.map((p) => p.productId))].map((pid) => {
@@ -605,14 +589,15 @@ function OrderDetail(ctx) {
               >
                 <div className="panel-body">
                   <QuoteList q={q} selected={selected} onSelect={setSelected} />
+                  <details className="booking-options"><summary>Tùy chọn kiểm tra đặt giao</summary>
                   <label className="checkbox-field">
                     <input
                       type="checkbox"
                       checked={timeout}
                       onChange={(e) => setTimeoutDemo(e.target.checked)}
                     />
-                    Mô phỏng API hết thời gian chờ
-                  </label>
+                    Kiểm tra trường hợp hết thời gian chờ
+                  </label></details>
                   <Button
                     kind="primary full"
                     icon="shipping"
@@ -622,8 +607,8 @@ function OrderDetail(ctx) {
                         (c) => c.id === selected,
                       );
                       confirm(
-                        "Xác nhận đặt giao mô phỏng",
-                        `${chosen.name}: ${money(chosen.fee)} theo kiện đã xác nhận. Thao tác không gọi API thật. Sau bước này kho mới bàn giao hàng.`,
+                        "Xác nhận đặt giao",
+                        `${chosen.name}: ${money(chosen.fee)} theo kiện đã xác nhận. Kho chỉ bàn giao sau khi đặt giao thành công.`,
                         "book",
                         {
                           id: o.id,
@@ -632,7 +617,7 @@ function OrderDetail(ctx) {
                           quotedAt: q.result.quotedAt,
                           simulateTimeout: timeout,
                         },
-                        "Đặt giao mô phỏng",
+                        "Đặt giao",
                       );
                     }}
                   >
@@ -664,7 +649,7 @@ function OrderDetail(ctx) {
                   }
                   icon="search"
                 >
-                  Kiểm tra kết quả mô phỏng
+                  Kiểm tra kết quả đặt giao
                 </Button>
               )}
             </Note>
@@ -696,7 +681,7 @@ function OrderDetail(ctx) {
           )}
           <Panel
             title="Mốc hành trình"
-            meta="Sự kiện nghiệp vụ, không phải vị trí GPS"
+
           >
             <Timeline events={o.events} />
           </Panel>
@@ -750,10 +735,7 @@ function OrderDetail(ctx) {
               </Panel>
               <Panel title="Trang người nhận">
                 <div className="panel-body">
-                  <p className="muted small">
-                    Chỉ có mốc giao và liên hệ được che bớt. Không có tiền hàng
-                    hay ghi chú nội bộ.
-                  </p>
+
                   {o.trackingRevoked ? (
                     <Badge tone="neutral">Link đã thu hồi</Badge>
                   ) : (
@@ -867,7 +849,7 @@ function ParcelEditor({ order, submit }) {
       </label>
       {error && (
         <p role="alert" className="field-error">
-          {error}
+          {displayText(error)}
         </p>
       )}
       <div className="form-actions">

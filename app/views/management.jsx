@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Boxes, ArrowRight, X, ShieldCheck } from "lucide-react";
 import {
   money,
+  displayText,
   statuses,
   Badge,
   Button,
@@ -22,18 +23,14 @@ function Shipments(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="GIAO NHẬN"
+
         title="Giao hàng"
-        description="Theo dõi trạng thái đặt giao và mốc bàn giao, tách riêng trạng thái tiền."
+
       />
       <Panel title="Các đơn giao">
         <OrderTable data={ctx.data} rows={rows} />
       </Panel>
-      <Note>
-        Bản minh họa hỗ trợ một lần giao cho mỗi đơn. Hàng chỉ được xuất kho khi
-        đã bàn giao thực tế; trạng thái giao hàng và trạng thái tiền được theo
-        dõi riêng.
-      </Note>
+
     </>
   );
 }
@@ -42,16 +39,15 @@ function Carriers({ data }) {
   return (
     <>
       <PageHead
-        eyebrow="BẰNG CHỨNG GIAO NHẬN"
+
         title="Đơn vị vận chuyển"
-        description="Hãng và dịch vụ minh họa. Chưa có hợp đồng đối tác hay kết nối API thật."
+
       />
       <div className="carrier-grid">
         {data.carriers.map((c) => (
           <Panel key={c.id}>
             <div className="panel-body">
               <div className="carrier-title">
-                <span className="carrier-avatar">{c.id}</span>
                 <div>
                   <h2>{c.name}</h2>
                   <p className="muted">
@@ -61,7 +57,7 @@ function Carriers({ data }) {
               </div>
               <Badge tone={c.liquid ? "success" : "neutral"}>
                 {c.liquid
-                  ? "Nhận chất lỏng theo giả định"
+                  ? "Nhận chất lỏng"
                   : "Chưa nhận chất lỏng"}
               </Badge>
               <hr />
@@ -87,9 +83,9 @@ function Returns(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="GIAO NHẬN / CHIỀU VỀ"
+
         title="Hàng hoàn"
-        description="Hãng báo hoàn chưa làm tăng kho. Chỉ ghi nhận khi hàng đã về và được kiểm tra."
+
       />
       <Panel>
         <Table
@@ -143,7 +139,7 @@ function Returns(ctx) {
                         ],
                         "receive-return",
                         { id: o.id },
-                        "Chỉ xác nhận sau khi nhận thực tế. Prototype kiểm tra toàn bộ lần hoàn; phân loại từng phần cần bổ sung.",
+                        "Chỉ xác nhận sau khi đã nhận và kiểm tra toàn bộ hàng hoàn.",
                       )
                     }
                   >
@@ -153,7 +149,7 @@ function Returns(ctx) {
                   <span className="muted">
                     {o.status === "returned"
                       ? "Đã ghi nhận"
-                      : "Chờ chủ ghi nhận trong demo"}
+                      : "Chờ chủ cơ sở ghi nhận"}
                   </span>
                 ),
             },
@@ -175,9 +171,9 @@ function Finance({ data }) {
   return (
     <>
       <PageHead
-        eyebrow="CHỦ CƠ SỞ / TÀI CHÍNH"
+
         title="Công nợ & đối soát"
-        description="Tách tiền hàng, tiền hãng giữ, phí giao và dòng tiền thực về cơ sở."
+
       />
       <div className="mini-metrics three">
         {[
@@ -193,7 +189,7 @@ function Finance({ data }) {
       </div>
       <Panel
         title="Công nợ tiền hàng"
-        meta="Số dư mẫu nhập riêng, không suy ra từ trạng thái giao"
+
       >
         <Table
           rows={data.customers.filter((c) => c.debt > 0)}
@@ -210,36 +206,13 @@ function Finance({ data }) {
               key: "source",
               label: "Nguồn",
               render: () => (
-                <span className="muted">Số dư minh họa · chưa đối soát</span>
+                <span className="muted">Chưa đối soát</span>
               ),
             },
           ]}
         />
       </Panel>
-      <div className="two-column spaced">
-        <Panel title="Phí giao">
-          <div className="panel-body">
-            <p>Giá sơ bộ → giá theo kiện đã xác nhận → phí thực thu.</p>
-            <p className="muted">
-              Prototype giữ báo giá khi đặt giao; chưa có sao kê phí thực tế từ
-              hãng. Chênh lệch cần căn cứ trước khi kết luận.
-            </p>
-          </div>
-        </Panel>
-        <Panel title="Gói & hoa hồng">
-          <div className="panel-body">
-            <Badge tone="warning">D08 / D09 chưa chốt</Badge>
-            <p className="muted">
-              Chưa xác nhận giá Pro, ranh giới Free/Pro hay tỷ lệ hoa hồng. Đơn
-              dùng hợp đồng riêng không mặc định có hoa hồng.
-            </p>
-          </div>
-        </Panel>
-      </div>
-      <Note>
-        Đây là màn hình trình bày phân tách nghiệp vụ, chưa có hạch toán, thu
-        tiền, chi tiền hay thanh toán thật.
-      </Note>
+
     </>
   );
 }
@@ -248,14 +221,14 @@ function Reports({ data }) {
   return (
     <>
       <PageHead
-        eyebrow="DỮ LIỆU & BẰNG CHỨNG"
+
         title="Báo cáo vận hành"
-        description="Đọc chỉ số cùng mẫu số, kỳ dữ liệu và nguồn. Chưa đủ mẫu thì nói rõ."
+
       />
       <div className="two-column">
         <Panel
           title="Trạng thái đơn hàng"
-          meta={`Bộ dữ liệu demo · ${data.orders.length} đơn`}
+          meta={`${data.orders.length} đơn hàng`}
         >
           <div className="status-chart">
             {Object.entries(statuses).map(([key, [label, tone]]) => {
@@ -281,32 +254,26 @@ function Reports({ data }) {
         </Panel>
         <Panel
           title="Giao đúng hẹn theo nhóm"
-          meta="Không phải điểm đánh giá chung của hãng"
+
         >
           <div className="panel-body">
-            <div className="report-number">
-              80<span>%</span>
-              <Badge tone="warning">Mẫu minh họa</Badge>
-            </div>
+
             <Evidence e={data.carriers[0].evidence} />
-            <p className="muted small">
-              Dịch vụ: Giao tiêu chuẩn · Hãng A. Hai đơn quá hạn chưa kết thúc
-              nằm trong mẫu số 10.
-            </p>
+
           </div>
         </Panel>
       </div>
       <Panel
         title="Nhật ký thao tác gần đây"
-        meta="Mốc tạo dữ liệu và quyết định của người thao tác"
+
         className="spaced"
       >
         <Table
           rows={data.audit}
           columns={[
             { key: "at", label: "Thời điểm" },
-            { key: "actor", label: "Người thao tác" },
-            { key: "text", label: "Nội dung" },
+            { key: "actor", label: "Người thao tác", render: (row) => displayText(row.actor) },
+            { key: "text", label: "Nội dung", render: (row) => displayText(row.text) },
           ]}
         />
       </Panel>
@@ -319,41 +286,39 @@ function SettingsView(ctx) {
   return (
     <>
       <PageHead
-        eyebrow="KHÔNG GIAN LÀM VIỆC"
+
         title="Thiết lập"
-        description="Quyền vận hành, phạm vi demo và các điểm cần chốt trước pilot."
+
       />
       <div className="settings-layout">
-        <Panel title="Cơ sở minh họa">
+        <Panel title="Vai trò">
+          <div className="panel-body">
+            <label className="field">
+              <span>Vai trò hiện tại</span>
+              <select aria-label="Chuyển vai trò" value={data.role} disabled={ctx.busy}
+                onChange={(e) => ctx.run("role", { role: e.target.value }, "Đã chuyển vai trò")}>
+                <option value="owner">Chủ cơ sở</option>
+                <option value="warehouse">Nhân viên kho</option>
+              </select>
+            </label>
+          </div>
+        </Panel>
+        <Panel title="Cơ sở">
           <dl className="settings-list">
             <div>
               <dt>Tên không gian</dt>
               <dd>Cơ sở Tân Bình</dd>
             </div>
-            <div>
-              <dt>Trạng thái dữ liệu</dt>
-              <dd>
-                <Badge tone="warning">Dữ liệu giả lập</Badge>
-              </dd>
-            </div>
-            <div>
-              <dt>Vai trò hiện tại</dt>
-              <dd>{data.role === "owner" ? "Chủ cơ sở" : "Nhân viên kho"}</dd>
-            </div>
-            <div>
-              <dt>Phạm vi địa bàn</dt>
-              <dd>Chỉ minh họa · D01 chưa chốt pilot</dd>
-            </div>
+
           </dl>
         </Panel>
-        <Panel title="Phân quyền kho" meta="D24 theo SRS v0.2">
+        <Panel title="Phân quyền kho" >
           <div className="panel-body">
             <div className="permission-row">
               <div>
                 <strong>Chọn và đặt giao</strong>
                 <p className="muted small">
-                  Mặc định tắt. Không mở quyền tài chính hay duyệt điều chỉnh
-                  kho.
+                  Không cấp quyền tài chính hoặc duyệt điều chỉnh kho.
                 </p>
               </div>
               <button
@@ -367,7 +332,7 @@ function SettingsView(ctx) {
                     data.warehouseShipping
                       ? "Thu hồi quyền đặt giao"
                       : "Cấp quyền đặt giao",
-                    "Thay đổi quyền của tài khoản kho minh họa. Dữ liệu tiền hàng, COD và công nợ vẫn không được gửi cho kho.",
+                    "Thay đổi quyền đặt giao của kho. Dữ liệu tiền hàng, COD và công nợ vẫn không được gửi cho kho.",
                     "permission",
                     { enabled: !data.warehouseShipping },
                     "Xác nhận thay đổi",
@@ -377,44 +342,29 @@ function SettingsView(ctx) {
                 <span />
               </button>
             </div>
-            <Note>
-              Chuyển vai trò ở góc phải chỉ để xem demo. Triển khai thật cần tài
-              khoản nhân viên và membership phía máy chủ.
-            </Note>
+
           </div>
         </Panel>
-        <Panel title="Các quyết định chưa chốt">
-          <div className="panel-body">
-            <ul className="plain-list">
-              <li>D01 · Địa bàn và nhóm hàng pilot</li>
-              <li>D02 / D09 · Đối tác, API, điều khoản và bảng giá</li>
-              <li>D03–D05 · Logic gợi ý và ngưỡng bằng chứng</li>
-              <li>D08 · Ranh giới Free/Pro và giá gói</li>
-              <li>D27 · Kiến trúc triển khai sản phẩm</li>
-              <li>BG01 / BG02 · Ngoại lệ COD và gộp thao tác chưa duyệt</li>
-            </ul>
-          </div>
-        </Panel>
-        <Panel title="Dữ liệu thử nghiệm">
+
+        <Panel title="Đặt lại dữ liệu">
           <div className="panel-body">
             <p className="muted">
-              Lưu riêng theo người dùng Sites. Đặt lại sẽ xóa các thao tác trong
-              demo này và khôi phục bộ mẫu.
+              Đặt lại sẽ xóa các thay đổi trong không gian hiện tại và khôi phục dữ liệu ban đầu.
             </p>
             <Button
               disabled={data.role !== "owner"}
               icon="return"
               onClick={() =>
                 confirm(
-                  "Đặt lại toàn bộ demo",
-                  "Các đơn và thay đổi bạn đã tạo trong prototype sẽ bị xóa. Chỉ ảnh hưởng không gian minh họa này.",
+                  "Đặt lại dữ liệu",
+                  "Các đơn và thay đổi bạn đã tạo trong không gian hiện tại sẽ bị xóa. Bạn có chắc muốn đặt lại dữ liệu?",
                   "reset",
                   {},
-                  "Đặt lại demo",
+                  "Đặt lại dữ liệu",
                 )
               }
             >
-              Đặt lại dữ liệu demo
+              Đặt lại dữ liệu
             </Button>
           </div>
         </Panel>
@@ -457,16 +407,16 @@ function Tracking({ token }) {
             synera<span className="brand-period">.</span>
           </span>
         </a>
-        <span className="demo-label">Trang người nhận · minh họa</span>
+
       </header>
       <main>
-        <p className="eyebrow">CÙNG BẠN THEO SÁT TỪNG CHẶNG</p>
+
         <h1>Hành trình đơn hàng</h1>
-        <p className="muted">Cập nhật theo các mốc giao nhận được ghi nhận.</p>
+
         {error ? (
           <Empty
             title="Không mở được hành trình"
-            text={error}
+            text={displayText(error)}
             action={
               <Button onClick={() => setReload((n) => n + 1)}>Thử lại</Button>
             }
@@ -502,16 +452,15 @@ function Tracking({ token }) {
               <Timeline events={data.events} />
             </Panel>
             <p className="tracking-source">
-              <ShieldCheck size={16} /> {data.carrier} · Sự kiện minh họa, không
-              phải GPS trực tiếp.
+              <ShieldCheck size={16} /> {data.carrier}
             </p>
           </>
         )}
         <a className="back-link" href="#/">
-          Về không gian demo <ArrowRight size={14} />
+          Về tổng quan <ArrowRight size={14} />
         </a>
       </main>
-      <footer>SYNERA · Cùng nhịp vận hành.</footer>
+
     </div>
   );
 }
