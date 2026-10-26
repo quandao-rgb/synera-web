@@ -6,7 +6,6 @@ import {
   ArrowUpRight,
   ChevronRight,
   ChevronsUpDown,
-  CircleCheck,
   X,
   Menu,
   Bell,
@@ -45,6 +44,10 @@ import {
   Tracking,
 } from "./views/management";
 import { MotionShell, useDialogMotion } from "../components/synera/motion";
+import LineSidebar from "../components/synera/line-sidebar";
+import SwipeToast from "../components/synera/swipe-toast";
+import { useToast } from "../components/synera/use-toast";
+import { mutationFeedback } from "../components/synera/toast-feedback.mjs";
 export default function Interface() {
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
@@ -55,11 +58,11 @@ export default function Interface() {
     [navCollapsed, setNavCollapsed] = useState(false),
     [busy, setBusy] = useState(false),
     [model, setModel] = useState(null),
-    [toast, setToast] = useState(""),
     [cmd, setCmd] = useState(false);
   const mainRef = useRef(null),
     sidebarRef = useRef(null),
     firstRoute = useRef(true);
+  const { toast, notify: setToast, dismiss: dismissToast } = useToast();
   const read = async () => {
     setError("");
     try {
@@ -69,6 +72,8 @@ export default function Interface() {
       setData(j);
     } catch (e) {
       setError(e.message);
+      setToast({ tone: "error", title: "Không tải được không gian vận hành", description: e.message,
+        action: { label: "Thử lại", onClick: read } });
     }
   };
   useEffect(() => {
@@ -133,11 +138,6 @@ export default function Interface() {
     };
   }, [mobile, smallScreen]);
   useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(""), 4500);
-    return () => clearTimeout(t);
-  }, [toast]);
-  useEffect(() => {
     const key = (e) => {
       const typing = /INPUT|TEXTAREA|SELECT/.test(
         document.activeElement?.tagName,
@@ -164,13 +164,15 @@ export default function Interface() {
     if (!r.ok) throw Error(j.error);
     return j;
   };
-  const mutate = async (action, payload = {}, message = "Đã lưu thay đổi") => {
+  const mutate = async (action, payload = {}, message) => {
     setBusy(true);
     try {
       const next = await send(action, payload);
       setData(next);
       setModel(null);
-      setToast(message);
+      setError("");
+      const feedback = mutationFeedback(action, payload, next, message);
+      setToast({ ...feedback, action: feedback.href ? { label: "Xem", onClick: () => { location.hash = feedback.href; } } : null });
       return next;
     } finally {
       setBusy(false);
@@ -180,7 +182,9 @@ export default function Interface() {
     try {
       return await mutate(...args);
     } catch (e) {
-      setToast(e.message);
+      // Keep the failure visible; never blindly retry a write / booking request.
+      setError(e.message);
+      setToast({ tone: "error", title: "Thao tác chưa hoàn tất", description: e.message });
     }
   };
   const form = (title, fields, action, payload = {}, info, label) =>
@@ -231,9 +235,8 @@ export default function Interface() {
   return (
     <MotionShell
       className={"app" + (navCollapsed ? " nav-collapsed" : "")}
-      routeKey={route + "?" + routeSearch}
-      role={data?.role}
       collapsed={navCollapsed} mobile={mobile}
+      routeKey={route + "?" + routeSearch} ready={!!data} role={data?.role}
     >
       <a
         className="skip-link"
@@ -256,9 +259,10 @@ export default function Interface() {
         ref={sidebarRef}
         inert={smallScreen && !mobile}
         aria-hidden={smallScreen && !mobile}
-        className={"sidebar " + (mobile ? "open" : "")}
+        className={"sidebar line-sidebar " + (mobile ? "open" : "")}
         aria-label="Điều hướng chính"
       >
+        <LineSidebar scopeRef={sidebarRef} routeKey={route + "?" + routeSearch} role={data?.role} />
         <div className="brand">
           <a className="brand-link" href="#/">
             <span className="brand-symbol">
@@ -308,7 +312,6 @@ export default function Interface() {
           <ChevronsUpDown size={14} aria-hidden="true" />
         </a>
         <nav>
-          <div className="nav-indicator" aria-hidden="true" />
           {navGroups
             .filter((g) => g.items.some((i) => i[3] !== "owner" || owner))
             .map((g) => (
@@ -522,21 +525,7 @@ export default function Interface() {
           )}
         </main>
       </div>
-      <div
-        className={"toast " + (toast ? "visible" : "")}
-        role="status"
-        aria-live="polite"
-      >
-        {toast && (
-          <>
-            <CircleCheck size={18} aria-hidden="true" />
-            {displayText(toast)}
-            <button aria-label="Đóng thông báo" onClick={() => setToast("")}>
-              <X size={15} />
-            </button>
-          </>
-        )}
-      </div>
+      <SwipeToast toast={toast} onClose={dismissToast} paused={!!model || cmd || (smallScreen && mobile)} />
       <Modal model={model} onClose={() => setModel(null)} />
       {cmd && <CommandMenu data={data} close={() => setCmd(false)} />}
     </MotionShell>

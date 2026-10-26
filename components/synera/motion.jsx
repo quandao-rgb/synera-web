@@ -21,19 +21,18 @@ export function useDialogMotion(ref, open) {
   }, { scope: ref, dependencies: [open], revertOnUpdate: true });
 }
 
-export function MotionShell({ children, routeKey, role, collapsed, mobile, ...props }) {
+export function MotionShell({ children, routeKey, ready, role, collapsed, mobile, ...props }) {
   const root = useRef(null);
   const state = useRef({ collapsed, mobile });
   state.current = { collapsed, mobile };
   const updateSidebar = useRef(null);
-  const updateIndicator = useRef(null);
 
   // Delegation also covers controls mounted later, without per-button listeners.
   useGSAP(() => {
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", (media) => {
       const host = root.current;
-      const selector = ".button,.icon-button,.sidebar-collapse,.sidebar nav a,.sidebar-bottom > a,.sidebar-bottom > button";
+      const selector = ".button,.icon-button,.sidebar-collapse";
       const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
       const target = (event) => {
         const el = event.target instanceof Element ? event.target.closest(selector) : null;
@@ -112,38 +111,28 @@ export function MotionShell({ children, routeKey, role, collapsed, mobile, ...pr
 
   useGSAP(() => { updateSidebar.current?.(); }, { scope: root, dependencies: [collapsed, mobile] });
 
-  // The selection background moves; the labels stay still and readable.
+  // Match the deployed SYNERA page reveal. Only navigation / initial readiness
+  // triggers it: edits, filters, refreshed data and button actions stay still.
   useGSAP(() => {
-    const host = root.current;
-    const nav = host.querySelector(".sidebar nav");
-    const indicator = host.querySelector(".nav-indicator");
-    if (!nav || !indicator) return;
+    if (!ready) return;
     const mm = gsap.matchMedia();
-    mm.add(motionQueries, (media) => {
-      let lastY;
-      let lastHeight;
-      media.add("place", () => {
-        const active = nav.querySelector('a[aria-current="page"]');
-        if (!active) { gsap.set(indicator, { autoAlpha: 0 }); lastY = undefined; return; }
-        const y = active.getBoundingClientRect().top - nav.getBoundingClientRect().top + nav.scrollTop;
-        const height = active.offsetHeight;
-        if (y === lastY && height === lastHeight) return;
-        const duration = lastY === undefined || media.conditions.reduce ? 0 : 0.28;
-        lastY = y; lastHeight = height;
-        gsap.to(indicator, { y, height, autoAlpha: 1, duration, ease: "power3.out", overwrite: "auto" });
-      });
-      updateIndicator.current = media.place;
-      media.place();
-      const observer = new ResizeObserver(media.place);
-      observer.observe(nav);
-      return () => { observer.disconnect(); updateIndicator.current = null; };
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const main = root.current.querySelector(".main-content");
+      if (!main) return;
+      const heading = main.querySelector(".page-heading");
+      const sections = [...main.querySelectorAll(".overview-welcome,.metric-grid,.panel,.processing-stages,.empty-state")]
+        .filter((el) => !el.parentElement.closest(".panel") && el.getClientRects().length)
+        .slice(0, 7);
+      const timeline = gsap.timeline({ defaults: { duration: 0.3, ease: "power3.out" } });
+      if (heading) timeline.fromTo(heading, { y: 7, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, clearProps: "transform,opacity,visibility",
+      }, 0);
+      if (sections.length) timeline.fromTo(sections, { y: 10, autoAlpha: 0 }, {
+        y: 0, autoAlpha: 1, stagger: { amount: 0.1 }, clearProps: "transform,opacity,visibility",
+      }, 0.035);
     });
     return () => mm.revert();
-  }, { scope: root });
-
-  useGSAP(() => { updateIndicator.current?.(); }, { scope: root, dependencies: [routeKey, role, collapsed] });
-
-
+  }, { scope: root, dependencies: [routeKey, ready, role], revertOnUpdate: true });
 
   return <div {...props} ref={root} data-motion="gsap">{children}</div>;
 }

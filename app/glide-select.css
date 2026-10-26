@@ -1,0 +1,36 @@
+@layer components {
+  .glide-select__form-value { position: absolute !important; width: 1px !important; height: 1px !important; min-height: 0 !important; margin: -1px !important; padding: 0 !important; border: 0 !important; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .glide-select__error { color: var(--danger); font-size: 12px; line-height: 1.5; }
+  .glide-select__native { border: 1px solid var(--strong-border); border-radius: 5px; min-height: 36px; padding: 7px 10px; background: var(--surface); color: var(--text); font: inherit; }
+  .glide-select__trigger { display: inline-flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 36px; padding: 7px 10px; border: 1px solid var(--strong-border); border-radius: 5px; background: var(--surface); color: var(--text); font: inherit; font-size: 13px; line-height: 1.4; text-align: left; cursor: pointer; min-width: 0; transition: border-color 150ms ease-out, background-color 150ms ease-out; }
+  .field .glide-select__trigger { width: 100%; }
+  .inline-field .glide-select__trigger { min-width: 175px; }
+  .glide-select__trigger > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .glide-select__trigger > span:last-child { display: inline-flex; color: var(--muted); }
+  .glide-select__trigger:disabled { cursor: not-allowed; opacity: .5; }
+  .glide-select__trigger[data-state="open"] { border-color: var(--primary); }
+  .glide-select__trigger:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+  .glide-select__trigger[aria-invalid="true"] { border-color: var(--danger); }
+  .glide-select__menu { position: relative; z-index: 110; min-width: var(--radix-select-trigger-width); max-width: calc(100vw - 24px); max-height: min(300px, var(--radix-select-content-available-height)); overflow: hidden; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); color: var(--text); box-shadow: 0 4px 14px #0f172a1a; font-family: inherit; animation: glide-select-enter 130ms ease-out; }
+  .glide-select__list { position: relative; padding: 4px; }
+  .glide-select__option { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 32px; padding: 7px 9px; border-radius: 3px; font-size: 13px; line-height: 1.4; cursor: pointer; outline: none; user-select: none; overflow-wrap: anywhere; }
+  .glide-select__option[data-state="checked"] { font-weight: 600; }
+  .glide-select__option[data-highlighted] { background: var(--accent); }
+  .glide-select__list[data-gliding="true"] .glide-select__option[data-highlighted] { background: transparent; }
+  .glide-select__option[data-disabled] { color: var(--muted); opacity: .5; cursor: not-allowed; }
+  .glide-select__pill { position: absolute; top: 0; left: 4px; right: 4px; border-radius: 3px; background: var(--accent); pointer-events: none; transition: transform 150ms ease-out, height 150ms ease-out; }
+  .glide-select__check { display: inline-flex; color: var(--primary); flex: none; }
+  .glide-select__scroll { display: grid; place-items: center; height: 22px; color: var(--muted); background: var(--surface); }
+  @keyframes glide-select-enter { from { opacity: 0; transform: translateY(-2px); } to { opacity: 1; transform: none; } }
+  @media (hover: hover) and (pointer: fine) { .glide-select__trigger:not(:disabled):hover { border-color: var(--primary); } }
+  @media (prefers-reduced-motion: reduce) {
+    .glide-select__menu { animation: none; }
+    .glide-select__pill,.glide-select__trigger { transition: none; }
+  }
+}
+@layer responsive {
+  @media (max-width: 767px) {
+    .glide-select__trigger { min-height: 44px; font-size: 16px; }
+    .glide-select__option { min-height: 44px; font-size: 14px; }
+  }
+}

@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import GlideSelect from "../../components/synera/glide-select";
+import { ReturnProgress } from "../../components/synera/workflow-progress";
 import { Boxes, ArrowRight, X, ShieldCheck } from "lucide-react";
 import {
   money,
@@ -109,7 +111,7 @@ function Returns(ctx) {
             {
               key: "status",
               label: "Trạng thái",
-              render: (o) => <Badge status={o.status} />,
+              render: (o) => <div className="return-progress-cell"><Badge status={o.status} /><ReturnProgress order={o} /></div>,
             },
             {
               key: "action",
@@ -295,11 +297,9 @@ function SettingsView(ctx) {
           <div className="panel-body">
             <label className="field">
               <span>Vai trò hiện tại</span>
-              <select aria-label="Chuyển vai trò" value={data.role} disabled={ctx.busy}
-                onChange={(e) => ctx.run("role", { role: e.target.value }, "Đã chuyển vai trò")}>
-                <option value="owner">Chủ cơ sở</option>
-                <option value="warehouse">Nhân viên kho</option>
-              </select>
+              <GlideSelect ariaLabel="Chuyển vai trò" value={data.role} disabled={ctx.busy}
+                onChange={(role) => ctx.run("role", { role }, "Đã chuyển vai trò")}
+                options={[{ value: "owner", label: "Chủ cơ sở" }, { value: "warehouse", label: "Nhân viên kho" }]} />
             </label>
           </div>
         </Panel>

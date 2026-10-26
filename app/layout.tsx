@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import "./synera.css";
 import "./admin-layout.css";
 import "./motion.css";
+import "./line-sidebar.css";
+import "./stepper.css";
+import "./swipe-toast.css";
+import "./glide-select.css";
+import "./shipping-recommendation.css";
 
 export const metadata: Metadata = {
   title: "SYNERA — Không gian vận hành",

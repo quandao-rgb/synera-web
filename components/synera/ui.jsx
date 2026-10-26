@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useDialogMotion } from "./motion";
+import GlideSelect from "./glide-select";
 import {
   LayoutDashboard,
   Package,
@@ -350,13 +351,7 @@ function FormDialog({ fields, submit, label = "Xác nhận", info }) {
         <label className="field" key={f.name}>
           <span>{f.label}</span>
           {f.options ? (
-            <select name={f.name} defaultValue={f.value}>
-              {f.options.map((o) => (
-                <option key={o.value ?? o} value={o.value ?? o}>
-                  {o.label ?? o}
-                </option>
-              ))}
-            </select>
+            <GlideSelect name={f.name} defaultValue={f.value} options={f.options} ariaLabel={f.label} />
           ) : f.type === "textarea" ? (
             <textarea
               name={f.name}

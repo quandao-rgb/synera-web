@@ -1,0 +1,33 @@
+@layer components {
+  .swipe-toast { --toast-tone: var(--success); position: fixed; z-index: 100; right: 24px; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); width: min(390px, calc(100vw - 32px)); font-family: inherit; }
+  .swipe-toast[data-tone="info"] { --toast-tone: var(--primary); }
+  .swipe-toast[data-tone="warning"] { --toast-tone: var(--warning); }
+  .swipe-toast[data-tone="error"] { --toast-tone: var(--danger); }
+  .swipe-toast__lift { animation: toast-appear 160ms ease-out; transition: opacity 160ms ease-out, transform 160ms ease-out; }
+  .swipe-toast[data-phase="closing"] .swipe-toast__lift { opacity: 0; transform: translateY(6px); pointer-events: none; }
+  .swipe-toast__card { --swipe-y: 0px; position: relative; display: flex; align-items: flex-start; gap: 9px; padding: 13px 10px 15px 13px; border: 1px solid var(--border); border-left: 3px solid var(--toast-tone); border-radius: 6px; background: var(--surface); color: var(--text); box-shadow: 0 4px 16px #0f172a14; overflow: hidden; transform: translateY(var(--swipe-y)); transition: transform 150ms ease-out; touch-action: pan-x; }
+  .swipe-toast__card[data-swiping] { transition: none; cursor: grabbing; user-select: none; }
+  .swipe-toast__icon { color: var(--toast-tone); flex: none; margin-top: 2px; }
+  .swipe-toast__body { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .swipe-toast__title { display: block; font-size: 13px; line-height: 1.5; font-weight: 600; }
+  .swipe-toast__description { margin-top: 3px; font-size: 12px; line-height: 1.5; color: var(--muted); }
+  .swipe-toast__action,.swipe-toast__close { flex: none; border: 0; border-radius: 4px; min-height: 32px; margin-top: -4px; cursor: pointer; touch-action: manipulation; }
+  .swipe-toast__action { font-size: 12px; font-weight: 600; padding: 0 8px; background: var(--muted-surface); color: var(--primary); }
+  .swipe-toast__close { width: 32px; display: grid; place-items: center; background: transparent; color: var(--muted); }
+  .swipe-toast__card:focus-visible,.swipe-toast button:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+  .swipe-toast__fuse { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--toast-tone); opacity: .55; transform-origin: left center; pointer-events: none; }
+  @media (hover: hover) and (pointer: fine) { .swipe-toast__action:hover,.swipe-toast__close:hover { background: var(--accent); } }
+  @keyframes toast-appear { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @media (prefers-reduced-motion: reduce) {
+    .swipe-toast__lift { animation: none; transition: none; }
+    .swipe-toast__card,.swipe-toast[data-phase="closing"] .swipe-toast__lift { transform: none; transition: none; }
+    .swipe-toast__fuse { display: none; }
+  }
+}
+@layer responsive {
+  @media (max-width: 767px) {
+    .swipe-toast { right: 16px; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+    .swipe-toast__action,.swipe-toast__close { min-height: 44px; }
+    .swipe-toast__close { width: 36px; }
+  }
+}

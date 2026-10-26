@@ -1,4 +1,5 @@
 "use client";
+import GlideSelect from "../../components/synera/glide-select";
 import { useState } from "react";
 import { Search, ArrowUpRight, X } from "lucide-react";
 import { money, Badge, LinkButton, Panel, Note, Table, OrderTable, PageHead } from "../../components/synera/ui";
@@ -461,10 +462,10 @@ function Customers(ctx) {
           </label>
           <label className="inline-field">
             <span className="sr-only">Lọc kết quả liên hệ</span>
-            <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-              <option value="all">Tất cả kết quả</option>
-              <option value="pending">Chưa liên hệ</option>
-            </select>
+            <GlideSelect value={filter} onChange={(next) => setFilter(next)} ariaLabel="Lọc kết quả liên hệ" options={[
+              { value: "all", label: "Tất cả kết quả" },
+              { value: "pending", label: "Chưa liên hệ" },
+            ]} />
           </label>
         </div>
         <Table

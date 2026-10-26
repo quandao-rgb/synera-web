@@ -1,6 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Package, ChevronRight, Check, CircleAlert, X, ShieldCheck, MapPin, Phone, Trash2, ArrowLeft } from "lucide-react";
+import GlideSelect from "../../components/synera/glide-select";
+import ShippingRecommendation from "../../components/synera/shipping-recommendation";
+import { OrderProcessingProgress, ShipmentProgress } from "../../components/synera/workflow-progress";
+import { Package, Check, CircleAlert, X, ShieldCheck, MapPin, Phone, Trash2, ArrowLeft } from "lucide-react";
 import {
   Icon,
   money,
@@ -207,18 +210,8 @@ function OrderForm(ctx) {
                 <span>
                   Khách hàng <b className="required">*</b>
                 </span>
-                <select
-                  required
-                  value={customerId}
-                  onChange={(e) => setCustomer(e.target.value)}
-                >
-                  <option value="">Chọn khách hàng…</option>
-                  {data.customers.map((c) => (
-                    <option value={c.id} key={c.id}>
-                      {c.name} — {c.contact}
-                    </option>
-                  ))}
-                </select>
+                <GlideSelect required value={customerId} onChange={(next) => setCustomer(next)} ariaLabel="Khách hàng"
+                  options={[{ value: "", label: "Chọn khách hàng…" }, ...data.customers.map((c) => ({ value: c.id, label: `${c.name} — ${c.contact}` }))]} />
               </label>
               {c && (
                 <div className="recipient">
@@ -249,24 +242,10 @@ function OrderForm(ctx) {
                   <div className="order-line" key={i}>
                     <label className="field grow">
                       <span>Mặt hàng {i + 1}</span>
-                      <select
-                        value={l.productId}
-                        onChange={(e) =>
-                          update(i, { productId: e.target.value })
-                        }
-                      >
-                        {data.products.map((p) => (
-                          <option
-                            key={p.id}
-                            value={p.id}
-                            disabled={lines.some(
-                              (v, j) => j !== i && v.productId === p.id,
-                            )}
-                          >
-                            {p.name}
-                          </option>
-                        ))}
-                      </select>
+                      <GlideSelect value={l.productId} onChange={(next) => update(i, { productId: next })} ariaLabel={`Mặt hàng ${i + 1}`}
+                        options={data.products.map((p) => ({ value: p.id, label: p.name,
+                          disabled: lines.some((v, j) => j !== i && v.productId === p.id),
+                        }))} />
                       <small>
                         Khả dụng {p.available} thùng · {money(p.price)} / thùng
                       </small>
@@ -411,6 +390,7 @@ function OrderDetail(ctx) {
       { id: o.id },
       "Đã kiểm tra · Xác nhận",
     );
+  const selectedQuote = (q.result?.serviceQuotes || q.result?.quotes)?.find((quote) => quote.id === selected && quote.eligible === true);
   const custom = () =>
     setModel({
       title: "Chỉnh kiện khác chuẩn",
@@ -454,23 +434,56 @@ function OrderDetail(ctx) {
           </Button>
         )}
       </PageHead>
-      <div className="workflow" aria-label="Các bước xử lý">
-        {[
-          ["Đơn xác nhận", true],
-          [
-            "Kiện đã xác nhận",
-            o.status !== "packing" && o.status !== "cancelled",
-          ],
-          ["Đã đặt giao", o.carrierId && o.status !== "verification"],
-          ["Bàn giao thực", o.handedOver],
-        ].map(([label, done], i) => (
-          <div key={label} className={done ? "done" : ""}>
-            <span>{done ? <Check size={13} /> : i + 1}</span>
-            {label}
-            {i < 3 && <ChevronRight size={14} />}
-          </div>
+      <OrderProcessingProgress order={o} />
+      {o.status === "ready" &&
+        (canQuote ? (
+          <ShippingRecommendation
+            key={o.id}
+            q={q}
+            selected={selected}
+            onSelect={setSelected}
+            disabled={ctx.busy}
+            packageContext={{
+              parcelCount: o.parcels.length,
+              weight: Math.round(o.parcels.reduce((sum, parcel) => sum + parcel.weight, 0) * 10) / 10,
+            }}
+          >
+            <details className="booking-options">
+              <summary>Tùy chọn kiểm tra đặt giao</summary>
+              <label className="checkbox-field">
+                <input type="checkbox" checked={timeout} onChange={(e) => setTimeoutDemo(e.target.checked)} />
+                Kiểm tra trường hợp hết thời gian chờ
+              </label>
+            </details>
+            <Button
+              kind="primary"
+              icon="shipping"
+              disabled={!selectedQuote || q.loading || ctx.busy}
+              onClick={() => {
+                const chosen = selectedQuote;
+                confirm(
+                  "Xác nhận đặt giao",
+                  `${chosen.name} · ${chosen.service}: ${money(chosen.fee)} theo kiện đã xác nhận. Kho chỉ bàn giao sau khi đặt giao thành công.`,
+                  "book",
+                  {
+                    id: o.id,
+                    carrierId: selected,
+                    fingerprint: q.result.fingerprint,
+                    quotedAt: q.result.quotedAt,
+                    simulateTimeout: timeout,
+                  },
+                  "Đặt giao",
+                );
+              }}
+            >
+              Xác nhận đặt giao
+            </Button>
+          </ShippingRecommendation>
+        ) : (
+          <Note tone="warning">
+            Kiện đã sẵn sàng. Chờ chủ cơ sở hoặc nhân viên được cấp quyền chọn và đặt giao.
+          </Note>
         ))}
-      </div>
       <div className="detail-layout">
         <div className="form-stack">
           <Panel
@@ -581,56 +594,6 @@ function OrderDetail(ctx) {
               phải giá đặt giao.
             </Note>
           )}
-          {o.status === "ready" &&
-            (canQuote ? (
-              <Panel
-                title="Chọn dịch vụ & đặt giao"
-                meta="Điều kiện được kiểm tra lại theo kiện đã xác nhận"
-              >
-                <div className="panel-body">
-                  <QuoteList q={q} selected={selected} onSelect={setSelected} />
-                  <details className="booking-options"><summary>Tùy chọn kiểm tra đặt giao</summary>
-                  <label className="checkbox-field">
-                    <input
-                      type="checkbox"
-                      checked={timeout}
-                      onChange={(e) => setTimeoutDemo(e.target.checked)}
-                    />
-                    Kiểm tra trường hợp hết thời gian chờ
-                  </label></details>
-                  <Button
-                    kind="primary full"
-                    icon="shipping"
-                    disabled={!selected || !q.result || ctx.busy}
-                    onClick={() => {
-                      const chosen = q.result.quotes.find(
-                        (c) => c.id === selected,
-                      );
-                      confirm(
-                        "Xác nhận đặt giao",
-                        `${chosen.name}: ${money(chosen.fee)} theo kiện đã xác nhận. Kho chỉ bàn giao sau khi đặt giao thành công.`,
-                        "book",
-                        {
-                          id: o.id,
-                          carrierId: selected,
-                          fingerprint: q.result.fingerprint,
-                          quotedAt: q.result.quotedAt,
-                          simulateTimeout: timeout,
-                        },
-                        "Đặt giao",
-                      );
-                    }}
-                  >
-                    Xác nhận đặt giao
-                  </Button>
-                </div>
-              </Panel>
-            ) : (
-              <Note tone="warning">
-                Kiện đã sẵn sàng. Chờ chủ cơ sở hoặc nhân viên được cấp quyền
-                chọn và đặt giao.
-              </Note>
-            ))}
           {o.status === "verification" && (
             <Note tone="warning">
               <strong>Kết quả đặt giao chưa rõ.</strong>
@@ -659,7 +622,7 @@ function OrderDetail(ctx) {
               <div className="panel-body">
                 <p>
                   Xác nhận khi {o.parcels.length} kiện đã được bàn giao cho{" "}
-                  {o.carrierId ? `Vận chuyển ${o.carrierId}` : "hãng"}.
+                  {o.carrierName || (o.carrierId ? `Vận chuyển ${o.carrierId}` : "hãng")}.
                 </p>
                 <Button
                   kind="primary"
@@ -683,7 +646,13 @@ function OrderDetail(ctx) {
             title="Mốc hành trình"
 
           >
-            <Timeline events={o.events} />
+            {["verification", "booked", "transit", "delivered", "returning", "returned"].includes(o.status) ? <>
+              <ShipmentProgress order={o} />
+              <details className="shipment-event-details">
+                <summary>Nhật ký hành trình và nguồn ghi nhận</summary>
+                <Timeline events={o.events} />
+              </details>
+            </> : <Timeline events={o.events} />}
           </Panel>
         </div>
         <aside className="form-stack">

@@ -1481,41 +1481,6 @@
   .bar.danger {
     background: #d36d6d;
   }
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    left: calc(50% + 100px);
-    transform: translate(-50%, 10px);
-    z-index: 100;
-    max-width: min(600px, 90vw);
-    background: #172b46;
-    color: #ffffff;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      opacity 180ms,
-      transform 180ms;
-  }
-  .toast.visible {
-    opacity: 1;
-    padding: 13px 15px;
-    transform: translate(-50%, 0);
-    pointer-events: auto;
-    box-shadow: 0 4px 18px #0f172a17;
-  }
-  .toast button {
-    color: #e2e8f0;
-    margin-left: 8px;
-    width: 24px;
-    height: 24px;
-    display: grid;
-    place-items: center;
-  }
   dialog {
     border: 1px solid var(--strong-border);
     border-radius: 12px;
@@ -2286,13 +2251,6 @@
     }
     .permission-row {
       min-height: 60px;
-    }
-    .toast {
-      left: 50%;
-      bottom: 16px;
-      font-size: 12px;
-      width: max-content;
-      max-width: calc(100vw - 28px);
     }
     .dialog-head {
       padding: 18px;

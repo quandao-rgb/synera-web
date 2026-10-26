@@ -1,0 +1,108 @@
+@layer components {
+  /* React Bits interaction, constrained to the existing SYNERA navigation. */
+  .sidebar.line-sidebar > .line-sidebar-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 39px;
+    border-radius: 4px;
+    background: #234b73;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .sidebar.line-sidebar > .line-sidebar-slider::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    width: 2px;
+    height: 18px;
+    border-radius: 1px;
+    background: #a6d0f6;
+    transform: translateY(-50%);
+  }
+  .sidebar.line-sidebar .nav-group > a,
+  .sidebar.line-sidebar .sidebar-bottom > a {
+    z-index: 1;
+  }
+  .sidebar.line-sidebar > .line-sidebar-slider[hidden] { display: none; }
+  .sidebar.line-sidebar .nav-group > a,
+  .sidebar.line-sidebar .sidebar-bottom > a {
+    --line-effect: 0;
+    position: relative;
+    isolation: isolate;
+    transition: background-color 150ms ease-out, color 150ms ease-out;
+  }
+  .sidebar.line-sidebar .nav-group > a::before,
+  .sidebar.line-sidebar .sidebar-bottom > a::before {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 50%;
+    width: 2px;
+    height: 6px;
+    border-radius: 1px;
+    background: #a6d0f6;
+    opacity: var(--line-effect);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .sidebar.line-sidebar .nav-group > a > svg,
+  .sidebar.line-sidebar .nav-group > a > span:not(.nav-new),
+  .sidebar.line-sidebar .sidebar-bottom > a > svg,
+  .sidebar.line-sidebar .sidebar-bottom > a > span {
+    transform: translateX(calc(var(--line-effect) * 1px));
+  }
+  .sidebar.line-sidebar .nav-group > a[aria-current="page"],
+  .sidebar.line-sidebar .sidebar-bottom > a[aria-current="page"] {
+    --line-effect: 1;
+    background: #234b73;
+    color: #fff;
+    font-weight: 600;
+  }
+  /* Selection is static and immediate, even before animation code runs. */
+  .sidebar.line-sidebar .nav-group > a[aria-current="page"]::before,
+  .sidebar.line-sidebar .sidebar-bottom > a[aria-current="page"]::before {
+    height: 18px;
+    opacity: 1;
+  }
+  .sidebar.line-sidebar[data-line-slider="true"] .nav-group > a[aria-current="page"]::before,
+  .sidebar.line-sidebar[data-line-slider="true"] .sidebar-bottom > a[aria-current="page"]::before {
+    opacity: 0;
+  }
+  .sidebar.line-sidebar[data-line-slider="true"] .nav-group > a[aria-current="page"],
+  .sidebar.line-sidebar[data-line-slider="true"] .sidebar-bottom > a[aria-current="page"] {
+    background: transparent;
+    transition: color 150ms ease-out;
+  }
+  .sidebar.line-sidebar .nav-group > a:focus-visible,
+  .sidebar.line-sidebar .sidebar-bottom > a:focus-visible {
+    outline: 2px solid #b3d8fa;
+    outline-offset: -2px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .sidebar.line-sidebar .nav-group > a:hover:not([aria-current="page"]),
+    .sidebar.line-sidebar .sidebar-bottom > a:hover:not([aria-current="page"]) {
+      background: #ffffff09;
+      color: #fff;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sidebar.line-sidebar > .line-sidebar-slider { display: none; }
+    .sidebar.line-sidebar[data-line-slider="true"] .nav-group > a[aria-current="page"],
+    .sidebar.line-sidebar[data-line-slider="true"] .sidebar-bottom > a[aria-current="page"] {
+      background: #234b73;
+      transition: none;
+    }
+    .sidebar.line-sidebar[data-line-slider="true"] .nav-group > a[aria-current="page"]::before,
+    .sidebar.line-sidebar[data-line-slider="true"] .sidebar-bottom > a[aria-current="page"]::before {
+      opacity: 1;
+    }
+    .sidebar.line-sidebar .nav-group > a,
+    .sidebar.line-sidebar .sidebar-bottom > a { transition: none; }
+    .sidebar.line-sidebar .nav-group > a > svg,
+    .sidebar.line-sidebar .nav-group > a > span:not(.nav-new),
+    .sidebar.line-sidebar .sidebar-bottom > a > svg,
+    .sidebar.line-sidebar .sidebar-bottom > a > span { transform: none; }
+  }
+}

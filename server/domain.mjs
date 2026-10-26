@@ -1,4 +1,5 @@
 // Server-only fictitious records. Never import this module from client code.
+import { SAMPLE_SHIPPING_SERVICES } from "./shipping-service-catalog.mjs";
 export class DomainError extends Error {
   constructor(message, status = 422) {
     super(message);
@@ -445,7 +446,7 @@ export function quotes(s, customerId, lines, parcels, now = Date.now()) {
   };
   return s.carriers
     .map((carrier) => {
-      const policy = policies[carrier.id];
+      const policy = policies[carrier.policyKey || carrier.id];
       const unknown =
         !policy ||
         typeof carrier.liquid !== "boolean" ||
@@ -483,7 +484,7 @@ export function quotes(s, customerId, lines, parcels, now = Date.now()) {
           ) * 1000,
         weight: Math.round(weight * 10) / 10,
         parcelCount: parcels.length,
-        source: "Bảng giá giả lập v1 · gồm thuế và phụ phí giả định",
+        source: carrier.sample ? "Bảng giá mẫu SYNERA · chưa kết nối hãng vận chuyển" : "Bảng giá giả lập v1 · gồm thuế và phụ phí giả định",
         validUntil: now + 900000,
         evidence:
           c.zone === "Vùng nội thành" && liquid
@@ -492,6 +493,13 @@ export function quotes(s, customerId, lines, parcels, now = Date.now()) {
       };
     })
     .sort((a, b) => Number(b.eligible) - Number(a.eligible) || a.fee - b.fee);
+}
+export function sampleServiceQuotes(s, customerId, lines, parcels, now = Date.now()) {
+  return quotes({ ...s, carriers: SAMPLE_SHIPPING_SERVICES }, customerId, lines, parcels, now);
+}
+
+function carrierName(s, order) {
+  return order.quoteSnapshot?.name || s.carriers.find((carrier) => carrier.id === order.carrierId)?.name || "Chưa đặt giao";
 }
 export function publicTracking(s, token) {
   const o = s.orders.find(
@@ -508,8 +516,7 @@ export function publicTracking(s, token) {
     phone: c.phone.slice(0, 3) + "••••" + c.phone.slice(-3),
     destination: c.zone,
     status: o.status,
-    carrier:
-      s.carriers.find((c) => c.id === o.carrierId)?.name || "Chưa đặt giao",
+    carrier: carrierName(s, o),
     parcelCount: o.parcels.length,
     events: o.events
       .filter((e) =>
@@ -573,6 +580,7 @@ export function project(s) {
       parcels: clone(o.parcels),
       packingNote: o.packingNote || "",
       carrierId: o.carrierId,
+      carrierName: carrierName(s, o),
       events: clone(o.events),
     };
     return owner
@@ -708,6 +716,14 @@ export function act(original, action, payload = {}) {
         source: q.source,
         validUntil: q.validUntil,
         evidence: q.evidence,
+      })),
+      // Keep legacy preliminary quotes and existing saved orders compatible.
+      // The booking workspace consumes the explicit, grouped sample catalog.
+      serviceQuotes: sampleServiceQuotes(s, customerId, lines, parcels).map((q) => ({
+        id: q.id, providerId: q.providerId, name: q.name, serviceTier: q.serviceTier,
+        service: q.service, days: q.days, eligible: q.eligible, reason: q.reason,
+        fee: q.fee, weight: q.weight, parcelCount: q.parcelCount, source: q.source,
+        validUntil: q.validUntil, evidence: q.evidence, sample: true,
       })),
       fingerprint: fingerprint(customerId, lines, parcels),
     };
@@ -895,7 +911,10 @@ export function act(original, action, payload = {}) {
           Date.now() - payload.quotedAt < 900000,
         "Báo giá hết hạn. Hãy lấy lại báo giá.",
       );
-      const q = quotes(s, o.customerId, o.lines, o.parcels).find(
+      const q = [
+        ...quotes(s, o.customerId, o.lines, o.parcels),
+        ...sampleServiceQuotes(s, o.customerId, o.lines, o.parcels),
+      ].find(
         (c) => c.id === payload.carrierId,
       );
       check(q?.eligible, "Dịch vụ không đủ điều kiện.");
