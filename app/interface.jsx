@@ -43,6 +43,7 @@ import {
   SettingsView,
   Tracking,
 } from "./views/management";
+import { MotionShell, useDialogMotion } from "../components/synera/motion";
 export default function Interface() {
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
@@ -227,7 +228,12 @@ export default function Interface() {
   const owner = data?.role === "owner",
     packing = data?.orders.filter((o) => o.status === "packing").length || 0;
   return (
-    <div className={"app" + (navCollapsed ? " nav-collapsed" : "")}>
+    <MotionShell
+      className={"app" + (navCollapsed ? " nav-collapsed" : "")}
+      routeKey={route + "?" + routeSearch}
+      ready={Boolean(data)} role={data?.role}
+      collapsed={navCollapsed} mobile={mobile}
+    >
       <a
         className="skip-link"
         href="#main-content"
@@ -238,14 +244,14 @@ export default function Interface() {
       >
         Đến nội dung chính
       </a>
-      {mobile && (
-        <button
-          className="sidebar-scrim"
+      <button
+          className={"sidebar-scrim" + (mobile ? " is-open" : "")}
+          disabled={!mobile} aria-hidden={!mobile} tabIndex={-1}
           aria-label="Đóng điều hướng"
           onClick={() => setMobile(false)}
         />
-      )}
       <aside
+        id="synera-sidebar"
         ref={sidebarRef}
         inert={smallScreen && !mobile}
         aria-hidden={smallScreen && !mobile}
@@ -273,6 +279,7 @@ export default function Interface() {
           </button>
           <button
             className="sidebar-collapse"
+            aria-controls="synera-sidebar" aria-expanded={!navCollapsed}
             aria-label={
               navCollapsed ? "Mở rộng thanh bên" : "Thu gọn thanh bên"
             }
@@ -300,6 +307,7 @@ export default function Interface() {
           <ChevronsUpDown size={14} aria-hidden="true" />
         </a>
         <nav>
+          <div className="nav-indicator" aria-hidden="true" />
           {navGroups
             .filter((g) => g.items.some((i) => i[3] !== "owner" || owner))
             .map((g) => (
@@ -339,6 +347,7 @@ export default function Interface() {
             href="#/settings"
             title="Thiết lập"
             className={route === "/settings" ? "active" : ""}
+            aria-current={route === "/settings" ? "page" : undefined}
           >
             <Icon name="settings" />
             <span>Thiết lập</span>
@@ -388,6 +397,7 @@ export default function Interface() {
             <button
               className="icon-button mobile-only"
               aria-label="Mở menu"
+              aria-controls="synera-sidebar" aria-expanded={mobile}
               onClick={() => setMobile(true)}
             >
               <Menu size={20} />
@@ -583,13 +593,14 @@ export default function Interface() {
       </div>
       <Modal model={model} onClose={() => setModel(null)} busy={busy} />
       {cmd && <CommandMenu data={data} close={() => setCmd(false)} />}
-    </div>
+    </MotionShell>
   );
 }
 function CommandMenu({ data, close }) {
   const [q, setQ] = useState(""),
     [selected, setSelected] = useState(0),
     ref = useRef(null);
+  useDialogMotion(ref, true);
   const owner = data?.role === "owner";
   let items = navGroups
     .flatMap((g) => g.items)

@@ -1,0 +1,59 @@
+/* GSAP owns movement; CSS owns color, focus and the no-JS fallback. */
+@layer components {
+  [data-motion="gsap"] .button {
+    transition: background-color 160ms, border-color 160ms, box-shadow 160ms;
+  }
+  [data-motion="gsap"] .button:active { transform: none; }
+  [data-motion="gsap"] .button.primary:hover { box-shadow: 0 3px 10px #1769c222; }
+  [data-motion="gsap"] .sidebar nav { position: relative; }
+  .nav-indicator {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    right: 10px;
+    height: 39px;
+    border-radius: 5px;
+    background: linear-gradient(100deg, #2567a9, #1f5996);
+    box-shadow: inset 2px 0 #83c4ff, 0 2px 7px #081d3226;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+  [data-motion="gsap"] .nav-group { position: relative; }
+  [data-motion="gsap"] .sidebar nav a.active { background: transparent; }
+  [data-motion="gsap"] .sidebar nav a,
+  [data-motion="gsap"] .sidebar-bottom > a,
+  [data-motion="gsap"] .sidebar-bottom > button,
+  [data-motion="gsap"] .icon-button,
+  [data-motion="gsap"] .sidebar-collapse {
+    transition: background-color 160ms, color 160ms;
+  }
+  [data-motion="gsap"] .sidebar nav a:hover:not(.active) { background: #ffffff0b; }
+  [data-motion="gsap"] .sidebar nav a:focus-visible {
+    outline: 2px solid #9bd2ff;
+    outline-offset: -2px;
+  }
+  [data-motion="gsap"] .sidebar-scrim { display: none; }
+}
+@layer responsive {
+  @media (min-width: 1025px) {
+    [data-motion="gsap"] .sidebar { overflow-x: clip; }
+    [data-motion="gsap"] .sidebar nav a > span { white-space: nowrap; }
+  }
+  @media (min-width: 768px) and (max-width: 1024px) {
+    .nav-indicator { left: 8px; right: 8px; }
+  }
+  @media (max-width: 767px) {
+    [data-motion="gsap"] .sidebar { transition: none; }
+    [data-motion="gsap"] .sidebar-scrim {
+      display: block;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    [data-motion="gsap"] .sidebar-scrim.is-open { pointer-events: auto; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-motion="gsap"] .button.primary:hover { box-shadow: none; }
+  }
+}

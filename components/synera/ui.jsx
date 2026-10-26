@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useDialogMotion } from "./motion";
 import {
   LayoutDashboard,
   Package,
@@ -276,6 +277,7 @@ function Table({
 function Modal({ model, onClose, busy }) {
   const ref = useRef(null),
     prior = useRef(null);
+  useDialogMotion(ref, Boolean(model));
   useEffect(() => {
     if (model) {
       prior.current = document.activeElement;

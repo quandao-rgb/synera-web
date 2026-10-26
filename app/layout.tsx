@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./synera.css";
 import "./admin-layout.css";
+import "./motion.css";
 
 export const metadata: Metadata = {
   title: "SYNERA — Không gian vận hành",
