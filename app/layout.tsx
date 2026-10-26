@@ -7,6 +7,7 @@ import "./stepper.css";
 import "./swipe-toast.css";
 import "./glide-select.css";
 import "./shipping-recommendation.css";
+import "./landing.css";
 
 export const metadata: Metadata = {
   title: "SYNERA — Không gian vận hành",

@@ -2,6 +2,11 @@
 
 Prototype để đánh giá hướng cá nhân hóa từ bản quản trị Sapo sang SYNERA, theo SRS v0.2 và master prompt của người dùng. Đây là repository độc lập chỉ chứa web SYNERA; không bao gồm mã nguồn hoặc lịch sử Git của reverse-skill.
 
+## Landing và tài khoản Node/local
+
+Bản local hiện tại: `http://localhost:4182/`. Landing có Đăng nhập/Đăng ký riêng bằng email và mật khẩu thật; chỉ vào `/#/` khi server đã xác nhận phiên. Giao diện quản trị đang có được giữ nguyên. Tài khoản/workspace lưu tại `.data/accounts.sqlite`; dữ liệu vận hành khởi tạo vẫn là dữ liệu mẫu.
+
+Xem [cách chạy và phạm vi chức năng](docs/LANDING.md), [nguồn Tailark và giấy phép](docs/TAILARK-SOURCES.md), [kết quả kiểm tra và ảnh](docs/LANDING-QA.md). Không thêm dependency. Các hướng dẫn Sites/Cloudflare ở dưới là profile khác, vẫn dùng cơ chế ChatGPT hiện có.
 Bản giao diện v0.2 theo yêu cầu mới: khung quản trị gần Sapo với sidebar xanh đậm, header tìm kiếm, nền xám, bảng/form trắng và nút xanh dương. Có màn Xử lý đơn hàng với bốn hàng đợi; tìm nhanh mở mặt hàng/khách kèm bộ lọc; sidebar thu gọn được. Chi tiết tại [ghi chú v0.2](docs/UI-V0.2.md).
 
 ## Render

@@ -4,6 +4,8 @@ import { mkdir, readFile, writeFile, rename, stat, readdir } from 'node:fs/promi
 import { resolve, join, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createDemo, act, project, publicTracking, DomainError } from './domain.mjs';
+import { createAccountAuth } from './account-auth.mjs';
+import { APP_HOME_URL } from '../lib/app-routes.mjs';
 
 const ROOT = fileURLToPath(new URL('../', import.meta.url));
 const COOKIE = 'synera_demo';
@@ -27,6 +29,8 @@ export async function createRenderServer({
   clientDir = resolve(clientDir); dataDir = resolve(dataDir);
   await mkdir(dataDir,{recursive:true,mode:0o700});
   const locks = new Map();
+  let accountStore;
+  const accounts = () => accountStore ||= createAccountAuth({ filename: join(dataDir, 'accounts.sqlite'), secureCookies });
   const json = (res,status,value) => {
     res.writeHead(status,{...SECURITY,'Content-Type':'application/json; charset=utf-8','Cache-Control':'private, no-store'});
     res.end(JSON.stringify(value));
@@ -55,6 +59,11 @@ export async function createRenderServer({
     return matches.length===1?matches[0].slice(COOKIE.length+1):'';
   }
   async function session(req,res,create=false) {
+    if (accounts().hasCookie(req)) {
+      const authenticated = accounts().session(req);
+      if (!authenticated) throw new DomainError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.',401);
+      return { id: 'account:' + authenticated.user.id, accountId: authenticated.user.id, state: accounts().readWorkspace(authenticated.user.id) };
+    }
     let id=sessionId(req),state=await readState(id);
     if(!state&&create){
       const files=await readdir(dataDir);
@@ -67,9 +76,9 @@ export async function createRenderServer({
     return {id,state};
   }
   const projection=state=>({...project(state),runtime:'render',storage:'ephemeral'});
-  async function body(req) {
+  async function body(req,limit=100000) {
     let length=0;const chunks=[];
-    for await(const chunk of req){length+=chunk.length;if(length>100000)throw new DomainError('Yêu cầu quá lớn.',413);chunks.push(chunk);}
+    for await(const chunk of req){length+=chunk.length;if(length>limit)throw new DomainError('Yêu cầu quá lớn.',413);chunks.push(chunk);}
     try{return JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new DomainError('Nội dung JSON không hợp lệ.',400);}
   }
   async function api(req,res,url) {
@@ -83,16 +92,37 @@ export async function createRenderServer({
     const expected=publicOrigin?new URL(publicOrigin).origin:new URL('http://'+req.headers.host).origin;
     if(req.headers.origin!==expected)throw new DomainError('Nguồn yêu cầu không hợp lệ.',403);
     if(!value||typeof value!=='object'||Array.isArray(value)||typeof value.action!=='string'||!Number.isSafeInteger(value.version)||value.payload!==undefined&&(!value.payload||typeof value.payload!=='object'||Array.isArray(value.payload)))throw new DomainError('Yêu cầu không hợp lệ.',400);
-    const {id}=await session(req,res);
+    const {id,accountId}=await session(req,res);
     return locked(id,async()=>{
-      const state=await readState(id);
+      const state=accountId?accounts().readWorkspace(accountId):await readState(id);
       if(!state)throw new DomainError('Phiên demo đã hết hạn. Tải lại trang để tạo phiên mới.',401);
       if(value.version!==state.version)throw new DomainError('Dữ liệu đã đổi ở cửa sổ khác. Tải lại rồi thử tiếp.',409);
       const next=act(state,value.action,value.payload||{});
       if(value.action==='quote')return json(res,200,next);
-      next.version=state.version+1;await writeState(id,next);
+      next.version=state.version+1;
+      if(accountId)accounts().writeWorkspace(accountId,next,state.version);else await writeState(id,next);
       return json(res,200,projection(next));
     });
+  }
+  async function accountApi(req,res,url) {
+    if(url.pathname==='/api/auth/session' && req.method==='GET') {
+      const authenticated=accounts().session(req);
+      return json(res,200,{authenticated:!!authenticated,user:authenticated?.user||null,homeRoute:APP_HOME_URL,runtime:'node'});
+    }
+    if(!['/api/auth/login','/api/auth/register','/api/auth/logout'].includes(url.pathname))throw new DomainError('Không tìm thấy chức năng xác thực.',404);
+    if(req.method!=='POST'){res.setHeader('Allow','POST');throw new DomainError('Phương thức không được hỗ trợ.',405);}
+    const expected=publicOrigin?new URL(publicOrigin).origin:new URL('http://'+req.headers.host).origin;
+    if(req.headers.origin!==expected)throw new DomainError('Nguồn yêu cầu không hợp lệ.',403);
+    if(!req.headers['content-type']?.startsWith('application/json'))throw new DomainError('Biểu mẫu cần gửi JSON.',415);
+    const value=await body(req,16384);
+    if(url.pathname==='/api/auth/logout'){
+      res.setHeader('Set-Cookie',accounts().logout(req));
+      return json(res,200,{authenticated:false,user:null,homeRoute:APP_HOME_URL});
+    }
+    const result=await accounts()[url.pathname.endsWith('/register')?'register':'login'](value,req.socket.remoteAddress||'unknown');
+    accounts().logout(req);
+    res.setHeader('Set-Cookie',result.setCookie);
+    return json(res,url.pathname.endsWith('/register')?201:200,{authenticated:true,user:result.user,homeRoute:APP_HOME_URL});
   }
   async function staticFile(req,res,url) {
     if(!['GET','HEAD'].includes(req.method))throw new DomainError('Phương thức không được hỗ trợ.',405);
@@ -105,10 +135,12 @@ export async function createRenderServer({
     res.writeHead(200,{...SECURITY,'Content-Type':MIME[extname(full)]||'application/octet-stream','Content-Length':bytes.length,'Cache-Control':pathname.startsWith('/assets/')?'public, max-age=31536000, immutable':'no-store'});
     res.end(req.method==='HEAD'?undefined:bytes);
   }
-  return createServer(async(req,res)=>{
+  const server=createServer(async(req,res)=>{
     try {
       const url=new URL(req.url,'http://localhost');
       if(url.pathname==='/healthz'&&req.method==='GET')return json(res,200,{status:'ok',service:'synera',mode:'demo'});
+      if(url.pathname.startsWith('/api/auth/'))return await accountApi(req,res,url);
+      if(url.pathname==='/signin-with-chatgpt'&&req.method==='GET'){res.writeHead(302,{...SECURITY,Location:'/?auth=login','Cache-Control':'no-store'});res.end();return;}
       if(url.pathname==='/api/demo')return await api(req,res,url);
       await staticFile(req,res,url);
     } catch(e) {
@@ -118,6 +150,8 @@ export async function createRenderServer({
       json(res,status,{error:e instanceof DomainError?e.message:'Chưa xử lý được yêu cầu. Vui lòng thử lại.'});
     }
   });
+  server.on('close',()=>accountStore?.close());
+  return server;
 }
 
 if(process.argv[1]&&resolve(process.argv[1])===fileURLToPath(import.meta.url)) {

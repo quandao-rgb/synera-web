@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import Interface from '../app/interface.jsx';
+import SiteEntry from '../components/landing/SiteEntry.jsx';
 import '../app/synera.css';
 import '../app/admin-layout.css';
 import '../app/motion.css';
@@ -9,4 +9,5 @@ import '../app/stepper.css';
 import '../app/swipe-toast.css';
 import '../app/glide-select.css';
 import '../app/shipping-recommendation.css';
-createRoot(document.getElementById('root')).render(<Interface />);
+import '../app/landing.css';
+createRoot(document.getElementById('root')).render(<SiteEntry />);

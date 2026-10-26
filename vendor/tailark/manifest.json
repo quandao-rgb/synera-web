@@ -1,0 +1,48 @@
+{
+  "repository": "https://github.com/tailark/blocks",
+  "commit": "8139698115c1341bfd2e3e286c04bb4d8146f472",
+  "license": "MIT",
+  "selected": [
+    "registry/bases/radix/mist/blocks/hero-section/one/hero-section.tsx",
+    "registry/bases/radix/mist/blocks/features/two.tsx",
+    "registry/bases/radix/mist/blocks/content/two.tsx",
+    "registry/bases/radix/mist/blocks/pricing/two.tsx",
+    "registry/bases/radix/mist/blocks/faqs/one.tsx",
+    "registry/bases/radix/mist/blocks/call-to-action/one.tsx",
+    "registry/bases/radix/mist/blocks/footer/two.tsx"
+  ],
+  "files": [
+    "registry/bases/radix/mist/blocks/hero-section/one/hero-section.tsx",
+    "registry/bases/radix/mist/ui/button.tsx",
+    "registry/core/lib/utils.ts",
+    "registry/bases/radix/mist/blocks/hero-section/one/header.tsx",
+    "registry/bases/radix/mist/ui/logo.tsx",
+    "registry/core/ui/svgs/vercel.tsx",
+    "registry/core/ui/svgs/spotify.tsx",
+    "registry/core/ui/svgs/supabase.tsx",
+    "registry/bases/radix/mist/blocks/features/two.tsx",
+    "registry/bases/radix/mist/ui/card.tsx",
+    "registry/bases/radix/mist/blocks/content/two.tsx",
+    "registry/bases/radix/mist/ui/toggle-group.tsx",
+    "registry/bases/radix/mist/ui/toggle.tsx",
+    "registry/bases/radix/mist/blocks/pricing/two.tsx",
+    "registry/bases/radix/mist/blocks/faqs/one.tsx",
+    "registry/bases/radix/mist/ui/accordion.tsx",
+    "registry/bases/radix/mist/blocks/call-to-action/one.tsx",
+    "registry/bases/radix/mist/blocks/footer/two.tsx"
+  ],
+  "upstreamImports": [
+    "@radix-ui/react-accordion",
+    "@radix-ui/react-slot",
+    "@radix-ui/react-toggle",
+    "@radix-ui/react-toggle-group",
+    "class-variance-authority",
+    "clsx",
+    "lucide-react",
+    "next/image",
+    "next/link",
+    "react",
+    "tailwind-merge"
+  ],
+  "note": "Original sources are retained verbatim as .source.txt. SYNERA adaptations use existing React/lucide and scoped CSS; upstream-only dependencies are not installed."
+}
