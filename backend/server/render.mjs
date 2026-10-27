@@ -5,7 +5,7 @@ import { resolve, join, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createDemo, act, project, publicTracking, DomainError } from './domain.mjs';
 import { createAccountAuth } from './account-auth.mjs';
-import { APP_HOME_URL } from '../../shared/app-routes.mjs';
+import { APP_HOME_URL, LOGIN_URL, isLoginPath } from '../../shared/app-routes.mjs';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const COOKIE = 'synera_demo';
@@ -127,7 +127,7 @@ export async function createRenderServer({
   async function staticFile(req,res,url) {
     if(!['GET','HEAD'].includes(req.method))throw new DomainError('Phương thức không được hỗ trợ.',405);
     let pathname;try{pathname=decodeURIComponent(url.pathname);}catch{throw new DomainError('Đường dẫn không hợp lệ.',400);}
-    if(pathname==='/'||pathname==='/index.html')pathname='/index.html';
+    if(pathname==='/'||pathname==='/index.html'||isLoginPath(pathname))pathname='/index.html';
     else if(!pathname.startsWith('/assets/')&&!['/favicon.svg','/favicon-synera.svg'].includes(pathname))throw new DomainError('Không tìm thấy trang.',404);
     const full=resolve(clientDir,'.'+pathname);
     if(!full.startsWith(clientDir+sep)||pathname.includes('\0')||pathname.includes('\\'))throw new DomainError('Không tìm thấy trang.',404);
@@ -140,7 +140,7 @@ export async function createRenderServer({
       const url=new URL(req.url,'http://localhost');
       if(url.pathname==='/healthz'&&req.method==='GET')return json(res,200,{status:'ok',service:'synera',mode:'demo'});
       if(url.pathname.startsWith('/api/auth/'))return await accountApi(req,res,url);
-      if(url.pathname==='/signin-with-chatgpt'&&req.method==='GET'){res.writeHead(302,{...SECURITY,Location:'/?auth=login','Cache-Control':'no-store'});res.end();return;}
+      if(url.pathname==='/signin-with-chatgpt'&&req.method==='GET'){res.writeHead(302,{...SECURITY,Location:LOGIN_URL,'Cache-Control':'no-store'});res.end();return;}
       if(url.pathname==='/api/demo')return await api(req,res,url);
       await staticFile(req,res,url);
     } catch(e) {

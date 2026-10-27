@@ -10,5 +10,6 @@ import '../app/swipe-toast.css';
 import '../app/glide-select.css';
 import '../app/shipping-recommendation.css';
 import '../app/landing.css';
+import '../app/login.css';
 import '../app/brand.css';
 createRoot(document.getElementById('root')).render(<SiteEntry />);

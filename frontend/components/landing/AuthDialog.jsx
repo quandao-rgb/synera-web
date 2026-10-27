@@ -33,7 +33,7 @@ function useAuthSubmit(action, { onSuccess, setBusy }) {
   } };
 }
 
-function LoginForm(props) {
+export function LoginForm(props) {
   const { error, errorRef, submit } = useAuthSubmit('login', props);
   return <form aria-label="Biểu mẫu đăng nhập" onSubmit={submit} aria-busy={props.busy}>
     <label className="sl-field"><span>Email</span><input name="email" type="email" autoComplete="email" maxLength={254} required /></label>

@@ -1,0 +1,84 @@
+/* Dedicated account screen; deliberately scoped away from landing and operations. */
+.synera-login {
+  --login-paper: #fff; --login-ground: #f3f5f7; --login-ink: #1f2937; --login-muted: #526071;
+  --login-navy: #122b49; --login-blue: #1769c2; --login-hover: #1255a0; --login-line: #bdc7d3;
+  --login-error: #9e2531; --login-error-ground: #fff2f2;
+  min-height: 100svh; padding: 24px; background: var(--login-ground); color: var(--login-ink);
+  font: 16px/1.5 "Segoe UI", Arial, sans-serif;
+}
+.synera-login *, .synera-login *::before, .synera-login *::after { box-sizing: border-box; }
+.synera-login a { color: inherit; text-decoration: none; }
+.synera-login button, .synera-login input { font: inherit; }
+.synera-login p, .synera-login h1 { margin: 0; }
+.synera-login :focus-visible { outline: 2px solid var(--login-blue); outline-offset: 4px; }
+/* 2 equal columns inside one 1392px frame; form stays at a readable 400px measure. */
+.synera-login__sheet { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); max-width: 1392px; min-height: calc(100svh - 48px); margin-inline: auto; background: var(--login-paper); border-radius: 16px; overflow: hidden; }
+.synera-login__account { display: flex; flex-direction: column; min-width: 0; padding: 36px 48px 28px; }
+.synera-login__header { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.synera-login__header > a { display: inline-flex; align-items: center; min-height: 44px; }
+.synera-login__back { gap: 7px; color: var(--login-muted) !important; font-size: 14px; white-space: nowrap; }
+.synera-login__back:hover { color: var(--login-blue) !important; }
+.synera-login__form { width: min(100%, 400px); margin: auto; padding-block: 64px; }
+.synera-login h1 { font-size: 30px; font-weight: 650; line-height: 1.25; letter-spacing: -.7px; color: var(--login-navy); }
+.synera-login__intro { margin-top: 12px !important; color: var(--login-muted); }
+.synera-login form { display: grid; gap: 22px; margin-top: 32px; }
+.synera-login .sl-field { display: grid; gap: 8px; text-align: left; }
+.synera-login .sl-field > label, .synera-login .sl-field > span:not(.sl-password) { font-size: 14px; font-weight: 600; }
+.synera-login .sl-field input { width: 100%; min-height: 50px; padding: 11px 14px; border: 1px solid var(--login-line); border-radius: 8px; background: var(--login-paper); color: var(--login-ink); transition: border-color 150ms; }
+.synera-login .sl-field input:hover { border-color: var(--login-muted); }
+.synera-login .sl-field input:focus { border-color: var(--login-blue); outline: 2px solid var(--login-blue); outline-offset: 2px; }
+.synera-login .sl-password { position: relative; display: block; }
+.synera-login .sl-password input { padding-right: 54px; }
+.synera-login .sl-password button { display: grid; place-items: center; position: absolute; top: 3px; right: 3px; width: 44px; height: 44px; padding: 0; border: 0; border-radius: 6px; color: var(--login-muted); background: transparent; cursor: pointer; }
+.synera-login .sl-password button:hover { background: var(--login-ground); color: var(--login-ink); }
+.synera-login .sl-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 50px; width: 100%; padding: 12px 18px; background: var(--login-blue); color: var(--login-paper); border: 0; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background-color 150ms, transform 150ms; }
+.synera-login .sl-button:hover { background: var(--login-hover); }
+.synera-login .sl-button:active { transform: translateY(1px); }
+.synera-login .sl-button:disabled { background: var(--login-hover); cursor: wait; opacity: .75; transform: none; }
+.synera-login .sl-form-error { padding: 12px 14px; border-radius: 8px; background: var(--login-error-ground); color: var(--login-error); font-size: 14px; line-height: 1.6; }
+.synera-login__form > .sl-form-error { margin-top: 20px; }
+.synera-login__register { margin-top: 26px !important; color: var(--login-muted); font-size: 14px; text-align: center; }
+.synera-login__register a { color: var(--login-blue); font-weight: 600; padding-block: 12px; }
+.synera-login__register a:hover { text-decoration: underline; text-underline-offset: 4px; }
+.synera-login__status { color: var(--login-muted); font-size: 14px; margin-top: 16px !important; }
+.synera-login__support { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; column-gap: 16px; row-gap: 4px; text-align: center; font-size: 12px; color: var(--login-muted); }
+.synera-login__support > span { flex-basis: 100%; }
+.synera-login__support a { display: inline-flex; align-items: center; min-height: 32px; }
+.synera-login__support a:hover { color: var(--login-blue); }
+.synera-login__visual { min-width: 0; display: grid; grid-template-rows: minmax(300px, 1fr) auto; background: var(--login-navy); color: var(--login-paper); }
+.synera-login__photo { position: relative; min-height: 300px; overflow: hidden; }
+.synera-login__photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 42%; }
+.synera-login__caption { padding: 32px 40px 24px; }
+.synera-login__caption p { font-size: clamp(22px, 2.1vw, 28px); line-height: 1.45; letter-spacing: -.4px; font-weight: 500; }
+.synera-login__caption a { display: inline-block; padding-block: 8px; margin-top: 14px; color: #b8c9dd; font-size: 12px; }
+.synera-login__caption a:hover { color: var(--login-paper); text-decoration: underline; }
+.synera-login__external { margin-top: 28px; }
+.synera-login__external > p { margin-bottom: 20px; color: var(--login-muted); }
+@media (max-width: 1100px) {
+  .synera-login__account { padding-inline: 32px; }
+  .synera-login__back { font-size: 0; gap: 0; }
+  .synera-login__back svg { width: 20px; height: 20px; }
+  .synera-login__caption { padding-inline: 28px; }
+}
+@media (max-width: 800px) {
+  .synera-login { padding: 16px; }
+  .synera-login__sheet { grid-template-columns: minmax(0, 1fr); min-height: calc(100svh - 32px); max-width: 640px; }
+  .synera-login__visual { display: none; }
+  .synera-login__account { padding: 24px 40px; }
+  .synera-login__back { font-size: 14px; gap: 7px; }
+  .synera-login__form { padding-block: 64px; }
+}
+@media (max-width: 480px) {
+  .synera-login { padding: 0; background: var(--login-paper); }
+  .synera-login__sheet { border-radius: 0; min-height: 100svh; }
+  .synera-login__account { padding: 20px 24px 24px; }
+  .synera-login__header .synera-logo { --synera-logo-height: 30px; --synera-logo-word: 92px; }
+  .synera-login__back { font-size: 0; gap: 0; justify-content: center; width: 44px; }
+  .synera-login__form { padding-block: 48px; }
+  .synera-login h1 { font-size: 27px; }
+  .synera-login__support { font-size: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .synera-login *, .synera-login *::before, .synera-login *::after { transition: none !important; animation: none !important; }
+  .synera-login .sl-button:active { transform: none; }
+}
