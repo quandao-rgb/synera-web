@@ -1,6 +1,6 @@
 // Adapted from Tailark Mist Hero Section 1 + header. MIT © 2025 Irung.
 import { useEffect, useRef, useState } from 'react';
-import { Menu, X, ChevronDown, ArrowRight, Play, Package, Users, Truck, Check } from 'lucide-react';
+import { Menu, X, ChevronDown, ArrowRight, Play, Package, Users, Truck } from 'lucide-react';
 import { APP_HOME_URL } from '../../lib/app-routes.mjs';
 import SyneraLogo from '../brand/SyneraLogo';
 import { SOLUTIONS } from './landing-data.mjs';
@@ -27,9 +27,7 @@ export function HeroHeader({ openAuth, user, onLogout, onSolution }) {
 }
 
 export default function HeroSection({ openAuth }) {
-  return <section className="sl-hero" aria-labelledby="sl-hero-title"><div className="sl-container sl-hero__grid">
+  return <section className="sl-hero" aria-labelledby="sl-hero-title"><video className="sl-background-video" aria-hidden="true" autoPlay loop muted playsInline preload="metadata"><source src="/assets/landing/background-lp.mp4" type="video/mp4" /></video><div className="sl-container sl-hero__grid">
     <div className="sl-hero__copy" data-reveal><h1 id="sl-hero-title">Quản lý phân phối<br /><span>chủ động từ kho đến giao hàng</span></h1><p>Kết nối kho, khách hàng và vận chuyển trên cùng hệ thống. Hỗ trợ bổ sung hàng, liên hệ khách mua lại và lựa chọn phương án giao phù hợp.</p><div className="sl-actions"><button className="sl-button" onClick={() => openAuth('register')}>Đăng ký trải nghiệm <ArrowRight size={18} aria-hidden="true" /></button><a className="sl-button sl-button--light-outline" href="#demo"><Play size={17} aria-hidden="true" />Xem demo</a></div></div>
-    <figure className="sl-hero__product" data-reveal><div className="sl-product-caption"><span><SyneraLogo decorative /> / Tổng quan</span><span>Giao diện ứng dụng · dữ liệu mẫu</span></div><img src="/assets/landing/synera-overview-logo.jpg" alt="Trang tổng quan SYNERA với hàng đợi đơn, tồn kho và các việc cần xử lý" width="1905" height="848" fetchPriority="high" /><figcaption><Package size={22} aria-hidden="true" /><div><b>Đơn, kiện hàng và giao nhận nối liền</b><span>Thông tin đi tiếp cùng công việc.</span></div><CheckMark /></figcaption></figure>
   </div></section>;
 }
-function CheckMark() { return <span className="sl-check-mark" aria-hidden="true"><Check size={16} /></span>; }
