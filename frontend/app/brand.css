@@ -8,7 +8,7 @@
 .synera-landing .sl-brand { display: inline-flex; align-items: center; flex: none; }
 .synera-landing .sl-brand .synera-logo { --synera-logo-height: 37px; --synera-logo-word: 113px; }
 .synera-landing .sl-auth__mark .synera-logo { --synera-logo-height: 30px; --synera-logo-word: 91px; }
-.synera-landing .sl-preview__bar .synera-logo, .synera-landing .sl-product-caption .synera-logo { --synera-logo-height: 23px; --synera-logo-word: 70px; gap: 5px; }
+.synera-landing .sl-preview__bar .synera-logo { --synera-logo-height: 23px; --synera-logo-word: 70px; gap: 5px; }
 .synera-site-loading .synera-logo { justify-self: center; --synera-logo-height: 44px; --synera-logo-word: 133px; }
 @media (min-width: 1025px) {
   .nav-collapsed .sidebar .brand .synera-logo { --synera-logo-height: 27px; gap: 0; }
