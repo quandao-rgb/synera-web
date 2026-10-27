@@ -19,10 +19,10 @@ Nếu bản xem trước đang chạy, dừng đúng tiến trình đang giữ c
 ## File thay đổi
 
 - `components/landing/`: bảy khối Tailark đã chuyển thành JSX; `ProductPreview.jsx`, `landing-data.mjs`, `LandingPage.jsx`, `AuthDialog.jsx`, `SiteEntry.jsx`.
-- `app/landing.css`: toàn bộ CSS giới hạn trong `.synera-landing`; một lớp loading riêng. `html:has(.synera-landing)` chỉ điều chỉnh khoảng neo khi landing hiện diện.
-- `render/main.jsx`, `app/page.tsx`, `app/layout.tsx`: nối entry và nạp CSS landing. Render/Node dùng email/mật khẩu; bản Cloudflare giữ cơ chế ChatGPT hiện có.
-- `lib/app-routes.mjs`: route trang chủ `/#/`, lấy từ hash router hiện có.
-- `server/account-auth.mjs`, `server/render.mjs`: tài khoản, phiên, lưu workspace theo tài khoản và bốn endpoint xác thực.
+- `frontend/app/landing.css`: toàn bộ CSS giới hạn trong `.synera-landing`; một lớp loading riêng. `html:has(.synera-landing)` chỉ điều chỉnh khoảng neo khi landing hiện diện.
+- `frontend/render/main.jsx`, `app/page.tsx`, `frontend/app/layout.tsx`: nối entry và nạp CSS landing. Render/Node dùng email/mật khẩu; bản Cloudflare giữ cơ chế ChatGPT hiện có.
+- `shared/app-routes.mjs`: route trang chủ `/#/`, lấy từ hash router hiện có.
+- `backend/server/account-auth.mjs`, `backend/server/render.mjs`: tài khoản, phiên, lưu workspace theo tài khoản và bốn endpoint xác thực.
 - `public/assets/landing/synera-overview-logo.jpg`: ảnh thật của giao diện SYNERA được khôi phục, chứa dữ liệu mẫu.
 - `tests/auth.test.mjs`: kiểm thử xác thực qua HTTP và kho lưu tài khoản.
 - `vendor/tailark/`: đầy đủ bản gốc 7 block và dependency nội bộ, manifest nguồn và giấy phép MIT. Mã gốc giữ dưới đuôi `.source.txt` để không lọt vào compilation của ứng dụng.

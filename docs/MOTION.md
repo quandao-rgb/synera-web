@@ -16,11 +16,11 @@ Tham khảo bộ skill chính thức [greensock/gsap-skills](https://github.com/
 
 ## Vị trí chỉnh sửa
 
-- `components/synera/motion.jsx`: MotionShell, useDialogMotion và vòng đời GSAP.
-- `app/motion.css`: màu, nền lựa chọn, focus và override tránh CSS/GSAP cùng điều khiển transform.
-- `app/interface.jsx`: kết nối trạng thái điều hướng vào MotionShell.
-- `components/synera/ui.jsx`: kết nối hộp thoại.
-- `render/main.jsx` và `app/layout.tsx`: nạp cùng stylesheet cho hai profile.
+- `frontend/components/synera/motion.jsx`: MotionShell, useDialogMotion và vòng đời GSAP.
+- `frontend/app/motion.css`: màu, nền lựa chọn, focus và override tránh CSS/GSAP cùng điều khiển transform.
+- `frontend/app/interface.jsx`: kết nối trạng thái điều hướng vào MotionShell.
+- `frontend/components/synera/ui.jsx`: kết nối hộp thoại.
+- `frontend/render/main.jsx` và `frontend/app/layout.tsx`: nạp cùng stylesheet cho hai profile.
 
 ## Kiểm tra
 

@@ -8,7 +8,7 @@ import {
   quotes,
   fingerprint,
   publicTracking,
-} from "../server/domain.mjs";
+} from "../backend/server/domain.mjs";
 const p = (s) => s.products[0];
 function booked(s, id = "DH1028") {
   s = act(s, "packing", { id });

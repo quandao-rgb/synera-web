@@ -1,7 +1,7 @@
 // Adapted from Tailark Mist Hero Section 1 + header. MIT © 2025 Irung.
 import { useEffect, useRef, useState } from 'react';
 import { Menu, X, ChevronDown, ArrowRight, Play, Package, Users, Truck, Check } from 'lucide-react';
-import { APP_HOME_URL } from '../../lib/app-routes.mjs';
+import { APP_HOME_URL } from '../../../shared/app-routes.mjs';
 import SyneraLogo from '../brand/SyneraLogo';
 import { SOLUTIONS } from './landing-data.mjs';
 

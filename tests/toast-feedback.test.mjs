@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createToastTimer, mutationFeedback, normalizeToast, shouldDismissSwipe } from "../components/synera/toast-feedback.mjs";
+import { createToastTimer, mutationFeedback, normalizeToast, shouldDismissSwipe } from "../frontend/components/synera/toast-feedback.mjs";
 
 test("Timer pauses with remaining time, resumes once, expires once and disposes safely", () => {
   let time = 0, callback, delay, scheduled = 0, cancelled = 0, expired = 0;

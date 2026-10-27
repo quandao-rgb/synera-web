@@ -5,9 +5,9 @@ import { resolve, join, sep, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createDemo, act, project, publicTracking, DomainError } from './domain.mjs';
 import { createAccountAuth } from './account-auth.mjs';
-import { APP_HOME_URL } from '../lib/app-routes.mjs';
+import { APP_HOME_URL } from '../../shared/app-routes.mjs';
 
-const ROOT = fileURLToPath(new URL('../', import.meta.url));
+const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const COOKIE = 'synera_demo';
 const TTL = 7 * 86400;
 const ID_PATTERN = /^[a-f0-9]{64}$/;

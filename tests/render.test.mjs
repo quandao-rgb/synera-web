@@ -4,7 +4,7 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
 import { once } from 'node:events';
-import { createRenderServer } from '../server/render.mjs';
+import { createRenderServer } from '../backend/server/render.mjs';
 
 let server,folder,base;
 before(async()=>{
@@ -32,7 +32,7 @@ test('Render serves the app, assets and health, never source or local records',a
   assert.equal((await request('/')).status,200);
   assert.equal((await request('/assets/app.js')).status,200);
   assert.equal((await request('/healthz')).body.status,'ok');
-  for(const path of ['/server/domain.mjs','/package.json','/.data/state.json','/assets/../server/domain.mjs'])assert.equal((await request(path)).status,404,path);
+  for(const path of ['/server/domain.mjs','/backend/server/domain.mjs','/frontend/app/interface.jsx','/shared/app-routes.mjs','/package.json','/.data/state.json','/assets/../server/domain.mjs'])assert.equal((await request(path)).status,404,path);
 });
 test('Visitors receive independent opaque HttpOnly demo sessions',async()=>{
   const a=await bootstrap(),b=await bootstrap();assert.notEqual(a.cookie,b.cookie);

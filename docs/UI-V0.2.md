@@ -17,11 +17,11 @@ Giữ luồng xác nhận đơn → giữ hàng; xác nhận kiện; chủ/ngư�
 
 ## Source
 
-- `app/synera.css`: primitive, component cơ bản, trạng thái và responsive.
-- `app/admin-layout.css`: bố cục quản trị gần Sapo, density và màu theo vai trò.
-- `app/views/dashboard.jsx`: tổng quan mới.
-- `app/views/operations.jsx`: danh sách và hàng đợi xử lý.
-- `app/interface.jsx`: shell, thu gọn sidebar, search và deep link.
+- `frontend/app/synera.css`: primitive, component cơ bản, trạng thái và responsive.
+- `frontend/app/admin-layout.css`: bố cục quản trị gần Sapo, density và màu theo vai trò.
+- `frontend/app/views/dashboard.jsx`: tổng quan mới.
+- `frontend/app/views/operations.jsx`: danh sách và hàng đợi xử lý.
+- `frontend/app/interface.jsx`: shell, thu gọn sidebar, search và deep link.
 - `design-system/synera/MASTER.md`: design system hiện hành; có nguồn skill và phép đo contrast.
 
 Các chức năng chưa triển khai đầy đủ tiếp tục được ghi tại COVERAGE.md. Đây là prototype với dữ liệu minh họa, chưa nối API Sapo hay vận chuyển thật. Publication tiếp tục dùng ID đã lưu, không tự tạo Site khác khi dịch vụ chưa tìm được dự án.

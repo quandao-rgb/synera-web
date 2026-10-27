@@ -15,7 +15,7 @@ Kiểm tra trên bundle production của `npm.cmd run build:render`, phục vụ
 - Năm FAQ mở bằng click và đóng bằng Enter. Header/menu mobile/Escape, dropdown Giải pháp và chọn mục chuyển đúng tab, đóng menu. Neo section không che nội dung dưới header.
 - Đã kiểm tra mailto Pro/footer và tel bằng DOM; không gửi email hoặc thực hiện cuộc gọi.
 - Khung kho không có giá, tổng tiền, chiết khấu, COD hoặc công nợ. Các test quyền server cũ vẫn qua.
-- Giữ nguyên byte nội dung các file quản trị/logic: `app/interface.jsx`, `app/synera.css`, `app/admin-layout.css`, `server/domain.mjs`; package/lockfile không đổi.
+- Giữ nguyên byte nội dung các file quản trị/logic: `frontend/app/interface.jsx`, `frontend/app/synera.css`, `frontend/app/admin-layout.css`, `backend/server/domain.mjs`; package/lockfile không đổi.
 
 ## Responsive
 

@@ -125,6 +125,9 @@ try {
   count++;
   for (const path of [
     "/server/domain.mjs",
+    "/backend/server/domain.mjs",
+    "/frontend/app/interface.jsx",
+    "/shared/app-routes.mjs",
     "/server/domain.mjs?raw",
     "/db/schema.ts",
     "/drizzle/0000_brief_gertrude_yorkes.sql",

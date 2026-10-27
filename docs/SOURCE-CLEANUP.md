@@ -25,7 +25,7 @@ Backup có `cleanup-plan.json` và `backed-up-files.json` liệt kê từng đư
 - `.data/`, database tài khoản, phiên, dữ liệu vận hành, `.env.local` và Git history.
 - Mã nghiệp vụ, router/quyền, component SYNERA, logo, đăng nhập/đăng ký/đăng xuất và toàn bộ kiểm thử.
 - Worker, D1/Drizzle, migration, scripts của hai runtime, cấu hình chạy và deployment.
-- `components.json`, `lib/utils.ts`, CSS Tailwind và giấy phép stylesheet: hạ tầng registry hiện có vẫn hợp lệ; khi cần cài component, thư mục đích sẽ được công cụ tạo lại.
+- `components.json`, `frontend/lib/utils.ts`, CSS Tailwind và giấy phép stylesheet: hạ tầng registry hiện có vẫn hợp lệ; khi cần cài component, thư mục đích sẽ được công cụ tạo lại.
 - Snapshot nguồn Tailark, manifest và giấy phép MIT theo yêu cầu ban đầu; tài liệu phân tích, design system và ảnh kiểm chứng có chủ đích.
 - Package/lockfile và dependency cài đặt hiện có. Không thay phiên bản package trong tác vụ dọn file này.
 

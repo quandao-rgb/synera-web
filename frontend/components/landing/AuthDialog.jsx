@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { X, Eye, EyeOff, ArrowRight } from 'lucide-react';
-import { APP_HOME_URL } from '../../lib/app-routes.mjs';
+import { APP_HOME_URL } from '../../../shared/app-routes.mjs';
 import SyneraLogo from '../brand/SyneraLogo';
 import { CONTACT } from './landing-data.mjs';
 
