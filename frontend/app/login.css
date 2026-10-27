@@ -8,9 +8,13 @@
   --login-error: #9e2531; --login-error-ground: #fff2f2;
   position: relative; isolation: isolate; display: grid; grid-template-columns: 58% 42%;
   min-height: 100svh; overflow: hidden; color: var(--login-ink);
-  background: linear-gradient(110deg,var(--login-sky) 0%,var(--login-pale) 64%,var(--login-near-white) 94%,var(--login-paper) 100%);
+  background: radial-gradient(ellipse at 92% 18%,rgba(151,201,255,.58),transparent 52%), radial-gradient(ellipse at 48% 100%,rgba(167,207,255,.56),transparent 58%), linear-gradient(125deg,var(--login-near-white),var(--login-pale) 43%,#d4e8ff 72%,var(--login-near-white));
   font: 15px/1.55 "Segoe UI", Arial, sans-serif;
 }
+/* Broad, static ribbons continue behind both the artwork and the login glass. */
+.synera-login::before,.synera-login::after { content: ''; position: absolute; z-index: -2; pointer-events: none; border-radius: 50%; }
+.synera-login::before { width: 145%; height: 125%; left: -35%; top: -99%; transform: rotate(-24deg); border: 54px solid rgba(255,255,255,.32); box-shadow: 0 32px 0 rgba(255,255,255,.18),0 62px 0 rgba(141,190,249,.09); }
+.synera-login::after { width: 146%; height: 100%; left: -20%; bottom: -90%; transform: rotate(-12deg); border: 32px solid rgba(255,255,255,.58); box-shadow: 0 -22px 0 rgba(133,191,252,.14),0 24px 0 rgba(255,255,255,.24); }
 .synera-login *, .synera-login *::before, .synera-login *::after { box-sizing: border-box; }
 .synera-login a { color: inherit; text-decoration: none; }
 .synera-login button, .synera-login input { font: inherit; }
@@ -79,7 +83,11 @@
   .synera-login .sl-field input { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .synera-login *, .synera-login *::before, .synera-login *::after { transition: none !important; animation: none !important; }
+  /* Broad, static ribbons continue behind both the artwork and the login glass. */
+.synera-login::before,.synera-login::after { content: ''; position: absolute; z-index: -2; pointer-events: none; border-radius: 50%; }
+.synera-login::before { width: 145%; height: 125%; left: -35%; top: -99%; transform: rotate(-24deg); border: 54px solid rgba(255,255,255,.32); box-shadow: 0 32px 0 rgba(255,255,255,.18),0 62px 0 rgba(141,190,249,.09); }
+.synera-login::after { width: 146%; height: 100%; left: -20%; bottom: -90%; transform: rotate(-12deg); border: 32px solid rgba(255,255,255,.58); box-shadow: 0 -22px 0 rgba(133,191,252,.14),0 24px 0 rgba(255,255,255,.24); }
+.synera-login *, .synera-login *::before, .synera-login *::after { transition: none !important; animation: none !important; }
   .synera-login .sl-button:active { transform: none; }
 }
 
