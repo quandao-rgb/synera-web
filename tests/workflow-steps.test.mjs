@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createDemo, act, fingerprint } from "../server/domain.mjs";
-import { orderProcessingSteps, shipmentSteps, returnSteps } from "../components/synera/workflow-steps.mjs";
+import { createDemo, act, fingerprint } from "../backend/server/domain.mjs";
+import { orderProcessingSteps, shipmentSteps, returnSteps } from "../frontend/components/synera/workflow-steps.mjs";
 const states = (items) => items.map((item) => item.status);
 const order = (s, id = "DH1028") => s.orders.find((o) => o.id === id);
 

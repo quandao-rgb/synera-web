@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createDemo, act, sampleServiceQuotes, fingerprint, project, publicTracking } from "../server/domain.mjs";
-import { rankShippingServices } from "../components/synera/shipping/recommendation/ranking.mjs";
+import { createDemo, act, sampleServiceQuotes, fingerprint, project, publicTracking } from "../backend/server/domain.mjs";
+import { rankShippingServices } from "../frontend/components/synera/shipping/recommendation/ranking.mjs";
 
 function fixture() {
   const state = act(createDemo(), "packing", { id: "DH1028" });

@@ -41,16 +41,16 @@ Local tool usage metrics are disabled by default. Set `WRANGLER_SEND_METRICS=tru
 ## Included Shape
 
 - edit site code under `app/`
-- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
+- `backend/auth/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
 - `.openai/hosting.json` declares optional Sites D1 and R2 bindings
 - `vite.config.ts` simulates declared bindings for local development
-- `worker/index.ts` is the production Worker entrypoint and preserves request-scoped connector bindings
+- `backend/worker/index.ts` is the production Worker entrypoint and preserves request-scoped connector bindings
 - `scripts/vite/` contains the maintained Vite integrations and the vendored Sites plugin license
 - `scripts/connector-preview/` contains the local connector preview Worker and session helpers
 - the remaining `scripts/` files select execution profiles and run installation, development, and builds; the plugin's helpers orchestrate the Sites lifecycle
 - `dist/` contains generated deployment output; `.vinext/`, `.wrangler/`, and `.sites-runtime/` contain ignored local tool state
-- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
-- `db/schema.ts` starts intentionally empty
+- `backend/db/index.ts` reads the D1 binding from the Cloudflare Worker environment
+- `backend/db/schema.ts` starts intentionally empty
 - `@cloudflare/workers-types` provides Worker types; `cloudflare-env.d.ts` declares optional `DB`/`BUCKET` bindings—update these declarations if binding names change
 - The unused `examples/d1/` demo and generic UI templates were removed from SYNERA after verifying that no live module imports them; the Worker/D1 infrastructure above remains.
 - `drizzle.config.ts` supports local migration generation when needed
@@ -89,7 +89,7 @@ export default async function Home() {
 
 ## Optional Dispatch-Owned ChatGPT Sign-In
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs optional or required ChatGPT sign-in:
+Import the ready-to-use helpers from `backend/auth/chatgpt-auth.ts` when the site needs optional or required ChatGPT sign-in:
 
 - Use `getChatGPTUser()` for optional signed-in UI.
 - Use the returned `userId` as the stable user key for user-owned records; do not use email as a durable identifier.

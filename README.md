@@ -2,6 +2,28 @@
 
 Prototype để đánh giá hướng cá nhân hóa từ bản quản trị Sapo sang SYNERA, theo SRS v0.2 và master prompt của người dùng. Đây là repository độc lập chỉ chứa web SYNERA; không bao gồm mã nguồn hoặc lịch sử Git của reverse-skill.
 
+## Clone và chạy local trên máy mới
+
+Cài Git và Node.js 24 LTS (tối thiểu Node 22.13). Mở terminal:
+
+```powershell
+git clone https://github.com/quandao-rgb/synera-web.git
+cd synera-web
+npm.cmd ci
+npm.cmd run build:render
+npm.cmd run dev:local
+```
+
+Mở **http://localhost:4182/**. Trên Windows có thể chạy `START-SYNERA.cmd` sau khi cài dependency; file này tự build giao diện rồi khởi động server. Trên macOS/Linux dùng `npm` thay cho `npm.cmd`.
+
+Bản Node/local không cần file môi trường, API key, tài khoản Cloudflare hay database cài riêng. Lần đầu chọn **Đăng ký** để tạo tài khoản của bạn; database và dữ liệu mẫu được tạo tự động trong `.data/`. Tài khoản và dữ liệu ở mỗi máy độc lập; tài khoản trên máy người khác hoặc web online không tự đồng bộ về local.
+
+Để làm việc riêng sau khi clone, chạy `git switch -c feat/ten-cong-viec` trước khi sửa. Không commit `.data/`, file `.env`, dependency hoặc file build.
+
+## Cấu trúc source và chạy local
+
+Giao diện ở `frontend/`, API và nghiệp vụ ở `backend/`. Xem [sơ đồ và quy tắc chỉnh sửa](docs/PROJECT-STRUCTURE.md). Mở `START-SYNERA.cmd` hoặc chạy `npm.cmd run build:render` rồi `npm.cmd run dev:local` để dùng bản Node/local tại `http://localhost:4182/`. Các lệnh Cloudflare bên dưới thuộc profile riêng.
+
 ## Landing và tài khoản Node/local
 
 Bản local hiện tại: `http://localhost:4182/`. Landing có Đăng nhập/Đăng ký riêng bằng email và mật khẩu thật; chỉ vào `/#/` khi server đã xác nhận phiên. Giao diện quản trị đang có được giữ nguyên. Tài khoản/workspace lưu tại `.data/accounts.sqlite`; dữ liệu vận hành khởi tạo vẫn là dữ liệu mẫu.
@@ -17,7 +39,7 @@ Bản giao diện v0.2 theo yêu cầu mới: khung quản trị gần Sapo vớ
 
 - Online: chưa xuất bản. Sites trả về `Sites project not found` khi đọc lại ID đã cấp ở phiên trước. URL dự kiến không phải bằng chứng đã deploy. Giữ nguyên ID trong `.openai/hosting.json` để khôi phục, không đăng ký dự án trùng.
 - Local dev: `http://127.0.0.1:4177/`. Lần đầu bấm **Đăng nhập để mở demo** để bật danh tính giả lập loopback của starter Sites. Đây không phải tài khoản Sapo.
-- Sau khi cài dependency và tạo database local theo hướng dẫn bên dưới, mở `START-SYNERA.cmd` để chạy; giữ cửa sổ server trong lúc xem.
+- `START-SYNERA.cmd` mở profile Node/local tại cổng 4182; profile Cloudflare ở cổng 4177 chạy bằng lệnh riêng bên dưới. Giữ cửa sổ server trong lúc xem.
 - Góc phải có bộ chuyển vai trò **Chủ cơ sở / Nhân viên kho** để thử giới hạn dữ liệu. Đây là chức năng trải nghiệm demo; chưa phải quản trị nhân viên sản xuất.
 - Dữ liệu lưu D1 riêng theo người dùng Sites. Hãng A/B/C, giá, hồ sơ khách và quy tắc đều minh họa. Không kết nối dịch vụ thật.
 
@@ -27,9 +49,9 @@ Yêu cầu Node >=22.13.0. Dùng `npm.cmd` trong PowerShell nếu máy chặn np
 
 ```powershell
 npm.cmd run install:ci
-npm.cmd run db:generate # Chỉ khi sửa db/schema.ts; không tạo lại migration đã có
+npm.cmd run db:generate # Chỉ khi sửa backend/db/schema.ts; không tạo lại migration đã có
 npm.cmd run build
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_brief_gertrude_yorkes.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file backend/drizzle/0000_brief_gertrude_yorkes.sql
 npm.cmd run dev -- --port 4177 --host 127.0.0.1
 ```
 
@@ -51,25 +73,15 @@ HTTP check chỉ chấp nhận loopback, mô phỏng header danh tính do Sites 
 ## Thư mục
 
 ```text
-app/
-  interface.jsx          Điều hướng, tải dữ liệu, trạng thái ứng dụng
-  views/
-    dashboard.jsx        Tổng quan và ba gợi ý
-    operations.jsx       Đơn, danh mục, kho, khách, nhắc mua
-    order-flow.jsx       Lên đơn, xác nhận kiện, chọn/đặt giao
-    management.jsx       Hành trình, hoàn, tài chính, báo cáo, thiết lập
-  api/demo/route.ts       Danh tính, phân quyền, CAS, dữ liệu theo người dùng
-  synera.css             Tokens, component và responsive theo CSS layers
-components/synera/ui.jsx Form, bảng, dialog, badge và các thành phần dùng chung
-server/domain.mjs        Dữ liệu giả và các quy tắc nghiệp vụ, chỉ phía server
-db/                      Schema và kết nối D1
-drizzle/                 Migration SQL và metadata được version hóa
-tests/                   Kiểm thử domain và API của Worker build
-docs/                    Phân tích, phạm vi, kiểm chứng
-design-system/synera/    Quyết định thiết kế theo master prompt + UI/UX Pro Max
-public/                  Tài nguyên công khai
-scripts/,worker/         Hạ tầng starter Sites/Vinext
-.openai/hosting.json     Site ID và binding, không chứa bí mật
+frontend/               Giao diện, component, CSS, assets, entry React
+backend/                HTTP/API, xác thực, nghiệp vụ, DB, migration, worker
+shared/                 Hằng số route công khai dùng chung
+app/                    Adapter router framework (page/layout/API)
+tests/                  Kiểm thử nghiệp vụ, xác thực, ranh giới source
+scripts/                Hạ tầng build và lệnh chạy
+docs/                   Hướng dẫn, phân tích, kiểm chứng
+design-system/synera/   Quyết định thiết kế
+.data/                  Tài khoản/workspace local (không commit)
 ```
 
 Không commit `node_modules`, `dist`, `.wrangler`, `.sites-runtime`, file môi trường, cookie hay credential. Bộ component mẫu không dùng và ví dụ D1 đã được dọn sau khi rà import. Giữ hạ tầng `scripts/`, `worker/`, database/migration và tài liệu nguồn/giấy phép. Xem [biên bản dọn source](docs/SOURCE-CLEANUP.md).

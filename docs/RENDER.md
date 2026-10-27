@@ -1,6 +1,6 @@
 # Triển khai SYNERA trên Render
 
-Bản Render dùng cùng giao diện và domain SYNERA. `vite.render.config.mjs` build React thành SPA; `server/render.mjs` phục vụ frontend và API bằng Node.js. Không chạy `wrangler dev` trên máy chủ production, không dùng binding D1 hoặc header đăng nhập Sites cho bản Render.
+Bản Render dùng cùng giao diện và domain SYNERA. `vite.render.config.mjs` build React thành SPA; `backend/server/render.mjs` phục vụ frontend và API bằng Node.js. Không chạy `wrangler dev` trên máy chủ production, không dùng binding D1 hoặc header đăng nhập Sites cho bản Render.
 
 ## Cấu hình
 

@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createDemo, quotes } from "../server/domain.mjs";
-import { rankShippingServices } from "../components/synera/shipping/recommendation/ranking.mjs";
-import { deliveryDays } from "../components/synera/shipping/recommendation/scoring.mjs";
+import { createDemo, quotes } from "../backend/server/domain.mjs";
+import { rankShippingServices } from "../frontend/components/synera/shipping/recommendation/ranking.mjs";
+import { deliveryDays } from "../frontend/components/synera/shipping/recommendation/scoring.mjs";
 const source = () => {
   const s = createDemo(), o = s.orders.find((item) => item.id === "DH1028");
   return quotes(s, o.customerId, o.lines, o.parcels);

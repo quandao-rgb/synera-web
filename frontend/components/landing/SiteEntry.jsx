@@ -1,6 +1,6 @@
 'use client';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { APP_HOME_URL, isApplicationHash } from '../../lib/app-routes.mjs';
+import { APP_HOME_URL, isApplicationHash } from '../../../shared/app-routes.mjs';
 import SyneraLogo from '../brand/SyneraLogo';
 import LandingPage from './LandingPage';
 const Interface = lazy(() => import('../../app/interface'));

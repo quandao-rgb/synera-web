@@ -4,7 +4,7 @@
 
 Dọn toàn bộ frontend tại `C:\SYNERA`: bỏ nội dung thừa và nhãn demo/prototype khỏi giao diện; giữ dữ liệu mẫu và cơ chế lưu hiện tại. Chuyển vai trò và đặt lại dữ liệu nằm trong Thiết lập. Giữ bố cục Sapo, màu trắng/xám/xanh dương/xanh đậm, chức năng SYNERA và phản hồi GSAP.
 
-Đã đọc router hash trong `app/interface.jsx`, bốn module view, các thành phần dùng chung, hai điểm vào Render/Sites và các luồng form/dialog. Không dùng riêng sidebar làm danh mục màn hình.
+Đã đọc router hash trong `frontend/app/interface.jsx`, bốn module view, các thành phần dùng chung, hai điểm vào Render/Sites và các luồng form/dialog. Không dùng riêng sidebar làm danh mục màn hình.
 
 ## Danh mục đầy đủ
 
@@ -70,7 +70,7 @@ Có **55 bản ghi kiểm tra tương tác** trong nhật ký local, ngoài các
 - Tùy chọn kiểm tra timeout trong disclosure đặt giao: giữ đường đi hiện có đến nhánh xác minh; không đổi state hay payload của form.
 - Menu xanh đậm và nút xanh dương: ràng buộc thương hiệu/bố cục Sapo đã được người dùng chốt, ưu tiên hơn khuyến nghị sidebar trung tính của skill.
 - URL, token mẫu, tên endpoint và metadata trong tài liệu/package: thuộc contract hoặc công cụ phát triển; không còn là nhãn trang trí trên UI.
-- Bộ dữ liệu mẫu trong `server/domain.mjs` và lưu phiên Render: người dùng đã xác nhận giữ nguyên. Đây không phải thay đổi backend sản xuất.
+- Bộ dữ liệu mẫu trong `backend/server/domain.mjs` và lưu phiên Render: người dùng đã xác nhận giữ nguyên. Đây không phải thay đổi backend sản xuất.
 
 ## Kiểm tra và nhận xét cuối
 
@@ -88,6 +88,6 @@ Không phát hiện route ứng dụng nào bị bỏ qua. Trang đăng nhập d
 
 ## File thay đổi
 
-`app/interface.jsx`, `app/views/dashboard.jsx`, `app/views/operations.jsx`, `app/views/management.jsx`, `app/views/order-flow.jsx`, `components/synera/ui.jsx`, `components/synera/motion.jsx`, `app/synera.css`, `app/admin-layout.css`, `app/motion.css`, `app/layout.tsx`, `render/index.html`, `docs/MOTION.md`, `docs/UI-CLEANUP-AUDIT.md`.
+`frontend/app/interface.jsx`, `frontend/app/views/dashboard.jsx`, `frontend/app/views/operations.jsx`, `frontend/app/views/management.jsx`, `frontend/app/views/order-flow.jsx`, `frontend/components/synera/ui.jsx`, `frontend/components/synera/motion.jsx`, `frontend/app/synera.css`, `frontend/app/admin-layout.css`, `frontend/app/motion.css`, `frontend/app/layout.tsx`, `frontend/render/index.html`, `docs/MOTION.md`, `docs/UI-CLEANUP-AUDIT.md`.
 
 Không sửa `server/`, route API, database, test nghiệp vụ, package/dependency, cấu hình auth hoặc quyền máy chủ. Dữ liệu dùng để kiểm tra tương tác chỉ nằm trong phiên local và đã được đặt lại sau khi kiểm tra.

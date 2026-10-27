@@ -5,8 +5,8 @@ import { tmpdir } from 'node:os';
 import { join, resolve, sep } from 'node:path';
 import { once } from 'node:events';
 import { DatabaseSync } from 'node:sqlite';
-import { createRenderServer } from '../server/render.mjs';
-import { createAccountAuth } from '../server/account-auth.mjs';
+import { createRenderServer } from '../backend/server/render.mjs';
+import { createAccountAuth } from '../backend/server/account-auth.mjs';
 
 let server, folder, clientDir, dataDir, base, counter = 0;
 const password = 'Synera test password 2026';
