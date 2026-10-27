@@ -14,28 +14,23 @@ export default function LoginPage({ runtime = 'node', checking = false, notice =
     return () => { document.title = previous; };
   }, []);
   return <main className="synera-login" id="login-main">
-    <div className="synera-login__sheet">
-      <div className="synera-login__account">
-        <header className="synera-login__header">
-          <a href="/" aria-label="SYNERA — Trang giới thiệu"><SyneraLogo decorative /></a>
-          <a className="synera-login__back" href="/"><ArrowLeft size={16} aria-hidden="true" />Trang giới thiệu</a>
-        </header>
-        <section className="synera-login__form" aria-labelledby="login-title" data-ui>
-          <h1 id="login-title">Đăng nhập SYNERA</h1>
-          <p className="synera-login__intro">Tiếp tục quản lý cơ sở của bạn.</p>
-          {notice && <p className="sl-form-error" role="alert">{notice}</p>}
-          {runtime === 'node'
-            ? <LoginForm onSuccess={onSuccess} busy={busy || checking} setBusy={setBusy} />
-            : <div className="synera-login__external"><p>Tiếp tục bằng tài khoản ChatGPT đang dùng cho cơ sở.</p><a className="sl-button" href={`/signin-with-chatgpt?return_to=${encodeURIComponent(APP_HOME_URL)}`}>Tiếp tục bằng ChatGPT<ArrowRight size={18} aria-hidden="true" /></a></div>}
-          {checking && <p className="synera-login__status" role="status">Đang kiểm tra phiên đăng nhập…</p>}
-          <p className="synera-login__register">Chưa có tài khoản? <a href="/?auth=register">Đăng ký SYNERA</a></p>
-        </section>
+    <div className="synera-login__visual">
+      <img src="/assets/login/synera-product-environment.png" alt="SYNERA — Vận hành đồng bộ, tăng trưởng bền vững. Laptop quản lý kết nối đơn hàng, kho hàng, vận chuyển, khách hàng và báo cáo." width="1536" height="1024" fetchPriority="high" />
+    </div>
+    <a className="synera-login__back" href="/"><ArrowLeft size={16} aria-hidden="true" />Trang giới thiệu</a>
+    <div className="synera-login__account">
+      <section className="synera-login__form" aria-labelledby="login-title" data-ui>
+        <a className="synera-login__brand" href="/" aria-label="SYNERA — Trang giới thiệu"><SyneraLogo decorative /></a>
+        <h1 id="login-title">Chào mừng trở lại</h1>
+        <p className="synera-login__intro">Đăng nhập để tiếp tục quản lý cơ sở của bạn.</p>
+        {notice && <p className="sl-form-error" role="alert">{notice}</p>}
+        {runtime === 'node'
+          ? <LoginForm onSuccess={onSuccess} busy={busy || checking} setBusy={setBusy} placeholders />
+          : <div className="synera-login__external"><p>Tiếp tục bằng tài khoản ChatGPT đang dùng cho cơ sở.</p><a className="sl-button" href={`/signin-with-chatgpt?return_to=${encodeURIComponent(APP_HOME_URL)}`}>Tiếp tục bằng ChatGPT<ArrowRight size={18} aria-hidden="true" /></a></div>}
+        {checking && <p className="synera-login__status" role="status">Đang kiểm tra phiên đăng nhập…</p>}
+        <p className="synera-login__register">Chưa có tài khoản? <a href="/?auth=register">Đăng ký SYNERA</a></p>
         <footer className="synera-login__support"><span>Cần hỗ trợ đăng nhập?</span><a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a><a href={CONTACT.phoneHref}>{CONTACT.phone}</a></footer>
-      </div>
-      <aside className="synera-login__visual" aria-label="Kho hàng và phân phối">
-        <div className="synera-login__photo"><img src="/assets/login/warehouse-maor-attias.jpg" alt="Các kệ hàng và thùng carton được sắp xếp dọc lối đi trong kho" width="1000" height="1500" fetchPriority="high" /></div>
-        <div className="synera-login__caption"><p>Kho, đơn hàng và giao nhận.<br />Kết nối trên cùng hệ thống.</p><a href="https://www.pexels.com/photo/boxes-on-shelves-inside-a-warehouse-5156696/" target="_blank" rel="noreferrer">Ảnh: Maor Attias / Pexels</a></div>
-      </aside>
+      </section>
     </div>
   </main>;
 }

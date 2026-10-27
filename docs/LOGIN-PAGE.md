@@ -1,46 +1,50 @@
 # Trang đăng nhập riêng của SYNERA
 
-Nút **Đăng nhập** trên landing mở `/login` bằng điều hướng trang thật, thay cho modal đăng nhập. Có thể mở trực tiếp hoặc tải lại `/login` và `/login/` trên Node/local; Cloudflare có route adapter riêng tại `app/login/page.tsx`.
+Nút Đăng nhập mở `/login` thay modal. Node hỗ trợ trực tiếp `/login`, `/login/`, HEAD và refresh; Cloudflare có adapter tại `app/login/page.tsx`. Đăng ký vẫn dùng form sẵn có trên landing.
 
-## Hành vi
+## Thiết kế hiện tại
 
-- Dùng lại `LoginForm`, API và bước kiểm tra cookie/session hiện có trong `AuthDialog.jsx`. Chỉ chuyển đến `/#/` sau khi server xác nhận cùng tài khoản và đúng home route.
-- Form thiếu dữ liệu dùng validation native. Sai thông tin hoặc lỗi mạng giữ nguyên trang, giữ dữ liệu form và đưa focus đến thông báo lỗi có `role="alert"`.
-- Nút hiện/ẩn mật khẩu có tên truy cập và `aria-pressed`; hỗ trợ Tab, Space và Enter.
-- Phiên hợp lệ khi vào `/login` đưa về trang chủ hiện có. Người chưa đăng nhập mở route ứng dụng được chuyển đến `/login`; route theo dõi người nhận giữ nguyên.
-- Link cũ `/?auth=login` và luồng đăng xuất cũ vẫn tương thích, chuyển tiếp đến trang đăng nhập mới.
-- Đăng ký vẫn dùng modal sẵn có trên landing; link `/?auth=register` mở đúng form. Đăng ký thành công vẫn tạo phiên và vào `/#/`.
-- Bản Cloudflare dùng nút đăng nhập ChatGPT hiện có, không gọi API email/mật khẩu của Node.
-- Không thêm nút quên mật khẩu, đăng nhập mạng xã hội hay cam kết chưa có backend thực hiện.
-- Không thay đổi bộ máy nghiệp vụ, phân quyền, session storage, seed dữ liệu hoặc màn hình quản trị.
+Theo bản mô tả và ba ảnh chủ dự án gửi ngày 28/10/2026: toàn viewport, hình quảng bá SYNERA bên trái, form kính sáng bên phải, nền xanh → xanh nhạt → gần trắng không có đường chia cứng. Desktop chia 58%/42%; form rộng tối đa 440px. Laptop, dashboard và module trong artwork được giữ đầy đủ bằng `object-fit: contain`, không crop laptop. Mask cả mép phải và mép trên/dưới giúp ảnh hòa vào nền. Mobile/tablet dùng hình mờ nhẹ phía sau form; không ép hai cột.
 
-## Thiết kế và nguồn tham khảo
+Giữ Segoe UI hỗ trợ tiếng Việt và màu SYNERA. Input 48px, hiện mật khẩu 44px, tiêu đề 25–27px; helper có tương phản với nền. Một nút chính xanh. Không thêm thông tin demo, ghi nhớ đăng nhập, quên mật khẩu hay Google vì chưa có tính năng tương ứng.
 
-Tham khảo luồng website → trang đăng nhập riêng của [Sapo](https://www.sapo.vn/dang-nhap-kenh-ban-hang.html) và khung tài khoản tập trung tại [Sapo Accounts](https://accounts.sapo.vn/login). Không sử dụng logo, ảnh hoặc thông tin tài khoản Sapo.
+Gradient, glass, shadow và entrance 320–340ms là ngoại lệ theo yêu cầu trực tiếp của chủ dự án, thay quy tắc mặc định trong design-taste-frontend. Không dùng hình dark-glass theo nghĩa đen, glow, bounce, particle hoặc animation liên tục. CSS có fallback khi không hỗ trợ backdrop-filter, và tắt animation/transition khi `prefers-reduced-motion: reduce`.
 
-Áp dụng `design-taste-frontend` trong phạm vi component xác thực hiện có: giữ Segoe UI và bảng màu trắng/xám/xanh/navy của SYNERA. Bố cục form 400px trên nền trắng, một ảnh kho thật ở cột bên phải, không gradient hoặc glass trên trang đăng nhập. Trang landing và video đã merge của cộng tác viên giữ nguyên.
+## Asset và nguồn
 
-Ảnh: **Boxes on Shelves inside a Warehouse**, **Maor Attias**, [Pexels source](https://www.pexels.com/photo/boxes-on-shelves-inside-a-warehouse-5156696/), [Pexels License](https://www.pexels.com/license/). Tải bản 1000×1500px về `frontend/public/assets/login/warehouse-maor-attias.jpg`, phục vụ cùng origin. Credit có link nằm dưới ảnh. Ảnh thể hiện bối cảnh kho hàng, không đại diện cho cơ sở thuộc SYNERA hay ngụ ý bên chụp xác nhận sản phẩm.
+- `frontend/public/assets/login/synera-product-environment.png`: bản nâng độ nét 1536×1024 do imagegen tạo từ ảnh quảng bá 540×360 chủ dự án cung cấp, giữ logo, tagline, laptop/dashboard và các module. Đây là biến thể từ ảnh tham chiếu, không phải file gốc nguyên byte. Không thêm ảnh kho Pexels vào thiết kế mới.
+- Logo trên form dùng lại component/asset thương hiệu hiện có; bản logo trong artwork là một phần ảnh tham chiếu.
+- Artwork là hình quảng bá; dữ liệu/chart in trong hình không phải dữ liệu live hoặc thay đổi màn hình quản trị.
+- Ảnh kho Pexels của vòng đầu đã loại khỏi source branch vì không còn được dùng.
+- Tham khảo luồng trang riêng: [Sapo](https://www.sapo.vn/dang-nhap-kenh-ban-hang.html). Không sao chép thông tin tài khoản hoặc asset Sapo.
+
+## Xác thực và phạm vi
+
+`LoginForm`, `sendAuth` và API giữ nguyên logic. Chỉ thêm placeholder cho form login mới. Email là phương thức thực sự hỗ trợ; không quảng cáo số điện thoại đăng nhập. Bước xác nhận HttpOnly session, ID người dùng và home route `/#/` được giữ nguyên trước chuyển trang. Validation, lỗi mạng, thông tin sai, focus đến alert, hiện mật khẩu và loading vẫn như trước. Profile ChatGPT giữ đường đăng nhập riêng có sẵn.
+
+Link `/?auth=login` và đăng xuất cũ chuyển tiếp đến `/login`. `/login` với phiên hợp lệ về home; tracking người nhận giữ nguyên kiểm tra. Không đổi domain, account-auth, quyền, lưu dữ liệu, API payload hoặc trang quản trị. Không sửa landing video của cộng tác viên. Chỉ cập nhật branch `feat/dedicated-login-page`, PR #2; chưa merge main.
 
 ## Kiểm tra
 
-- `npm test`: **51/51 đạt**, gồm kiểm tra route mới, HEAD, cache, đường dẫn không hợp lệ và chặn source riêng tư.
-- `npm run check -- --incremental false`: đạt.
-- `npm run build:render` và `npm run build`: đạt, Cloudflare liệt kê `/login`.
-- Client bundle privacy check: đạt ở cả hai profile.
-- Lint thiết kế trên component/CSS mới: **0 FAIL, 0 WARN**.
-- Kiểm tra bằng công cụ trình duyệt tại **1440×900**, **768×1024**, **390×844**: không overflow ngang; h1 một dòng; form 50px và nút hiện mật khẩu 44px. Ảnh ẩn trên tablet/phone để ưu tiên đăng nhập.
-- Đã thử trên Node preview: landing → login → refresh, validation trống, thông tin sai, hiện/ẩn mật khẩu, Tab/Space, Enter để đăng nhập đúng, về Tổng quan, đăng xuất, đăng ký và tự vào ứng dụng, phiên có sẵn quay về home.
-- Reduced motion: CSS mới tắt transition/animation trong media query; trang không có animation xuất hiện hoặc ảnh chuyển động. Không giả lập hệ điều hành để tuyên bố đã kiểm thử media preference thực tế.
-- Không chạy `inspect.mjs` vì kiểm tra trình duyệt phải dùng công cụ CUA của phiên này; dùng ảnh và phép đo DOM trực tiếp ở ba kích thước thay thế.
+- 51/51 Node tests đạt, gồm auth, domain, route mới và chặn source.
+- TypeScript đạt; Node và Cloudflare production build đạt.
+- Client bundle privacy check đạt cả hai profile.
+- CUA kiểm tra hình ảnh tại 1920×1080, 1440×900, 768×1024, 390×844: không tràn ngang, form đọc được, laptop không crop; computed backdrop-filter thực tế `blur(24px)` sau build.
+- Browser: đăng nhập sai giữ `/login`, focus alert; đăng nhập đúng bằng Enter về `/#/`; Tab/Space và hiện/ẩn mật khẩu hoạt động; mở menu mobile và đăng xuất quay lại login.
+- Reduced motion: kiểm tra media rule trong source; không tuyên bố đã giả lập preference hệ điều hành. Form và nội dung hiển thị tĩnh khi animation bị tắt.
+- Không chạy inspector ngoài CUA. Lint mặc định từ vòng đầu không dùng làm kết quả cho vòng này vì gradient/glass được người dùng yêu cầu.
 
-Đánh giá sau khi xem ảnh: form là trọng tâm, ảnh và khoảng trắng cân bằng; không thêm nội dung quảng cáo, số liệu hay tính năng giả. Phần hỗ trợ dùng liên hệ đã được chủ dự án cung cấp. Màn hình không có dữ liệu nghiệp vụ mẫu mới.
+Đánh giá hình ảnh: một nền liền, form nhỏ gọn có tương phản rõ, không còn khung trắng bọc toàn trang hoặc divider cứng. Ở mobile ảnh nhận diện giảm opacity 0.14 để ưu tiên thao tác. Chỉ có nội dung thật cần cho đăng nhập và liên hệ đã được chủ dự án cung cấp.
 
-![Desktop](login-desktop.png)
+![1920px](login-wide.png)
+
+![1440px](login-desktop.png)
+
+![Tablet](login-tablet.png)
 
 ![Mobile](login-mobile.png)
 
-## Chạy thử
+## Chạy
 
 ```powershell
 git fetch origin
@@ -50,4 +54,4 @@ npm.cmd run build:render
 npm.cmd run dev:local
 ```
 
-Mở `http://localhost:4182/login`. Bản xem thử riêng trong phiên làm việc dùng `http://127.0.0.1:4186/login` và database QA riêng; không chia sẻ cookie với `localhost`.
+Mở `http://localhost:4182/login`. Preview riêng của phiên này: `http://127.0.0.1:4186/login`, dùng database QA riêng, không chia sẻ cookie với `localhost`.
