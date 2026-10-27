@@ -16,9 +16,9 @@ async function sendAuth(action, form) {
   return verified.user;
 }
 
-function PasswordField({ name = 'password', label = 'Mật khẩu', registering = false, placeholder }) {
+function PasswordField({ name = 'password', label = 'Mật khẩu', registering = false, placeholder, liquid = false }) {
   const [visible, setVisible] = useState(false), id = useId();
-  return <div className="sl-field"><label htmlFor={id}>{label}</label><span className="sl-password"><input id={id} name={name} placeholder={placeholder} type={visible ? 'text' : 'password'} required minLength={registering ? 12 : 1} maxLength={128} autoComplete={registering ? 'new-password' : 'current-password'} aria-describedby={registering && name === 'password' ? `${id}-hint` : undefined} /><button type="button" aria-label={`${visible ? 'Ẩn' : 'Hiện'} ${label.toLowerCase()}`} aria-pressed={visible} onClick={() => setVisible(value => !value)}>{visible ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}</button></span>{registering && name === 'password' && <small id={`${id}-hint`}>Từ 12 đến 128 ký tự. Bạn có thể dán hoặc dùng trình quản lý mật khẩu.</small>}</div>;
+  return <div className="sl-field"><label htmlFor={id}>{label}</label><span className={liquid ? "sl-password sl-liquid-field" : "sl-password"}><input id={id} name={name} placeholder={placeholder} type={visible ? 'text' : 'password'} required minLength={registering ? 12 : 1} maxLength={128} autoComplete={registering ? 'new-password' : 'current-password'} aria-describedby={registering && name === 'password' ? `${id}-hint` : undefined} /><button type="button" aria-label={`${visible ? 'Ẩn' : 'Hiện'} ${label.toLowerCase()}`} aria-pressed={visible} onClick={() => setVisible(value => !value)}>{visible ? <EyeOff size={19} aria-hidden="true" /> : <Eye size={19} aria-hidden="true" />}</button></span>{registering && name === 'password' && <small id={`${id}-hint`}>Từ 12 đến 128 ký tự. Bạn có thể dán hoặc dùng trình quản lý mật khẩu.</small>}</div>;
 }
 
 function useAuthSubmit(action, { onSuccess, setBusy }) {
@@ -36,8 +36,8 @@ function useAuthSubmit(action, { onSuccess, setBusy }) {
 export function LoginForm(props) {
   const { error, errorRef, submit } = useAuthSubmit('login', props);
   return <form aria-label="Biểu mẫu đăng nhập" onSubmit={submit} aria-busy={props.busy}>
-    <label className="sl-field"><span>Email</span><span><input name="email" type="email" placeholder={props.placeholders ? 'vd: admin@synera.vn' : undefined} autoComplete="email" maxLength={254} required /></span></label>
-    <PasswordField placeholder={props.placeholders ? 'Nhập mật khẩu của bạn' : undefined} />
+    <label className="sl-field"><span>Email</span><span className={props.liquidFields ? "sl-liquid-field" : undefined}><input name="email" type="email" placeholder={props.placeholders ? 'vd: admin@synera.vn' : undefined} autoComplete="email" maxLength={254} required /></span></label>
+    <PasswordField liquid={props.liquidFields} placeholder={props.placeholders ? 'Nhập mật khẩu của bạn' : undefined} />
     {error && <p className="sl-form-error" role="alert" tabIndex={-1} ref={errorRef}>{error}</p>}
     <button className="sl-button" disabled={props.busy} type="submit">{props.busy ? 'Đang đăng nhập…' : 'Đăng nhập'}<ArrowRight size={18} aria-hidden="true" /></button>
   </form>;
