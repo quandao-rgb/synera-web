@@ -29,7 +29,7 @@ Link `/?auth=login` và đăng xuất cũ chuyển tiếp đến `/login`. `/log
 - 51/51 Node tests đạt, gồm auth, domain, route mới và chặn source.
 - TypeScript đạt; Node và Cloudflare production build đạt.
 - Client bundle privacy check đạt cả hai profile.
-- CUA kiểm tra hình ảnh tại 1920×1080, 1440×900, 768×1024, 390×844: không tràn ngang, form đọc được, laptop không crop; computed backdrop-filter thực tế `blur(24px)` sau build.
+- CUA kiểm tra hình ảnh tại 1920×1080, 1440×900, 768×1024, 390×844: không tràn ngang, form đọc được, laptop không crop; computed backdrop-filter thực tế `blur(28px) saturate(145%)` sau build.
 - Browser: đăng nhập sai giữ `/login`, focus alert; đăng nhập đúng bằng Enter về `/#/`; Tab/Space và hiện/ẩn mật khẩu hoạt động; mở menu mobile và đăng xuất quay lại login.
 - Reduced motion: kiểm tra media rule trong source; không tuyên bố đã giả lập preference hệ điều hành. Form và nội dung hiển thị tĩnh khi animation bị tắt.
 - Không chạy inspector ngoài CUA. Lint mặc định từ vòng đầu không dùng làm kết quả cho vòng này vì gradient/glass được người dùng yêu cầu.
@@ -55,3 +55,11 @@ npm.cmd run dev:local
 ```
 
 Mở `http://localhost:4182/login`. Preview riêng của phiên này: `http://127.0.0.1:4186/login`, dùng database QA riêng, không chia sẻ cookie với `localhost`.
+
+## Bổ sung kính và giọt nước
+
+Theo yêu cầu tiếp theo của chủ dự án, form dùng lớp trắng opacity 0.25, optical edge, inset reflection và blur 28px/saturate 145%. Input là lớp kính nhẹ; phản sáng hình giọt nước dịch chuyển theo chuột trong phạm vi mỗi ô. CSS variable cập nhật qua requestAnimationFrame, không dùng React state mỗi frame, không thêm dependency. Phản sáng ở dưới chữ, pointer-events none; không chặn nhập liệu hoặc nút mắt. Mất hover khi rời ô, hủy pointer hoặc media preference thay đổi. Effect và listener được dọn khi unmount.
+
+Chỉ bật giọt nước cho fine pointer có hover. Touch/coarse pointer và prefers-reduced-motion không có hiệu ứng giọt nước; keyboard luôn có focus ring. prefers-reduced-transparency có nền đặc thay thế. Không mô phỏng vật lý iOS hoặc dùng displacement filter nặng; đây là lớp trình bày lấy cảm hứng kính theo ảnh của chủ dự án.
+
+Kiểm tra vòng này: 51/51 tests, TypeScript, Node/Cloudflare build và bundle privacy đạt. CUA xác nhận pointer vào ô active, ra ngoài clear; computed blur 28px/saturate 1.45, highlight z-index 0 dưới text z-index 1; không overflow 1920/1440/768/390. Login sai giữ lỗi, đúng bằng Enter vào Tổng quan; Tab/Space hiện mật khẩu và đăng xuất hoạt động. Reduced preferences kiểm tra theo source, không tuyên bố đã giả lập hệ điều hành.
