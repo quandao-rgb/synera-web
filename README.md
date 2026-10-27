@@ -72,6 +72,6 @@ scripts/,worker/         Hạ tầng starter Sites/Vinext
 .openai/hosting.json     Site ID và binding, không chứa bí mật
 ```
 
-Không commit `node_modules`, `dist`, `.wrangler`, `.sites-runtime`, file môi trường, cookie hay credential. Các component mẫu khác trong `components/ui`, `examples` và script nền thuộc starter, không phải màn hình nghiệp vụ đã được triển khai.
+Không commit `node_modules`, `dist`, `.wrangler`, `.sites-runtime`, file môi trường, cookie hay credential. Bộ component mẫu không dùng và ví dụ D1 đã được dọn sau khi rà import. Giữ hạ tầng `scripts/`, `worker/`, database/migration và tài liệu nguồn/giấy phép. Xem [biên bản dọn source](docs/SOURCE-CLEANUP.md).
 
 Đọc [phân tích sản phẩm](docs/PRODUCT-ANALYSIS.md), [phạm vi prototype](docs/COVERAGE.md), [design system](design-system/synera/MASTER.md) và [kiểm chứng](docs/VALIDATION.md).

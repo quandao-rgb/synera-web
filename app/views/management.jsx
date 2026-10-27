@@ -1,4 +1,5 @@
 "use client";
+import SyneraLogo from "../../components/brand/SyneraLogo";
 import { useEffect, useState } from "react";
 import GlideSelect from "../../components/synera/glide-select";
 import { ReturnProgress } from "../../components/synera/workflow-progress";
@@ -399,14 +400,7 @@ function Tracking({ token }) {
   return (
     <div className="tracking-page">
       <header>
-        <a className="brand" href="#/">
-          <span className="brand-symbol">
-            <Boxes size={22} />
-          </span>
-          <span>
-            synera<span className="brand-period">.</span>
-          </span>
-        </a>
+        <a className="brand" href="#/" aria-label="SYNERA — Tổng quan"><SyneraLogo decorative /></a>
 
       </header>
       <main>

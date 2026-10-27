@@ -23,12 +23,12 @@ Nếu bản xem trước đang chạy, dừng đúng tiến trình đang giữ c
 - `render/main.jsx`, `app/page.tsx`, `app/layout.tsx`: nối entry và nạp CSS landing. Render/Node dùng email/mật khẩu; bản Cloudflare giữ cơ chế ChatGPT hiện có.
 - `lib/app-routes.mjs`: route trang chủ `/#/`, lấy từ hash router hiện có.
 - `server/account-auth.mjs`, `server/render.mjs`: tài khoản, phiên, lưu workspace theo tài khoản và bốn endpoint xác thực.
-- `public/assets/landing/synera-overview.jpg`: ảnh thật của giao diện SYNERA được khôi phục, chứa dữ liệu mẫu.
+- `public/assets/landing/synera-overview-logo.jpg`: ảnh thật của giao diện SYNERA được khôi phục, chứa dữ liệu mẫu.
 - `tests/auth.test.mjs`: kiểm thử xác thực qua HTTP và kho lưu tài khoản.
 - `vendor/tailark/`: đầy đủ bản gốc 7 block và dependency nội bộ, manifest nguồn và giấy phép MIT. Mã gốc giữ dưới đuôi `.source.txt` để không lọt vào compilation của ứng dụng.
 - Tài liệu nguồn: [TAILARK-SOURCES.md](TAILARK-SOURCES.md). Kiểm tra giao diện: [LANDING-QA.md](LANDING-QA.md).
 
-`app/interface.jsx`, CSS quản trị, menu, router, logic nghiệp vụ, quyền chủ/kho và các screen quản trị không đổi. Package/lockfile không đổi. Không push GitHub hoặc deploy Render.
+Các screen nghiệp vụ, router, logic và quyền chủ/kho được giữ nguyên. Khung chung đã cập nhật logo chính và nút Đăng xuất; xem [logo](LOGO.md) và [đăng xuất](LOGOUT.md). Package/lockfile không đổi. Source được đồng bộ lên nhánh `feat/synera-landing-auth`; chưa cập nhật `main` hoặc deploy Render.
 
 ## Chức năng đã nối thật
 

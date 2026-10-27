@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import {
-  Boxes,
   Search,
   ArrowUpRight,
   ChevronRight,
@@ -9,6 +8,7 @@ import {
   X,
   Menu,
   Bell,
+  LogOut,
 } from "lucide-react";
 import {
   Icon,
@@ -24,6 +24,7 @@ import {
   FormDialog,
   Forbidden,
 } from "../components/synera/ui";
+import SyneraLogo from "../components/brand/SyneraLogo";
 import { Dashboard } from "./views/dashboard";
 import {
   Orders,
@@ -48,7 +49,8 @@ import LineSidebar from "../components/synera/line-sidebar";
 import SwipeToast from "../components/synera/swipe-toast";
 import { useToast } from "../components/synera/use-toast";
 import { mutationFeedback } from "../components/synera/toast-feedback.mjs";
-export default function Interface() {
+/** @param {{onLogout?: (() => Promise<void>) | null, logoutPending?: boolean}} props */
+export default function Interface({ onLogout = null, logoutPending = false } = {}) {
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
     [route, setRoute] = useState("/"),
@@ -63,6 +65,12 @@ export default function Interface() {
     sidebarRef = useRef(null),
     firstRoute = useRef(true);
   const { toast, notify: setToast, dismiss: dismissToast } = useToast();
+  const handleLogout = async () => {
+    try { await onLogout?.(); }
+    catch (failure) {
+      setToast({ tone: "error", title: "Chưa đăng xuất được", description: failure.message || "Vui lòng thử lại." });
+    }
+  };
   const read = async () => {
     setError("");
     try {
@@ -264,13 +272,8 @@ export default function Interface() {
       >
         <LineSidebar scopeRef={sidebarRef} routeKey={route + "?" + routeSearch} role={data?.role} />
         <div className="brand">
-          <a className="brand-link" href="#/">
-            <span className="brand-symbol">
-              <Boxes size={22} strokeWidth={1.5} />
-            </span>
-            <span>
-              SYNERA<span className="brand-period">.</span>
-            </span>
+          <a className="brand-link" href="#/" aria-label="SYNERA — Tổng quan">
+            <SyneraLogo light className="brand-symbol" decorative />
           </a>
           <button
             className="mobile-only icon-button"
@@ -356,6 +359,18 @@ export default function Interface() {
             <Icon name="settings" />
             <span>Thiết lập</span>
           </a>
+          {onLogout && <button
+            type="button"
+            title={logoutPending ? "Đang đăng xuất…" : "Đăng xuất"}
+            aria-label={logoutPending ? "Đang đăng xuất…" : "Đăng xuất"}
+            disabled={logoutPending}
+            aria-busy={logoutPending}
+            onClick={handleLogout}
+          >
+            <LogOut size={18} aria-hidden="true" />
+            <span>{logoutPending ? "Đang đăng xuất…" : "Đăng xuất"}</span>
+          </button>}
+
 
         </div>
       </aside>

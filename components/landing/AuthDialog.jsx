@@ -1,6 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
-import { X, Eye, EyeOff, ArrowRight, LockKeyhole } from 'lucide-react';
+import { X, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { APP_HOME_URL } from '../../lib/app-routes.mjs';
+import SyneraLogo from '../brand/SyneraLogo';
 import { CONTACT } from './landing-data.mjs';
 
 async function sendAuth(action, form) {
@@ -62,7 +63,7 @@ export default function AuthDialog({ mode, onClose, onModeChange, onSuccess, not
   useEffect(() => { dialog.current?.querySelector('input')?.focus({ preventScroll: true }); }, [mode]);
   const register = mode === 'register';
   return <dialog ref={dialog} className="sl-auth" aria-labelledby="sl-auth-title" onCancel={event => { event.preventDefault(); if (!busy) onClose(); }} onClick={event => { if (event.target === event.currentTarget && !busy) onClose(); }}>
-    <div className="sl-auth__heading"><div><span className="sl-auth__mark"><LockKeyhole size={18} aria-hidden="true" /> SYNERA</span><h2 id="sl-auth-title">{register ? 'Tạo tài khoản SYNERA' : 'Đăng nhập SYNERA'}</h2><p>{register ? 'Bắt đầu kết nối công việc của cơ sở.' : 'Tiếp tục công việc trong không gian của bạn.'}</p></div><button className="sl-auth__close" aria-label="Đóng biểu mẫu tài khoản" disabled={busy} onClick={onClose}><X size={21} aria-hidden="true" /></button></div>
+    <div className="sl-auth__heading"><div><span className="sl-auth__mark"><SyneraLogo /></span><h2 id="sl-auth-title">{register ? 'Tạo tài khoản SYNERA' : 'Đăng nhập SYNERA'}</h2><p>{register ? 'Bắt đầu kết nối công việc của cơ sở.' : 'Tiếp tục công việc trong không gian của bạn.'}</p></div><button className="sl-auth__close" aria-label="Đóng biểu mẫu tài khoản" disabled={busy} onClick={onClose}><X size={21} aria-hidden="true" /></button></div>
     {notice && <p className="sl-form-error" role="alert">{notice}</p>}
     {runtime === 'node' ? (register ? <RegisterForm key="register" onSuccess={onSuccess} busy={busy} setBusy={setBusy} /> : <LoginForm key="login" onSuccess={onSuccess} busy={busy} setBusy={setBusy} />) : <div className="sl-auth__external"><p>Phiên bản này xác thực bằng ChatGPT. Email/mật khẩu được hỗ trợ trên bản Node/local.</p><a className="sl-button" href={`/signin-with-chatgpt?return_to=${encodeURIComponent(APP_HOME_URL)}`}>Tiếp tục bằng ChatGPT<ArrowRight size={18} aria-hidden="true" /></a></div>}
     <p className="sl-auth__switch">{register ? 'Bạn đã có tài khoản?' : 'Bạn chưa có tài khoản?'} <button disabled={busy} onClick={() => onModeChange(register ? 'login' : 'register')}>{register ? 'Đăng nhập' : 'Đăng ký'}</button></p>

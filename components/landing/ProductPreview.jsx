@@ -1,4 +1,5 @@
 import { Boxes, Package, Check, Truck, ClipboardList, Users, ArrowRight, Clock3 } from 'lucide-react';
+import SyneraLogo from '../brand/SyneraLogo';
 import { DEMO_ORDER as order, DEMO_STOCK as stock, demoFacts, formatMoney, DEMO_ALTERNATIVE as alternative, DEMO_STAGES, DEMO_MILESTONES, DEMO_OVERVIEW as overview } from './landing-data.mjs';
 
 function Chip({ children, tone = 'blue' }) { return <span className={`sl-chip sl-chip--${tone}`}>{children}</span>; }
@@ -8,7 +9,7 @@ export function ProductPreview({ mode = 'inventory', step = 0, role, compact = f
   const facts = demoFacts();
   const titles = { inventory: 'Gợi ý bổ sung hàng', customers: 'Nhắc mua lại', shipping: 'Chọn dịch vụ & đặt giao', journey: 'Chi tiết đơn hàng', owner: 'Tổng quan cơ sở', warehouse: 'Việc kho cần xử lý' };
   return <div className={`sl-preview${compact ? ' sl-preview--compact' : ''}`} data-ui="synera-product" data-preview-role={role || mode}>
-    <div className="sl-preview__bar"><span><Boxes size={17} aria-hidden="true" /><b>SYNERA</b><span>/ {titles[mode]}</span></span><small>Minh họa</small></div>
+    <div className="sl-preview__bar"><span><SyneraLogo light /><span>/ {titles[mode]}</span></span><small>Minh họa</small></div>
     <div className="sl-preview__content" key={`${mode}-${step}`}>
       {mode === 'inventory' && <>
         <div className="sl-preview__heading"><div><h3>Hàng cần xem xét</h3><p>{order.product} · {order.sku}</p></div><Chip>Chờ kiểm tra</Chip></div>
