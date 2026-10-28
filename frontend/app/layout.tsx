@@ -8,6 +8,7 @@ import "./swipe-toast.css";
 import "./glide-select.css";
 import "./shipping-recommendation.css";
 import "./landing.css";
+import "./login.css";
 import "./brand.css";
 import "./workspace-theme.css";
 import "./workspace-refinements.css";

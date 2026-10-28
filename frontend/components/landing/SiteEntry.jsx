@@ -1,21 +1,26 @@
 'use client';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { APP_HOME_URL, isApplicationHash } from '../../../shared/app-routes.mjs';
+import { APP_HOME_URL, LOGIN_URL, isLoginPath, isApplicationHash } from '../../../shared/app-routes.mjs';
 import SyneraLogo from '../brand/SyneraLogo';
 import LandingPage from './LandingPage';
+import LoginPage from './LoginPage';
 const Interface = lazy(() => import('../../app/interface'));
 function LoadingSite() { return <div className="synera-site-loading" role="status"><SyneraLogo /><p>Đang mở không gian làm việc…</p></div>; }
 
-/** @param {{ runtime?: 'node' | 'chatgpt', initialUser?: {id:string,name:string,email:string} | null }} props */
-export default function SiteEntry({ runtime = 'node', initialUser = null }) {
+/** @param {{ runtime?: 'node' | 'chatgpt', initialPage?: 'landing' | 'login', initialUser?: {id:string,name:string,email:string} | null }} props */
+export default function SiteEntry({ runtime = 'node', initialPage = 'landing', initialUser = null }) {
   const [ready, setReady] = useState(false), [appRoute, setAppRoute] = useState(false), [trackingRoute, setTrackingRoute] = useState(false);
   const [user, setUser] = useState(initialUser), [checking, setChecking] = useState(runtime === 'node');
+  const [loginRoute, setLoginRoute] = useState(initialPage === 'login');
   const [loggingOut, setLoggingOut] = useState(false);
   const [authMode, setAuthMode] = useState(null), [notice, setNotice] = useState(''), [feedback, setFeedback] = useState('');
   useEffect(() => {
     const sync = () => { setAppRoute(isApplicationHash(window.location.hash)); setTrackingRoute(window.location.hash.startsWith('#/track/')); };
     sync(); setReady(true);
-    if (new URLSearchParams(window.location.search).get('auth') === 'login') setAuthMode('login');
+    setLoginRoute(isLoginPath(window.location.pathname));
+    const auth = new URLSearchParams(window.location.search).get('auth');
+    if (auth === 'login') window.location.replace(LOGIN_URL);
+    if (auth === 'register') setAuthMode('register');
     window.addEventListener('hashchange', sync);
     return () => window.removeEventListener('hashchange', sync);
   }, []);
@@ -29,7 +34,15 @@ export default function SiteEntry({ runtime = 'node', initialUser = null }) {
     }).catch(error => { if (error.name !== 'AbortError') setNotice('Chưa kiểm tra được phiên đăng nhập. Bạn có thể đăng nhập lại tại đây.'); }).finally(() => { if (!controller.signal.aborted) setChecking(false); });
     return () => controller.abort();
   }, [runtime]);
-  const openAuth = mode => { setNotice(''); setAuthMode(mode); };
+  useEffect(() => {
+    if (!ready || checking) return;
+    if (loginRoute && user) window.location.replace(APP_HOME_URL);
+    else if (appRoute && !trackingRoute && !user) window.location.replace(LOGIN_URL);
+  }, [ready, checking, loginRoute, user, appRoute, trackingRoute]);
+  const openAuth = mode => {
+    if (mode === 'login') { window.location.assign(LOGIN_URL); return; }
+    setNotice(''); setAuthMode(mode);
+  };
   const closeAuth = () => { setAuthMode(null); setNotice(''); if (appRoute && !user) window.location.assign('/'); };
   const success = account => { setUser(account); setAuthMode(null); setNotice(''); window.location.assign(APP_HOME_URL); };
   const logout = async () => {
@@ -52,5 +65,6 @@ export default function SiteEntry({ runtime = 'node', initialUser = null }) {
   if (!ready || appRoute && checking && !trackingRoute) return <LoadingSite />;
   // Keep the recipient tracking route under its existing token/session checks.
   if (trackingRoute || appRoute && user) return <Suspense fallback={<LoadingSite />}><Interface onLogout={logout} logoutPending={loggingOut} account={user} /></Suspense>;
+  if (loginRoute || appRoute && !user) return <LoginPage runtime={runtime} checking={checking} notice={notice} onSuccess={success} />;
   return <LandingPage user={user} runtime={runtime} authMode={authMode || (appRoute ? 'login' : null)} openAuth={openAuth} closeAuth={closeAuth} onSuccess={success} onLogout={() => { logout().catch(error => setFeedback(error.message)); }} notice={notice} feedback={feedback} clearFeedback={() => setFeedback('')} />;
 }

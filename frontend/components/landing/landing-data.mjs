@@ -22,25 +22,25 @@ export const demoFacts = () => {
 };
 export const formatMoney = value => new Intl.NumberFormat('vi-VN').format(value) + ' ₫';
 export const SOLUTIONS = Object.freeze([
-  { id: 'inventory', label: 'Bổ sung hàng', title: 'Chủ động nguồn hàng theo nhu cầu.', description: 'Đặt tồn khả dụng, hàng đang giữ và hàng sắp về cạnh nhau để người phụ trách cân nhắc phần cần bổ sung.', action: 'Kiểm tra trước khi bổ sung hàng' },
-  { id: 'customers', label: 'Khách mua lại', title: 'Biết khách nào nên được liên hệ tiếp theo.', description: 'Lịch sử mua và chu kỳ đặt hàng cùng xuất hiện tại một nơi. Ghi nhận kết quả trao đổi trước khi tạo đơn mới.', action: 'Liên hệ đúng khách, đúng thời điểm' },
-  { id: 'shipping', label: 'Vận chuyển', title: 'Chọn phương án giao từ thông tin đã có trong đơn.', description: 'Tận dụng quy cách hàng và kiện đã xác nhận để so sánh dịch vụ đủ điều kiện, thời gian dự kiến và chi phí.', action: 'Người phụ trách chọn và xác nhận dịch vụ' },
+  { id: 'inventory', label: 'Bổ sung hàng', title: 'Chủ động nguồn hàng.', description: 'Xem tồn khả dụng và hàng sắp về để cân nhắc bổ sung.' },
+  { id: 'customers', label: 'Khách mua lại', title: 'Liên hệ đúng lúc.', description: 'Theo dõi lịch sử mua và khách đến kỳ đặt lại.' },
+  { id: 'shipping', label: 'Vận chuyển', title: 'Chọn cách giao phù hợp.', description: 'So sánh dịch vụ, thời gian và chi phí theo kiện đã xác nhận.' },
 ]);
 export const JOURNEY = Object.freeze([
-  { title: 'Tạo đơn và giữ hàng', detail: 'Khách, mặt hàng và số lượng đi tiếp cùng đơn.' },
-  { title: 'Xác nhận kiện', detail: 'Đúng quy cách chuẩn thì xác nhận nhanh từng nhóm kiện.' },
-  { title: 'Chọn phương án vận chuyển', detail: 'Lấy lại báo giá theo kiện đã được xác nhận.' },
-  { title: 'Theo dõi giao hàng', detail: 'Bàn giao thực tế rồi cập nhật từng mốc hành trình.' },
-  { title: 'Đối chiếu kết quả và chi phí', detail: 'So sánh giá sơ bộ, giá theo kiện và thực thu.' },
+  { title: 'Tạo đơn và giữ hàng', description: 'Ghi nhận mặt hàng, số lượng và giữ tồn khả dụng cho đơn.' },
+  { title: 'Xác nhận kiện', description: 'Kiểm tra quy cách, khối lượng và thông tin từng kiện.' },
+  { title: 'Chọn dịch vụ giao', description: 'So sánh dịch vụ theo kiện đã xác nhận trước khi đặt giao.' },
+  { title: 'Theo dõi giao hàng', description: 'Ghi nhận các mốc bàn giao và trạng thái vận chuyển.' },
+  { title: 'Đối chiếu chi phí', description: 'So sánh giá dự kiến với chi phí thực thu để kiểm tra chênh lệch.' },
 ]);
 export const PLANS = Object.freeze([
-  { id: 'free', name: 'Free', priceLabel: 'Trải nghiệm cơ bản', description: 'Bắt đầu với một quy trình quản lý tập trung.', features: ['Quản lý cơ bản', 'Theo dõi kho, đơn và khách hàng', 'Kết nối thông tin giữa các khâu'], action: 'Đăng ký trải nghiệm' },
-  { id: 'pro', name: 'Pro', priceLabel: 'Liên hệ tư vấn', description: 'Trao đổi phạm vi quản lý nâng cao cho cơ sở.', features: ['Bảng giá và hợp đồng vận chuyển riêng', 'Thống kê chất lượng giao theo nhóm', 'Đối chiếu chi phí theo từng mốc'], action: 'Liên hệ tư vấn', note: 'Phạm vi Pro và mức phí chưa được công bố chính thức.' },
+  { id: 'free', name: 'Free', priceLabel: 'Trải nghiệm cơ bản', features: ['Quản lý kho và đơn hàng', 'Theo dõi khách hàng', 'Kết nối quy trình giao nhận'], action: 'Đăng ký trải nghiệm' },
+  { id: 'pro', name: 'Pro', priceLabel: 'Liên hệ tư vấn', features: ['Bảng giá vận chuyển riêng', 'Thống kê chất lượng giao', 'Đối chiếu chi phí từng mốc'], action: 'Liên hệ tư vấn', note: 'Phạm vi và mức phí Pro chưa công bố chính thức.' },
 ]);
 export const FAQS = Object.freeze([
-  ['SYNERA phù hợp với cơ sở nào?', 'SYNERA hướng đến cơ sở bán sỉ, đại lý phân phối và cơ sở sản xuất nhỏ có hàng hóa đóng gói, cần kết nối kho, đơn, khách hàng và giao nhận.'],
-  ['Có cần cài ứng dụng không?', 'Bạn có thể mở SYNERA bằng trình duyệt trên máy tính, máy tính bảng hoặc điện thoại. Không cần cài ứng dụng riêng để sử dụng bản web.'],
-  ['Nhân viên kho xem được những thông tin gì?', 'Kho xem hàng cần chuẩn bị, số lượng, quy cách kiện và trạng thái giao nhận. Giá bán, chiết khấu, tổng tiền và công nợ không nằm trong góc nhìn kho. Quyền chọn và đặt giao do chủ cơ sở cấp.'],
-  ['Có thể sử dụng bảng giá vận chuyển riêng không?', 'Đây là định hướng của gói Pro. Bản hiện tại dùng cấu hình dịch vụ mẫu; hợp đồng và bảng giá riêng cần được trao đổi thêm với SYNERA.'],
-  ['Ai xác nhận các gợi ý của hệ thống?', 'Người phụ trách kiểm tra và xác nhận. Xem gợi ý không tự tạo kế hoạch bổ sung, liên hệ khách hay đặt vận đơn.'],
+  ['SYNERA dành cho ai?', 'Cơ sở bán sỉ, đại lý phân phối và cơ sở sản xuất nhỏ có hàng đóng gói.'],
+  ['Có cần cài ứng dụng không?', 'Không. Dùng ngay trên trình duyệt máy tính, máy tính bảng hoặc điện thoại.'],
+  ['Nhân viên kho xem được gì?', 'Hàng, số lượng, kiện và giao nhận; không xem giá bán, chiết khấu, tổng tiền hay công nợ. Chủ cơ sở cấp quyền chọn và đặt giao.'],
+  ['Có dùng bảng giá vận chuyển riêng không?', 'Đây là định hướng của Pro, cần trao đổi thêm. Bản hiện tại dùng dịch vụ mẫu.'],
+  ['Ai xác nhận gợi ý?', 'Người phụ trách xác nhận. Gợi ý không tự bổ sung hàng, liên hệ khách hay đặt giao.'],
 ]);

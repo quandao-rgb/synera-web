@@ -12,6 +12,7 @@ before(async()=>{
   const clientDir=join(folder,'client');await mkdir(join(clientDir,'assets'),{recursive:true});
   await writeFile(join(clientDir,'index.html'),'<!doctype html><html lang="vi"><title>SYNERA</title><div id="root"></div></html>');
   await writeFile(join(clientDir,'assets','app.js'),'console.log("safe client")');
+  await writeFile(join(clientDir,'assets','hero.mp4'),Buffer.from('0123456789abcdef'));
   server=await createRenderServer({clientDir,dataDir:join(folder,'data'),secureCookies:false});
   server.listen(0,'127.0.0.1');await once(server,'listening');base='http://127.0.0.1:'+server.address().port;
 });
@@ -34,6 +35,24 @@ test('Render serves the app, assets and health, never source or local records',a
   assert.equal((await request('/healthz')).body.status,'ok');
   for(const path of ['/server/domain.mjs','/backend/server/domain.mjs','/frontend/app/interface.jsx','/shared/app-routes.mjs','/package.json','/.data/state.json','/assets/../server/domain.mjs'])assert.equal((await request(path)).status,404,path);
 });
+test('Hero video is served as MP4 with byte ranges and a body-free HEAD response',async()=>{
+  const full=await fetch(base+'/assets/hero.mp4');
+  assert.equal(full.status,200);assert.equal(full.headers.get('content-type'),'video/mp4');
+  assert.equal(full.headers.get('accept-ranges'),'bytes');assert.equal(await full.text(),'0123456789abcdef');
+  for(const [range,expected,contentRange] of [['bytes=0-3','0123','bytes 0-3/16'],['bytes=12-','cdef','bytes 12-15/16'],['bytes=-4','cdef','bytes 12-15/16'],['bytes=14-99','ef','bytes 14-15/16']]){
+    const part=await fetch(base+'/assets/hero.mp4',{headers:{Range:range}});
+    assert.equal(part.status,206,range);assert.equal(part.headers.get('content-range'),contentRange);
+    assert.equal(Number(part.headers.get('content-length')),expected.length);assert.equal(await part.text(),expected);
+  }
+  const head=await fetch(base+'/assets/hero.mp4',{method:'HEAD',headers:{Range:'bytes=0-3'}});
+  assert.equal(head.status,200);assert.equal(head.headers.get('content-length'),'16');assert.equal(await head.text(),'');
+  for(const range of ['bytes=16-','bytes=9-2','bytes=-0']){
+    const invalid=await fetch(base+'/assets/hero.mp4',{headers:{Range:range}});
+    assert.equal(invalid.status,416);assert.equal(invalid.headers.get('content-range'),'bytes */16');
+    assert.equal(await invalid.text(),'');
+  }
+});
+
 test('Visitors receive independent opaque HttpOnly demo sessions',async()=>{
   const a=await bootstrap(),b=await bootstrap();assert.notEqual(a.cookie,b.cookie);
   assert.match(a.headers.get('set-cookie'),/HttpOnly/);assert.match(a.headers.get('set-cookie'),/SameSite=Lax/);
@@ -58,4 +77,16 @@ test('Tracking is scoped to the demo session and contains only recipient data',a
   const t=await request('/api/demo?tracking='+token,{cookie:a.cookie});assert.equal(t.status,200);assertNoMoney(t.body);assert.ok(t.body.phone.includes('••••'));assert.ok(!t.body.address);
   assert.equal((await request('/api/demo?tracking=invalid',{cookie:a.cookie})).status,404);
   assert.equal((await request('/api/demo?tracking='+token)).status,401);
+});
+
+test('Dedicated login route supports direct navigation and refresh without exposing arbitrary source paths',async()=>{
+  for(const route of ['/login','/login/','/login?from=landing']) {
+    const page=await request(route); assert.equal(page.status,200,route);
+    assert.match(page.headers.get('content-type'),/text\/html/);
+    assert.equal(page.headers.get('cache-control'),'no-store');
+    assert.equal(page.body,(await request('/')).body);
+  }
+  const head=await fetch(base+'/login',{method:'HEAD'}); assert.equal(head.status,200); assert.equal(await head.text(),'');
+  for(const route of ['/login/backend/server/render.mjs','/login.js','/unknown-page']) assert.equal((await request(route)).status,404,route);
+  const signIn=await fetch(base+'/signin-with-chatgpt',{redirect:'manual'}); assert.equal(signIn.status,302); assert.equal(signIn.headers.get('location'),'/login');
 });

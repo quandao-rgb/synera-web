@@ -1,5 +1,17 @@
 # SYNERA design system — giao diện quản trị theo Sapo
 
+## Landing page — cập nhật 28/10/2026
+
+Quy tắc và kết quả áp dụng UI UX Pro Max mới nhất: [pages/landing.md](pages/landing.md).
+
+Landing page tham khảo cách tổ chức nội dung tại https://www.sapo.vn/: giới thiệu sản phẩm, khám phá giải pháp, demo quy trình, vai trò, gói sử dụng và CTA. Giữ nội dung ngắn và các chức năng SYNERA hiện có; không dùng số liệu, khách hàng hay lời chứng thực của Sapo.
+
+- Bảng màu landing độc lập: cyan #079BEA, xanh #2454DC, tím #6239DF; chữ chính #192444, chữ phụ #53617D. Nút chính gradient xanh–tím, nền trắng và các sắc xanh/tím nhạt.
+- Hero dùng video `background-lp.mp4` phủ nền, lớp phủ navy đậm phía trái mờ dần về bên phải theo ảnh tham khảo, điểm sắc cyan–xanh–tím nhẹ; trên mobile tăng độ phủ để chữ sáng dễ đọc. Đã bỏ khối tổng quan minh họa và các thẻ nổi ở hero. Menu giải pháp ba cột trên desktop, xếp dọc trên mobile; nút bấm bo tròn và tiêu đề các phần căn giữa.
+- Giữ GSAP/ScrollTrigger, hỗ trợ giảm chuyển động và thao tác bàn phím. Phần giới thiệu không thay đổi API, quyền hay nghiệp vụ.
+- Header cố định trên hero, kính mờ với nền navy pha tím bán trong suốt 68–72%, blur 22px và viền sáng nhẹ ở đầu trang; cuộn quá 24px chuyển sang gradient cyan–xanh–tím, trở về kính mờ khi lên đầu. Logo/chữ sáng; menu mở giữ nền trắng dễ đọc. Khoảng đệm hero bù chiều cao header theo breakpoint.
+- Các quy tắc không dùng gradient ở bên dưới áp dụng cho giao diện quản trị, không áp dụng cho landing page.
+
 **Cập nhật 27/10/2026:** chủ dự án chấp nhận hướng Tổng quan trắng/xanh, Roboto và yêu cầu mở rộng sang toàn bộ màn hiện có. [Quy tắc workspace hiện tại](pages/workspace.md) và [Tổng quan](pages/dashboard.md) thay thế các giá trị màu, font, radius và kích thước cũ bên dưới khi có khác biệt. Ràng buộc giữ nguyên nghiệp vụ tiếp tục áp dụng.
 
 Cập nhật 25/10/2026, prototype v0.2. Yêu cầu trực tiếp mới nhất của người dùng chốt giao diện gần Sapo đã clone và bảng màu trắng, xám, xanh dương, xanh dương đậm. Quyết định này thay thế hướng kem/nâu của master prompt trước đó. Nghiệp vụ tiếp tục theo SRS SYNERA v0.2.

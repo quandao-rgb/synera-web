@@ -111,7 +111,7 @@ test('Authentication endpoints reject cross-origin writes, wrong content type, m
   assert.equal((await request('/api/auth/register', { raw: JSON.stringify({ name: 'x'.repeat(17000) }) })).status, 413);
   assert.equal((await request('/api/auth/login')).status, 405);
   assert.equal((await request('/api/auth/not-real')).status, 404);
-  const legacy = await request('/signin-with-chatgpt?return_to=%2F'); assert.equal(legacy.status, 302); assert.equal(legacy.headers.get('location'), '/?auth=login');
+  const legacy = await request('/signin-with-chatgpt?return_to=%2F'); assert.equal(legacy.status, 302); assert.equal(legacy.headers.get('location'), '/login');
 });
 test('Account-store expiry and Secure cookies work; login attempts are bounded', async () => {
   let now = 2000000000000;
