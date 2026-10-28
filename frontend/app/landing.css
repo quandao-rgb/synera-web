@@ -92,7 +92,7 @@ html:has(.synera-landing) { scroll-padding-top: calc(96px + env(safe-area-inset-
 .synera-landing .sl-hero h1 { font-size: clamp(42px,3.8vw,52px); line-height: 1.14; font-weight: 600; letter-spacing: -1.5px; }
 .synera-landing .sl-hero h1 > span { color: #a8dfff; background: linear-gradient(110deg,#8edfff 0%,#b7d0ff 55%,#d5c2ff 100%); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: none; }
 .synera-landing .sl-hero__copy > p { margin-block: 24px 30px; color: var(--sl-light-muted); max-width: 510px; font-size: 17px; line-height: 1.8; }
-.synera-landing .sl-audience { background: rgba(255,255,255,.72); padding-block: 30px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+.synera-landing .sl-audience { position: relative; isolation: isolate; background: rgba(255,255,255,.72); padding-block: 30px; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
 .synera-landing .sl-audience .sl-container { display: flex; gap: 36px; align-items: center; justify-content: space-between; }
 .synera-landing .sl-audience p { max-width: 390px; font-size: 15px; color: var(--sl-muted); }
 .synera-landing .sl-audience .sl-container > div { display: flex; align-items: center; flex-wrap: wrap; gap: 28px; }
@@ -604,4 +604,21 @@ html:has(.synera-landing) { scroll-padding-top: calc(96px + env(safe-area-inset-
   .synera-landing :is(button, .sl-button)::after {
     transition: none;
   }
+}
+
+/* Decoration is clipped to whitespace inside the audience strip. No cursor tracking. */
+.synera-landing .sl-audience-truck { position: absolute; z-index: 1; overflow: hidden; pointer-events: none; visibility: hidden; contain: strict; }
+.synera-landing .sl-audience-truck[data-active] { visibility: visible; }
+.synera-landing .sl-audience-truck__scene { position: absolute; top: 0; left: 0; transform-origin: 0 0; }
+.synera-landing .sl-audience-truck__vehicle { position: absolute; top: 0; left: 0; width: 72px; height: 63px; transform-origin: center; will-change: transform; filter: drop-shadow(0 2px 2px rgba(18,43,73,.16)); }
+.synera-landing .sl-audience-truck__sprite { display: block; position: absolute; inset: 0; background-size: 400% 200%; background-repeat: no-repeat; user-select: none; }
+.synera-landing .sl-audience-truck__wheel { display: none; position: absolute; width: 4px; height: 4px; border-radius: 50%; background: linear-gradient(0deg,transparent 40%,rgba(226,233,241,.55) 42% 58%,transparent 60%),linear-gradient(90deg,transparent 40%,rgba(226,233,241,.4) 42% 58%,transparent 60%); }
+.synera-landing .sl-audience-truck[data-view="e"] .sl-audience-truck__wheel,.synera-landing .sl-audience-truck[data-view="w"] .sl-audience-truck__wheel { display: block; }
+.synera-landing .sl-audience-truck__wheel--rear { left: 22%; top: 63%; }
+.synera-landing .sl-audience-truck__wheel--front { left: 75%; top: 77%; width: 4.5px; height: 4.5px; }
+.synera-landing .sl-audience-truck[data-view="w"] .sl-audience-truck__wheel--rear { left: 77%; top: 66%; }
+.synera-landing .sl-audience-truck[data-view="w"] .sl-audience-truck__wheel--front { left: 25%; top: 80%; }
+.synera-landing .sl-audience-truck__smoke { position: absolute; top: 0; left: 0; width: 18px; height: 15px; border-radius: 50%; opacity: 0; filter: blur(.45px); background: radial-gradient(ellipse at 34% 62%,rgba(170,192,216,.95),transparent 60%),radial-gradient(ellipse at 68% 60%,rgba(190,209,229,.9),transparent 60%),radial-gradient(ellipse at 50% 34%,rgba(220,231,244,.95),transparent 65%); }
+@media (max-width: 1024px), (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .synera-landing .sl-audience-truck { display: none; }
 }
