@@ -9,7 +9,7 @@
   .synera-stepper__title { display: block; color: var(--text); font-size: 13px; line-height: 1.5; font-weight: 500; overflow-wrap: anywhere; }
   .synera-stepper__state { display: block; color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 2px; }
   .synera-stepper__description { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 5px; }
-  .synera-stepper__item[data-status="complete"] > .synera-stepper__badge { border-color: #cce4d4; color: var(--success); background: #f0f7f2; }
+  .synera-stepper__item[data-status="complete"] > .synera-stepper__badge { border-color: var(--ui-blue-edge); color: var(--primary); background: var(--accent); }
   .synera-stepper__item[data-status="complete"]::after { background: #b9d2ea; }
   .synera-stepper__item[data-status="current"] > .synera-stepper__badge { color: var(--primary); border-color: var(--primary); background: var(--accent); }
   .synera-stepper__item[data-status="current"] .synera-stepper__title { font-weight: 600; color: var(--primary); }

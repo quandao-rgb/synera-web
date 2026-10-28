@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { createTruckAnimationEngine, TRUCK_ANIMATION, TRUCK_VIEWS, truckRear, truckView } from '../frontend/components/landing/truck-animation-engine.mjs';
-import { audienceTruckPoint, findAudienceTruckZone } from '../frontend/components/landing/audience-truck-zone.mjs';
+import { audienceTruckPoint, findAudienceTruckZone, audienceTruckLayout } from '../frontend/components/landing/audience-truck-zone.mjs';
 
 test('All eight local travel directions select a frame and emit smoke behind the vehicle', () => {
   for (const [vx, vy, expected] of [[100,0,'e'],[100,-100,'ne'],[0,-100,'n'],[-100,-100,'nw'],[-100,0,'w'],[-100,100,'sw'],[0,100,'s'],[100,100,'se']]) {
@@ -35,4 +35,24 @@ test('Insufficient whitespace disables the decoration instead of changing conten
   assert.equal(findAudienceTruckZone(1100,110,[{left:24,right:1076,top:20,bottom:90}]), null);
   assert.equal(findAudienceTruckZone(1440,60,[]), null);
   const zone = findAudienceTruckZone(1440,140,[]); assert.ok(zone.width <= 520);
+});
+
+test('Refreshed compact landing fits the truck without growing the strip or overlapping content', () => {
+  const width = 1440, height = 82.75;
+  const obstacles = [{left:120,right:460,top:29,bottom:53.75},{left:800,right:1320,top:30,bottom:53}];
+  assert.equal(findAudienceTruckZone(width, height, obstacles), null);
+  const zone = audienceTruckLayout(width, height, obstacles);
+  assert.ok(zone); assert.ok(zone.scale >= 0.75 && zone.scale < 1);
+  const engine = createTruckAnimationEngine(() => 0.5);
+  for (let time = 0; time < 60_000; time += 32) {
+    const point = audienceTruckPoint(time, zone.width / zone.scale, zone.height / zone.scale);
+    engine.move(point.x, point.y, time); engine.step(time);
+    const x = zone.left + engine.truck.x * zone.scale, y = zone.top + engine.truck.y * zone.scale;
+    const halfWidth = (TRUCK_ANIMATION.width / 2 + 3) * zone.scale, halfHeight = (TRUCK_ANIMATION.height / 2 + 3) * zone.scale;
+    assert.ok(x - halfWidth >= 0 && x + halfWidth <= width);
+    assert.ok(y - halfHeight >= 0 && y + halfHeight <= height);
+    for (const rect of obstacles) assert.ok(x + halfWidth <= rect.left || x - halfWidth >= rect.right || y + halfHeight <= rect.top || y - halfHeight >= rect.bottom);
+  }
+  assert.equal(audienceTruckLayout(1440, 60, []), null);
+  assert.equal(audienceTruckLayout(1440, 140, []).scale, 1);
 });

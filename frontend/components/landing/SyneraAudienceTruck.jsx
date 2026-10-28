@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useRef } from 'react';
 import { createTruckAnimationEngine, TRUCK_ANIMATION, TRUCK_VIEWS, truckAnimationEnabled } from './truck-animation-engine.mjs';
-import { audienceTruckPoint, findAudienceTruckZone } from './audience-truck-zone.mjs';
+import { audienceTruckPoint, audienceTruckLayout } from './audience-truck-zone.mjs';
 
 const ATLAS = '/assets/cursor/delivery-truck-directions.webp';
 
@@ -11,6 +11,7 @@ export default function SyneraAudienceTruck({ disabled = false }) {
   useEffect(() => {
     if (!layer.current || disabled) return;
     const host = layer.current, section = host.closest('.sl-audience'), page = section.closest('.synera-landing');
+    const scene = host.querySelector('.sl-audience-truck__scene');
     const vehicle = host.querySelector('.sl-audience-truck__vehicle'), sprite = host.querySelector('.sl-audience-truck__sprite');
     const wheels = [...host.querySelectorAll('.sl-audience-truck__wheel')], smoke = [...host.querySelectorAll('.sl-audience-truck__smoke')];
     const content = [...section.querySelectorAll('.sl-container > p,.sl-container > div')];
@@ -32,7 +33,7 @@ export default function SyneraAudienceTruck({ disabled = false }) {
       if (!canRun()) { pause(); return; }
       if (previous !== null) elapsed += Math.min(32, Math.max(0, now - previous));
       previous = now;
-      const point = audienceTruckPoint(elapsed, zone.width, zone.height, TRUCK_ANIMATION);
+      const point = audienceTruckPoint(elapsed, zone.width / zone.scale, zone.height / zone.scale, TRUCK_ANIMATION);
       engine.move(point.x, point.y, now); engine.step(now);
       const truck = engine.truck;
       if (lastView !== truck.view) {
@@ -57,11 +58,14 @@ export default function SyneraAudienceTruck({ disabled = false }) {
         const item = node.getBoundingClientRect();
         return { left: item.left - rect.left, right: item.right - rect.left, top: item.top - rect.top, bottom: item.bottom - rect.top };
       });
-      const next = enabled ? findAudienceTruckZone(rect.width, rect.height, obstacles, TRUCK_ANIMATION) : null;
+      const next = enabled ? audienceTruckLayout(rect.width, rect.height, obstacles, TRUCK_ANIMATION) : null;
       const nextSignature = JSON.stringify(next);
       if (signature !== nextSignature) {
         pause(); signature = nextSignature; zone = next; elapsed = 0;
-        if (zone) Object.assign(host.style, { left: `${zone.left}px`, top: `${zone.top}px`, width: `${zone.width}px`, height: `${zone.height}px` });
+        if (zone) {
+          Object.assign(host.style, { left: `${zone.left}px`, top: `${zone.top}px`, width: `${zone.width}px`, height: `${zone.height}px` });
+          scene.style.transform = `scale(${zone.scale})`;
+        }
       }
       if (enabled && zone && !asset.src) asset.src = ATLAS;
       resume();
@@ -99,7 +103,8 @@ export default function SyneraAudienceTruck({ disabled = false }) {
     };
   }, [disabled]);
   return <div className="sl-audience-truck" ref={layer} aria-hidden="true" data-audience-truck>
-    {Array.from({ length: TRUCK_ANIMATION.maxParticles }, (_, index) => <i key={index} className="sl-audience-truck__smoke" />)}
+    <div className="sl-audience-truck__scene">{Array.from({ length: TRUCK_ANIMATION.maxParticles }, (_, index) => <i key={index} className="sl-audience-truck__smoke" />)}
     <div className="sl-audience-truck__vehicle"><i className="sl-audience-truck__sprite" /><i className="sl-audience-truck__wheel sl-audience-truck__wheel--rear" /><i className="sl-audience-truck__wheel sl-audience-truck__wheel--front" /></div>
+    </div>
   </div>;
 }

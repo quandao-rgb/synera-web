@@ -31,3 +31,11 @@ export function audienceTruckPoint(elapsedMs, width, height, vehicle = { width: 
   const phase = elapsedMs / period * Math.PI * 2;
   return { x: width / 2 + Math.cos(phase) * rx, y: height / 2 + Math.sin(phase) * ry };
 }
+
+/** Preserve compact landing spacing by scaling the decoration, never the content. */
+export function audienceTruckLayout(width, height, obstacles, vehicle = { width: 72, height: 63 }) {
+  const scale = Math.min(1, (height - 30) / vehicle.height);
+  if (scale < 0.75) return null;
+  const zone = findAudienceTruckZone(width, height, obstacles, { width: vehicle.width * scale, height: vehicle.height * scale });
+  return zone ? { ...zone, scale } : null;
+}

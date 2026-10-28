@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import GlideSelect from "../../components/synera/glide-select";
 import ShippingRecommendation from "../../components/synera/shipping-recommendation";
+import { CarrierLogo, ProductImage } from "../../components/synera/visual-assets";
+import { openCustomerForm } from "../../components/synera/catalog-forms";
 import { OrderProcessingProgress, ShipmentProgress } from "../../components/synera/workflow-progress";
 import { Package, Check, CircleAlert, X, ShieldCheck, MapPin, Phone, Trash2, ArrowLeft } from "lucide-react";
 import {
@@ -95,7 +97,7 @@ function QuoteList({ q, selected, onSelect, preliminary = false }) {
                 }
               >
                 <div className="quote-header">
-
+                  <CarrierLogo name={c.name} providerId={c.providerId} />
                   <div className="grow">
                     <h3>{c.name}</h3>
                     <small>
@@ -146,7 +148,6 @@ function QuoteList({ q, selected, onSelect, preliminary = false }) {
       ) : (
         <Empty
           title="Gợi ý sẽ hiện tại đây"
-          text="Chọn khách, mặt hàng và số lượng để xem ngay kiện dự kiến và dịch vụ phù hợp."
         />
       )}
     </>
@@ -160,6 +161,7 @@ function OrderForm(ctx) {
     [error, setError] = useState(""),
     [submitting, setSubmitting] = useState(false),
     [cod, setCod] = useState("");
+  const [customerSelectKey, setCustomerSelectKey] = useState(0);
   const total = lines.reduce(
     (s, l) =>
       s + (data.products.find((p) => p.id === l.productId)?.price || 0) * l.qty,
@@ -202,7 +204,7 @@ function OrderForm(ctx) {
         title="Tạo đơn hàng"
 
       />
-      <form className="order-layout" onSubmit={submit}>
+      <form className="order-layout order-create" onSubmit={submit}>
         <div className="form-stack">
           <Panel title="Khách hàng & nơi nhận" >
             <div className="panel-body">
@@ -210,9 +212,15 @@ function OrderForm(ctx) {
                 <span>
                   Khách hàng <b className="required">*</b>
                 </span>
-                <GlideSelect required value={customerId} onChange={(next) => setCustomer(next)} ariaLabel="Khách hàng"
+                <GlideSelect key={customerSelectKey} required value={customerId} onChange={(next) => setCustomer(next)} ariaLabel="Khách hàng"
                   options={[{ value: "", label: "Chọn khách hàng…" }, ...data.customers.map((c) => ({ value: c.id, label: `${c.name} — ${c.contact}` }))]} />
               </label>
+              <button type="button" className="text-link new-customer-link" onClick={()=>openCustomerForm(ctx,customer=>{
+                setCustomer(customer.id);
+                // Refresh Radix's native form option registry for a newly added option.
+                // Existing customer selections and the rest of the draft stay mounted.
+                setCustomerSelectKey(key=>key+1);
+              })}>+ Thêm khách hàng mới</button>
               {c && (
                 <div className="recipient">
                   <span className="customer-avatar">
@@ -224,7 +232,7 @@ function OrderForm(ctx) {
                     </strong>
                     <p>{c.address}</p>
                     <small>
-                      {c.zone} · {c.note || "Chưa có lưu ý nhận hàng"}
+                      {c.zone}{c.note ? ` · ${c.note}` : ''}
                     </small>
                   </div>
                 </div>
@@ -240,6 +248,7 @@ function OrderForm(ctx) {
                 const p = data.products.find((p) => p.id === l.productId);
                 return (
                   <div className="order-line" key={i}>
+                  <ProductImage id={l.productId} image={data.products.find(p=>p.id===l.productId)?.image} />
                     <label className="field grow">
                       <span>Mặt hàng {i + 1}</span>
                       <GlideSelect value={l.productId} onChange={(next) => update(i, { productId: next })} ariaLabel={`Mặt hàng ${i + 1}`}
@@ -302,7 +311,6 @@ function OrderForm(ctx) {
               <div className="total-display">
                 <span>Tổng tiền hàng</span>
                 <strong>{money(total)}</strong>
-                <small>Chưa gồm phí giao</small>
               </div>
               <label className="field">
                 <span>Số tiền COD (₫)</span>
@@ -316,7 +324,6 @@ function OrderForm(ctx) {
                   placeholder={String(total)}
                   onChange={(e) => setCod(e.target.value)}
                 />
-                <small>Để trống = tiền hàng. Không hiển thị cho kho.</small>
               </label>
             </div>
           </Panel>
@@ -326,9 +333,6 @@ function OrderForm(ctx) {
             </p>
           )}
           <div className="order-submit">
-            <p>
-              <ShieldCheck size={16} /> Xác nhận chỉ giữ hàng, chưa đặt giao.
-            </p>
             <Button
               type="submit"
               kind="primary"
@@ -346,10 +350,6 @@ function OrderForm(ctx) {
           >
             <div className="panel-body">
               <QuoteList q={q} preliminary />
-              <Note tone="warning">
-                Đây là giá sơ bộ. Kho cần xác nhận từng kiện trước khi lấy giá
-                hợp lệ và đặt giao chính thức.
-              </Note>
             </div>
           </Panel>
         </aside>
@@ -480,9 +480,7 @@ function OrderDetail(ctx) {
             </Button>
           </ShippingRecommendation>
         ) : (
-          <Note tone="warning">
-            Kiện đã sẵn sàng. Chờ chủ cơ sở hoặc nhân viên được cấp quyền chọn và đặt giao.
-          </Note>
+          <p className="permission-message">Chưa có quyền đặt giao.</p>
         ))}
       <div className="detail-layout">
         <div className="form-stack">
@@ -531,14 +529,6 @@ function OrderDetail(ctx) {
                   : []),
               ]}
             />
-            <div className="panel-foot">
-              <Icon name="inventory" size={15} />
-              {o.handedOver
-                ? "Đã xuất kho khi bàn giao thực tế."
-                : o.status === "cancelled"
-                  ? "Đã giải phóng hàng giữ."
-                  : "Đã giữ hàng. Tồn thực chưa giảm."}
-            </div>
           </Panel>
           <Panel
             title="Kiện hàng"
@@ -588,12 +578,6 @@ function OrderDetail(ctx) {
               )}
             </div>
           </Panel>
-          {o.status === "packing" && (
-            <Note>
-              Kiểm tra kiện trước khi xác nhận. Gợi ý sơ bộ khi lên đơn chưa
-              phải giá đặt giao.
-            </Note>
-          )}
           {o.status === "verification" && (
             <Note tone="warning">
               <strong>Kết quả đặt giao chưa rõ.</strong>
@@ -698,9 +682,6 @@ function OrderDetail(ctx) {
                     <dd>{money(o.finance.received)}</dd>
                   </div>
                 </dl>
-                <p className="panel-foot">
-                  Giao thành công không đồng nghĩa tiền đã về.
-                </p>
               </Panel>
               <Panel title="Trang người nhận">
                 <div className="panel-body">
@@ -734,12 +715,6 @@ function OrderDetail(ctx) {
                 </div>
               </Panel>
             </>
-          )}
-          {!owner && (
-            <Note>
-              Chế độ kho: chỉ dữ liệu giao nhận cần thiết. Quyền đặt giao{" "}
-              {data.warehouseShipping ? "đang được cấp" : "đang tắt"}.
-            </Note>
           )}
         </aside>
       </div>

@@ -10,12 +10,12 @@ test('Section-owned truck has no pointer listeners and pauses offscreen, in menu
   let clock = 0, nextId = 1, effect, menuOpen = false;
   const frames = new Map(), effects = new Map(), queries = new Map();
   const nodes = () => ({ style: {} });
-  const vehicle = nodes(), sprite = nodes(), wheels = [nodes(), nodes()], smoke = Array.from({ length: 24 }, nodes), attributes = new Set();
+  const scene = nodes(), vehicle = nodes(), sprite = nodes(), wheels = [nodes(), nodes()], smoke = Array.from({ length: 24 }, nodes), attributes = new Set();
   const page = { querySelector: () => menuOpen ? {} : null, addEventListener: (key, fn) => effects.set(`page:${key}`, fn), removeEventListener: key => effects.delete(`page:${key}`) };
   const paragraph = { getBoundingClientRect: () => ({left:100,right:490,top:535,bottom:585}) };
   const icons = { getBoundingClientRect: () => ({left:850,right:1340,top:545,bottom:570}) };
   const section = { closest: () => page, querySelectorAll: () => [paragraph, icons], getBoundingClientRect: () => ({left:0,top:500,bottom:640,width:1440,height:140}) };
-  const host = { style: {}, dataset: {}, closest: () => section, querySelector: selector => selector.endsWith('__vehicle') ? vehicle : sprite, querySelectorAll: selector => selector.endsWith('__wheel') ? wheels : smoke, removeAttribute: key => attributes.delete(key), setAttribute: key => attributes.add(key) };
+  const host = { style: {}, dataset: {}, closest: () => section, querySelector: selector => selector.endsWith('__scene') ? scene : selector.endsWith('__vehicle') ? vehicle : sprite, querySelectorAll: selector => selector.endsWith('__wheel') ? wheels : smoke, removeAttribute: key => attributes.delete(key), setAttribute: key => attributes.add(key) };
   const windowMock = {
     innerWidth: 1440, innerHeight: 900,
     matchMedia: query => {

@@ -32,7 +32,7 @@ export function MotionShell({ children, routeKey, ready, role, collapsed, mobile
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", (media) => {
       const host = root.current;
-      const selector = ".button,.icon-button,.sidebar-collapse";
+      const selector = "button,a,summary,.shipping-service,.shipping-strategy,.glide-select__trigger";
       const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
       const target = (event) => {
         const el = event.target instanceof Element ? event.target.closest(selector) : null;
@@ -64,9 +64,38 @@ export function MotionShell({ children, routeKey, ready, role, collapsed, mobile
         if (!e.repeat && (e.key === "Enter" || e.key === " ") && usable(el)) media.respond(el, true);
       };
       const keyup = (e) => { if (e.key === "Enter" || e.key === " ") media.respond(target(e)); };
-      const listeners = { pointerover: over, pointerout: out, pointerdown: down, pointerup: up, pointercancel: up, focusout: up, keydown, keyup };
+      const focus = (e) => { const el = target(e); if (usable(el)) media.respond(el, false, true); };
+      const listeners = { pointerover: over, pointerout: out, pointerdown: down, pointerup: up, pointercancel: up, focusin: focus, focusout: up, keydown, keyup };
       Object.entries(listeners).forEach(([name, fn]) => host.addEventListener(name, fn));
       return () => Object.entries(listeners).forEach(([name, fn]) => host.removeEventListener(name, fn));
+    });
+    return () => mm.revert();
+  }, { scope: root });
+
+  // Observe presentation states only. Never intercept a form event or business callback.
+  useGSAP(() => {
+    const mm = gsap.matchMedia();
+    mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const host = root.current;
+      let frame = 0;
+      const pending = new Set();
+      const observer = new MutationObserver(records => {
+        for (const record of records) {
+          const el = record.target;
+          if (!(el instanceof Element)) continue;
+          if (el.matches('.shipping-service[data-selected="true"],.shipping-strategy[data-selected="true"],.tabs button.selected,.switch')) pending.add(el);
+        }
+        if (!pending.size || frame) return;
+        frame = requestAnimationFrame(() => {
+          frame = 0;
+          pending.forEach(el => {
+            if (el.isConnected) gsap.fromTo(el, { scale: 0.99 }, { scale: 1, duration: 0.22, ease: 'power3.out', overwrite: 'auto', clearProps: 'transform' });
+          });
+          pending.clear();
+        });
+      });
+      observer.observe(host, { subtree: true, attributes: true, attributeFilter: ['data-selected', 'aria-selected', 'aria-checked'] });
+      return () => { observer.disconnect(); cancelAnimationFrame(frame); pending.clear(); };
     });
     return () => mm.revert();
   }, { scope: root });

@@ -1,8 +1,11 @@
 "use client";
 import GlideSelect from "../../components/synera/glide-select";
+import { ProductImage } from "../../components/synera/visual-assets";
+import { openProductForm, openCustomerForm } from "../../components/synera/catalog-forms";
+import { CountValue } from "../../components/synera/operational-elements";
 import { useState } from "react";
 import { Search, ArrowUpRight, X } from "lucide-react";
-import { money, Badge, LinkButton, Panel, Note, Table, OrderTable, PageHead } from "../../components/synera/ui";
+import { money, Badge, Button, LinkButton, Panel, Table, OrderTable, PageHead } from "../../components/synera/ui";
 function Orders(ctx) {
   const { data } = ctx;
   const [q, setQ] = useState(""),
@@ -43,7 +46,7 @@ function Orders(ctx) {
               onClick={() => setTab(k)}
             >
               {v}
-              <span>
+              <span className="tab-count">
                 {k === "all"
                   ? data.orders.length
                   : data.orders.filter((o) => o.status === k).length}
@@ -69,7 +72,8 @@ function Orders(ctx) {
   );
 }
 
-function Products({ data, initialSearch = "" }) {
+function Products(ctx) {
+  const {data, initialSearch = ""} = ctx;
   const [q, setQ] = useState(initialSearch);
   const rows = data.products.filter((p) =>
     (p.name + " " + p.sku).toLowerCase().includes(q.toLowerCase()),
@@ -79,8 +83,7 @@ function Products({ data, initialSearch = "" }) {
       <PageHead
 
         title="Hàng hóa"
-
-      />
+      >{data.role === 'owner' && <Button kind="primary" icon="plus" onClick={()=>openProductForm(ctx)}>Thêm mặt hàng</Button>}</PageHead>
       <Panel>
         <div className="toolbar">
           <label className="search-input">
@@ -103,6 +106,7 @@ function Products({ data, initialSearch = "" }) {
               sort: true,
               render: (p) => (
                 <div className="product-cell">
+                  <ProductImage id={p.id} image={p.image} />
                   <div>
                     <strong>{p.name}</strong>
                     <small className="cell-sub">
@@ -212,8 +216,7 @@ function Inventory(ctx) {
       <PageHead
 
         title="Quản lý kho"
-
-      />
+      >{owner && <Button kind="primary" icon="plus" onClick={()=>openProductForm(ctx)}>Thêm mặt hàng</Button>}</PageHead>
       <div className="mini-metrics">
         {[
           ["Tồn thực", data.products.reduce((s, p) => s + p.physical, 0)],
@@ -224,7 +227,7 @@ function Inventory(ctx) {
           <div key={k}>
             <span>{k}</span>
             <strong>
-              {v} <small>thùng</small>
+              <CountValue value={v}/> <small>thùng</small>
             </strong>
           </div>
         ))}
@@ -260,7 +263,7 @@ function Inventory(ctx) {
                 />
               </label>
               <span className="muted small">
-                Khả dụng = thực − cách ly − giữ
+                {rows.length} mặt hàng
               </span>
             </div>
             <Table
@@ -271,9 +274,11 @@ function Inventory(ctx) {
                   label: "Mặt hàng",
                   sort: true,
                   render: (p) => (
-                    <div>
+                    <div className="product-cell">
+                      <ProductImage id={p.id} image={p.image}/><div>
                       <strong>{p.name}</strong>
                       <small className="cell-sub">{p.sku} · thùng</small>
+                      </div>
                     </div>
                   ),
                 },
@@ -447,9 +452,8 @@ function Customers(ctx) {
       <PageHead
 
         title={ctx.repeat ? "Nhắc mua lại" : "Khách hàng"}
-
-      />
-      <Panel>
+      >{!ctx.repeat && data.role === 'owner' && <Button kind="primary" icon="plus" onClick={()=>openCustomerForm(ctx)}>Thêm khách hàng</Button>}</PageHead>
+      <Panel className="customer-directory">
         <div className="toolbar">
           <label className="search-input">
             <Search size={16} />
@@ -469,6 +473,7 @@ function Customers(ctx) {
           </label>
         </div>
         <Table
+          layout="directory"
           rows={rows}
           columns={[
             {
@@ -500,8 +505,7 @@ function Customers(ctx) {
                 <div>
                   {c.cycle ? `Chu kỳ ${c.cycle} ngày` : "Chưa đủ lịch sử"}
                   <small className="cell-sub">
-                    {c.purchases} đơn mua riêng biệt · lần gần nhất {c.lastDays}{" "}
-                    ngày trước
+                    {c.purchases > 0 ? `${c.purchases} đơn mua riêng biệt · lần gần nhất ${c.lastDays} ngày trước` : 'Chưa có lịch sử mua'}
                   </small>
                 </div>
               ),
@@ -528,6 +532,7 @@ function Customers(ctx) {
             {
               key: "action",
               label: "Thao tác",
+              width: 164,
               render: (c) => (
                 <button
                   className="text-link"
@@ -661,7 +666,7 @@ function Processing(ctx) {
             <span>
               {label}
               <strong>
-                {data.orders.filter((o) => o.status === key).length}
+                <CountValue value={data.orders.filter((o) => o.status === key).length}/>
               </strong>
             </span>
 
@@ -685,7 +690,6 @@ function Processing(ctx) {
         </div>
         <OrderTable data={data} rows={rows} />
       </Panel>
-      {stage === "verification" && <Note tone="warning">Kết quả đặt giao chưa rõ. Kiểm tra vận đơn hiện có trước khi gửi lại yêu cầu.</Note>}
     </>
   );
 }

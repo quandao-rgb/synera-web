@@ -10,6 +10,8 @@ import "./shipping-recommendation.css";
 import "./landing.css";
 import "./login.css";
 import "./brand.css";
+import "./workspace-theme.css";
+import "./workspace-refinements.css";
 
 export const metadata: Metadata = {
   title: "SYNERA — Không gian vận hành",
