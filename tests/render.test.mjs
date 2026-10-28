@@ -78,3 +78,15 @@ test('Tracking is scoped to the demo session and contains only recipient data',a
   assert.equal((await request('/api/demo?tracking=invalid',{cookie:a.cookie})).status,404);
   assert.equal((await request('/api/demo?tracking='+token)).status,401);
 });
+
+test('Dedicated login route supports direct navigation and refresh without exposing arbitrary source paths',async()=>{
+  for(const route of ['/login','/login/','/login?from=landing']) {
+    const page=await request(route); assert.equal(page.status,200,route);
+    assert.match(page.headers.get('content-type'),/text\/html/);
+    assert.equal(page.headers.get('cache-control'),'no-store');
+    assert.equal(page.body,(await request('/')).body);
+  }
+  const head=await fetch(base+'/login',{method:'HEAD'}); assert.equal(head.status,200); assert.equal(await head.text(),'');
+  for(const route of ['/login/backend/server/render.mjs','/login.js','/unknown-page']) assert.equal((await request(route)).status,404,route);
+  const signIn=await fetch(base+'/signin-with-chatgpt',{redirect:'manual'}); assert.equal(signIn.status,302); assert.equal(signIn.headers.get('location'),'/login');
+});
