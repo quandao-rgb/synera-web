@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { SHIPPING_STRATEGIES } from "./shipping/recommendation/strategies.mjs";
 import { rankShippingServices } from "./shipping/recommendation/ranking.mjs";
 import { money, displayText, Button, Evidence } from "./ui";
+import { CarrierLogo } from "./visual-assets";
 
 // Built from the user's screenshot, using existing SYNERA primitives and tokens.
 // No React Bits Pro source, dependency, license or network install is required.
@@ -20,6 +21,7 @@ export default function ShippingRecommendation({ q, selected, onSelect, disabled
   return <section className="shipping-workspace" aria-labelledby={`${id}-title`}>
     <header className="shipping-workspace__header">
       <div><h2 id={`${id}-title`}>Chọn dịch vụ & đặt giao</h2>
+        <span className="sample-service-notice">Dịch vụ mẫu · chưa kết nối hãng</span>
         {context && <p>{context.parcelCount} kiện riêng · {context.weight.toLocaleString("vi-VN")} kg · Kiện đã xác nhận</p>}
       </div>
     </header>
@@ -51,6 +53,7 @@ export default function ShippingRecommendation({ q, selected, onSelect, disabled
             <legend className="sr-only">Chọn dịch vụ giao hàng</legend>
             {ranked.map(({ quote, rank, reasons }) => <label key={quote.id} className="shipping-service" data-selected={selected === quote.id ? "true" : undefined}>
               <span className="shipping-service__rank" aria-hidden="true">{rank}</span>
+              <CarrierLogo name={quote.name} providerId={quote.providerId} />
               <span className="shipping-service__body"><strong>{quote.name}{rank === 1 && <small>Đề xuất</small>}</strong>
                 <span>{quote.service} · {quote.days}</span><span>{reasons.slice(0, 2).join(" · ")}</span>
               </span>
@@ -64,6 +67,7 @@ export default function ShippingRecommendation({ q, selected, onSelect, disabled
         <div className="shipping-preview__heading"><h3>Đề xuất hiện tại</h3>{chosen && <span>Đã chọn</span>}</div>
         <div className="shipping-preview__surface">
           <div className="shipping-preview__lead"><span>{strategyInfo.label}</span>
+            {preview && <CarrierLogo name={preview.quote.name} providerId={preview.quote.providerId} />}
             <strong>{preview ? money(preview.quote.fee) : "Chưa có báo giá"}</strong>
             {preview && <span>{preview.quote.name} · {preview.quote.service}</span>}
           </div>

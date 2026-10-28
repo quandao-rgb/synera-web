@@ -1,6 +1,8 @@
 "use client";
 import { useState } from "react";
 import { ArrowRight, ChevronRight } from "lucide-react";
+import "../dashboard-overview.css";
+import { ProductImage } from "../../components/synera/visual-assets";
 import {
   Icon,
   num,
@@ -115,10 +117,10 @@ function Dashboard({ data }) {
     },
   ];
   return (
-    <>
+    <div className="dashboard-overview">
       <PageHead
         title="Tổng quan"
-
+        description="Đơn hàng, tồn kho và công việc cần xử lý."
       >
 
         {owner && (
@@ -128,11 +130,9 @@ function Dashboard({ data }) {
         )}
       </PageHead>
 
-      <div className="overview-grid">
-        <div className="overview-main">
           <Panel
             title="Tình hình hoạt động"
-
+            className="overview-activity"
             action={
               <span className="period-label">
                 {data.orders.length} đơn hàng
@@ -144,7 +144,7 @@ function Dashboard({ data }) {
                 <a key={m.label} href={"#" + m.to} className="metric">
                   <span className="metric-label">
                     {m.label}
-
+                    <ArrowRight size={16} aria-hidden="true" />
                   </span>
                   <strong className="metric-value">{num(m.value)}</strong>
 
@@ -152,8 +152,11 @@ function Dashboard({ data }) {
               ))}
             </div>
           </Panel>
+      <div className="overview-grid">
+        <div className="overview-main">
           <Panel
             title="Đơn hàng cần xử lý"
+            className="overview-orders"
             action={
               <a href="#/orders" className="text-link">
                 Tất cả đơn hàng
@@ -172,7 +175,7 @@ function Dashboard({ data }) {
                 className={tab === "pending" ? "selected" : ""}
                 onClick={() => setTab("pending")}
               >
-                Cần xử lý <span>{pending.length}</span>
+                Cần xử lý <span className="tab-count">{pending.length}</span>
               </button>
               <button
                 role="tab"
@@ -180,7 +183,7 @@ function Dashboard({ data }) {
                 className={tab === "all" ? "selected" : ""}
                 onClick={() => setTab("all")}
               >
-                Tất cả <span>{data.orders.length}</span>
+                Tất cả <span className="tab-count">{data.orders.length}</span>
               </button>
             </div>
             <OrderTable
@@ -192,7 +195,7 @@ function Dashboard({ data }) {
           </Panel>
           <Panel
             title="Theo dõi tồn kho"
-
+            className="overview-inventory"
             action={
               <a href="#/inventory" className="text-link">
                 Quản lý kho
@@ -211,6 +214,7 @@ function Dashboard({ data }) {
                   label: "Mặt hàng",
                   render: (p) => (
                     <div className="inventory-name">
+                      <ProductImage id={p.id} image={p.image} />
 
                       <div>
                         <strong>{p.name}</strong>
@@ -251,7 +255,7 @@ function Dashboard({ data }) {
           </Panel>
         </div>
         <aside className="overview-aside" aria-label="Công việc và gợi ý">
-          <Panel title="Việc cần làm">
+          <Panel title="Việc cần làm" className="overview-work">
             <div className="work-list">
               {tasks.map((t) => (
                 <a key={t.label} href={"#" + t.to}>
@@ -266,11 +270,11 @@ function Dashboard({ data }) {
           {owner && (
             <Panel
               title="Gợi ý SYNERA"
-
+              className="overview-suggestions"
             >
               <div className="smart-list">
                 <a href="#/inventory">
-
+                  <Icon name="inventory" size={19} className="smart-symbol" />
                   <div>
                     <h3>Bổ sung hàng</h3>
                     <strong>{low.length} mặt hàng cần xem xét</strong>
@@ -285,7 +289,7 @@ function Dashboard({ data }) {
                   </div>
                 </a>
                 <a href="#/repeat">
-
+                  <Icon name="history" size={19} className="smart-symbol" />
                   <div>
                     <h3>Liên hệ mua lại</h3>
                     <strong>{repeat.length} khách đến kỳ liên hệ</strong>
@@ -300,7 +304,7 @@ function Dashboard({ data }) {
                   </div>
                 </a>
                 <a href={ready[0] ? "#/orders/" + ready[0].id : "#/packing"}>
-
+                  <Icon name="shipping" size={19} className="smart-symbol" />
                   <div>
                     <h3>Lựa chọn vận chuyển</h3>
                     <strong>{ready.length} đơn đã xác nhận kiện</strong>
@@ -317,8 +321,10 @@ function Dashboard({ data }) {
               </a>
             </Panel>
           )}
+        </aside>
           <Panel
             title="Hành trình mới nhất"
+            className="overview-journey"
             action={
               <a
                 className="icon-link"
@@ -329,6 +335,7 @@ function Dashboard({ data }) {
               </a>
             }
           >
+            <div className="overview-journey-body">
             <div className="journey-summary">
               <div>
                 <a className="text-link strong" href={"#/orders/" + active.id}>
@@ -339,12 +346,11 @@ function Dashboard({ data }) {
               <Badge status={active.status} />
             </div>
             <Timeline events={active.events.slice(-3)} />
-
+            </div>
           </Panel>
-        </aside>
       </div>
 
-    </>
+    </div>
   );
 }
 export { Dashboard };

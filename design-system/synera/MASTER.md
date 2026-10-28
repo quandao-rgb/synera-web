@@ -12,6 +12,8 @@ Landing page tham khảo cách tổ chức nội dung tại https://www.sapo.vn/
 - Header cố định trên hero, kính mờ với nền navy pha tím bán trong suốt 68–72%, blur 22px và viền sáng nhẹ ở đầu trang; cuộn quá 24px chuyển sang gradient cyan–xanh–tím, trở về kính mờ khi lên đầu. Logo/chữ sáng; menu mở giữ nền trắng dễ đọc. Khoảng đệm hero bù chiều cao header theo breakpoint.
 - Các quy tắc không dùng gradient ở bên dưới áp dụng cho giao diện quản trị, không áp dụng cho landing page.
 
+**Cập nhật 27/10/2026:** chủ dự án chấp nhận hướng Tổng quan trắng/xanh, Roboto và yêu cầu mở rộng sang toàn bộ màn hiện có. [Quy tắc workspace hiện tại](pages/workspace.md) và [Tổng quan](pages/dashboard.md) thay thế các giá trị màu, font, radius và kích thước cũ bên dưới khi có khác biệt. Ràng buộc giữ nguyên nghiệp vụ tiếp tục áp dụng.
+
 Cập nhật 25/10/2026, prototype v0.2. Yêu cầu trực tiếp mới nhất của người dùng chốt giao diện gần Sapo đã clone và bảng màu trắng, xám, xanh dương, xanh dương đậm. Quyết định này thay thế hướng kem/nâu của master prompt trước đó. Nghiệp vụ tiếp tục theo SRS SYNERA v0.2.
 
 ## Cơ sở lựa chọn

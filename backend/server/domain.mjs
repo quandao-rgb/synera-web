@@ -1,5 +1,6 @@
 // Server-only fictitious records. Never import this module from client code.
 import { SAMPLE_SHIPPING_SERVICES } from "./shipping-service-catalog.mjs";
+import { addProduct, addCustomer } from "./catalog-entries.mjs";
 export class DomainError extends Error {
   constructor(message, status = 422) {
     super(message);
@@ -556,6 +557,7 @@ export function project(s) {
       height: p.height,
       liquid: p.liquid,
       color: p.color,
+      ...(p.image ? { image: p.image } : {}),
       ...stock(s, p),
     };
     return owner
@@ -689,6 +691,16 @@ export function act(original, action, payload = {}) {
     "Vai trò hiện tại không có quyền thực hiện thao tác này.",
     403,
   );
+  if (action === "product-create") {
+    const product = addProduct(s, payload, check);
+    audit(s, `Thêm mặt hàng ${product.sku} · tồn đầu kỳ ${product.physical} thùng`);
+    return s;
+  }
+  if (action === "customer-create") {
+    const customer = addCustomer(s, payload, check);
+    audit(s, `Thêm khách hàng ${customer.name}`);
+    return s;
+  }
   if (action === "quote") {
     let lines, parcels, customerId;
     if (payload.orderId) {
