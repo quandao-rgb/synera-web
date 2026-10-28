@@ -1,6 +1,10 @@
 # SYNERA — Không gian vận hành
 
-Prototype để đánh giá hướng cá nhân hóa từ bản quản trị Sapo sang SYNERA, theo SRS v0.2 và master prompt của người dùng. Đây là repository độc lập chỉ chứa web SYNERA; không bao gồm mã nguồn hoặc lịch sử Git của reverse-skill.
+Prototype độc lập dùng để phát triển và đánh giá trải nghiệm vận hành của SYNERA theo SRS v0.2 và các yêu cầu thiết kế của dự án.
+
+Repository này chỉ chứa mã nguồn web SYNERA và các tài nguyên liên quan đến sản phẩm. Toàn bộ cấu trúc giao diện, luồng nghiệp vụ, thành phần chức năng và định hướng trải nghiệm được phát triển riêng cho SYNERA.
+
+Repository không bao gồm mã nguồn, lịch sử Git hoặc tài nguyên của bất kỳ dự án tham chiếu bên ngoài nào.
 
 ## Clone và chạy local trên máy mới
 
