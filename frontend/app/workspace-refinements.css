@@ -237,7 +237,9 @@ body, .app, .app .main-content { background: var(--canvas); }
 .app .permission-message { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
 
 /* Settings pairs related surfaces on the same rows without stretching the photo. */
-.app .settings-layout { width: 100%; max-width: 1280px; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: stretch; gap: 20px; }
+/* Settings fills the canvas: two equal columns + 20px gap = available content width. */
+.app .main-content:has(.settings-layout) { width: 100%; max-width: none; }
+.app .settings-layout { width: 100%; max-width: none; grid-template-columns: repeat(2,minmax(0,1fr)); align-items: stretch; gap: 20px; }
 .app .settings-layout .account-details { display: flex; flex-direction: column; }
 .app .settings-layout .account-details .panel-body { flex: 1; }
 .app .settings-layout :is(.settings-role,.settings-permissions) { display: flex; flex-direction: column; }
