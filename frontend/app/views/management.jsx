@@ -1,8 +1,10 @@
 "use client";
 import SyneraLogo from "../../components/brand/SyneraLogo";
+import { AccountDetails, CarrierLogo, WorkspacePhoto } from "../../components/synera/visual-assets";
 import { useEffect, useState } from "react";
 import GlideSelect from "../../components/synera/glide-select";
 import { ReturnProgress } from "../../components/synera/workflow-progress";
+import { CountValue, SpotlightSurface } from "../../components/synera/operational-elements";
 import { Boxes, ArrowRight, X, ShieldCheck } from "lucide-react";
 import {
   money,
@@ -12,7 +14,6 @@ import {
   Button,
   Panel,
   Empty,
-  Note,
   Table,
   Evidence,
   Timeline,
@@ -51,6 +52,7 @@ function Carriers({ data }) {
           <Panel key={c.id}>
             <div className="panel-body">
               <div className="carrier-title">
+                <CarrierLogo name={c.name} />
                 <div>
                   <h2>{c.name}</h2>
                   <p className="muted">
@@ -69,11 +71,6 @@ function Carriers({ data }) {
           </Panel>
         ))}
       </div>
-      <Note tone="warning">
-        Tỷ lệ không đại diện toàn hãng: chỉ áp dụng nhóm hàng, dịch vụ, cặp vùng
-        và thời kỳ đã nêu. Mẫu gồm các đơn quá hạn chưa kết thúc. Dữ liệu nhập
-        tay chưa được xác minh.
-      </Note>
     </>
   );
 }
@@ -112,11 +109,13 @@ function Returns(ctx) {
             {
               key: "status",
               label: "Trạng thái",
+              width: 250,
               render: (o) => <div className="return-progress-cell"><Badge status={o.status} /><ReturnProgress order={o} /></div>,
             },
             {
               key: "action",
               label: "Nhận thực tế",
+              width: 164,
               render: (o) =>
                 o.status === "returning" && data.role === "owner" ? (
                   <button
@@ -159,10 +158,6 @@ function Returns(ctx) {
           ]}
         />
       </Panel>
-      <Note tone="warning">
-        Nhận hoàn không tự hoàn tiền hay xóa công nợ. Các giao dịch tài chính
-        phải được đối soát riêng.
-      </Note>
     </>
   );
 }
@@ -228,7 +223,7 @@ function Reports({ data }) {
         title="Báo cáo vận hành"
 
       />
-      <div className="two-column">
+      <div className="reports-layout">
         <Panel
           title="Trạng thái đơn hàng"
           meta={`${data.orders.length} đơn hàng`}
@@ -248,23 +243,17 @@ function Reports({ data }) {
                         }}
                       />
                     </div>
-                    <strong>{count}</strong>
+                    <strong><CountValue value={count}/></strong>
                   </div>
                 )
               );
             })}
           </div>
         </Panel>
-        <Panel
-          title="Giao đúng hẹn theo nhóm"
-
-        >
-          <div className="panel-body">
-
-            <Evidence e={data.carriers[0].evidence} />
-
-          </div>
-        </Panel>
+        <div className="reports-context">
+          <SpotlightSurface className="panel report-evidence"><div className="panel-head"><h2>Giao đúng hẹn theo nhóm</h2></div><div className="panel-body"><Evidence e={data.carriers[0].evidence}/></div></SpotlightSurface>
+          <figure className="report-photo"><img src="/assets/photos/workspace-tan-binh.png" alt="Kho hàng do chủ cơ sở cung cấp" width="1672" height="941" loading="lazy"/><figcaption>Kho & giao nhận</figcaption></figure>
+        </div>
       </div>
       <Panel
         title="Nhật ký thao tác gần đây"
@@ -294,7 +283,9 @@ function SettingsView(ctx) {
 
       />
       <div className="settings-layout">
-        <Panel title="Vai trò">
+        <Panel title="Cơ sở Tân Bình" className="workspace-details"><WorkspacePhoto /></Panel>
+        <AccountDetails account={ctx.account} owner={data.role === "owner"} />
+        <Panel title="Vai trò" className="settings-role">
           <div className="panel-body">
             <label className="field">
               <span>Vai trò hiện tại</span>
@@ -304,23 +295,11 @@ function SettingsView(ctx) {
             </label>
           </div>
         </Panel>
-        <Panel title="Cơ sở">
-          <dl className="settings-list">
-            <div>
-              <dt>Tên không gian</dt>
-              <dd>Cơ sở Tân Bình</dd>
-            </div>
-
-          </dl>
-        </Panel>
-        <Panel title="Phân quyền kho" >
+        <Panel title="Phân quyền kho" className="settings-permissions">
           <div className="panel-body">
             <div className="permission-row">
               <div>
                 <strong>Chọn và đặt giao</strong>
-                <p className="muted small">
-                  Không cấp quyền tài chính hoặc duyệt điều chỉnh kho.
-                </p>
               </div>
               <button
                 className={"switch " + (data.warehouseShipping ? "on" : "")}
@@ -347,11 +326,8 @@ function SettingsView(ctx) {
           </div>
         </Panel>
 
-        <Panel title="Đặt lại dữ liệu">
+        <Panel title="Đặt lại dữ liệu" className="settings-reset">
           <div className="panel-body">
-            <p className="muted">
-              Đặt lại sẽ xóa các thay đổi trong không gian hiện tại và khôi phục dữ liệu ban đầu.
-            </p>
             <Button
               disabled={data.role !== "owner"}
               icon="return"

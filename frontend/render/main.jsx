@@ -11,4 +11,6 @@ import '../app/glide-select.css';
 import '../app/shipping-recommendation.css';
 import '../app/landing.css';
 import '../app/brand.css';
+import '../app/workspace-theme.css';
+import '../app/workspace-refinements.css';
 createRoot(document.getElementById('root')).render(<SiteEntry />);

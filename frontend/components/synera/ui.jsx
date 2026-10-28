@@ -94,6 +94,17 @@ function displayText(value) {
     .trim();
 }
 const numericColumns = new Set(["total","price","available","physical","reserved","quarantine","incoming","suggested","qty","remaining","count","debt","parcels","allocation"]);
+const columnWidths = { id:132, parcels:88, total:158, price:156, debt:156, status:158, action:116,
+  physical:76, reserved:76, quarantine:76, available:88, incoming:76, suggested:150,
+  qty:92, remaining:100, count:92, allocation:156, unit:76, weight:196, liquid:168,
+  zone:150, outcome:164, at:176, actor:148 };
+const columnWeights = { id:1.55, customerName:2.8, name:3, productId:3, parcels:.9,
+  total:1.8, price:1.8, debt:1.8, status:1.9, action:1.55, physical:1, reserved:1,
+  quarantine:1, available:1.15, incoming:1, suggested:1.8, qty:1, remaining:1.15,
+  count:1, allocation:1.5, unit:1, weight:2, liquid:2, zone:1.6, outcome:1.8,
+  at:1.7, actor:1.7, text:4, reason:2.5, contact:2, source:1.6 };
+const statusIcons = { packing:"products", ready:"clock", booked:"check", verification:"alert",
+  transit:"shipping", delivered:"check", returning:"return", returned:"return", cancelled:"close" };
 const statuses = {
   packing: ["Chờ đóng kiện", "warning"],
   ready: ["Chờ đặt giao", "info"],
@@ -148,16 +159,18 @@ const titles = {
 };
 function Badge({ status, children, tone = "neutral" }) {
   const s = statuses[status];
+  const icon = statusIcons[status] || { success:"check", warning:"clock", danger:"alert" }[tone];
   return (
     <span
       className={"badge " + (s ? s[1] : tone)}
+      data-status={status}
       title={
         typeof (children || s?.[0]) === "string"
           ? children || s?.[0]
           : undefined
       }
     >
-      <span className="status-dot" />
+      {icon && <Icon name={icon} size={14} className="status-mark" />}
       <span className="badge-label">{children || s?.[0]}</span>
     </span>
   );
@@ -196,7 +209,7 @@ function Empty({ title = "Chưa có dữ liệu", text, action, page = false }) 
   const Heading = page ? "h1" : "h3";
   return (
     <div className="empty">
-
+      <div className="empty-visual" aria-hidden="true"><Package size={32} strokeWidth={1.3} /><span /><span /></div>
       <Heading>{title}</Heading>
       {text && <p className="muted">{displayText(text)}</p>}
       {action}
@@ -215,6 +228,7 @@ function Table({
   columns,
   rows,
   keyField = "id",
+  layout = "balanced",
   empty = "Chưa có dữ liệu phù hợp.",
 }) {
   const [sort, setSort] = useState({ key: "", asc: true });
@@ -229,15 +243,22 @@ function Table({
       (sort.asc ? 1 : -1)
     );
   });
+  const weights = columns.map(c => c.width ? c.width / 100 : columnWeights[c.key] || 1.5);
+  const totalWeight = weights.reduce((sum, weight) => sum + weight, 0);
   if (!rows.length) return <Empty text={empty} />;
   return (
     <div className="table-wrap">
-      <table>
+      <table data-layout={layout}>
+        <colgroup>{columns.map((c,i)=><col key={c.key} data-column={c.key} style={{
+          '--column-width':(c.width ?? columnWidths[c.key]) ? `${c.width ?? columnWidths[c.key]}px` : undefined,
+          '--column-share':`${weights[i] / totalWeight * 100}%`,
+        }}/>)}</colgroup>
         <thead>
           <tr>
             {columns.map((c) => (
               <th
                 key={c.key}
+                data-column={c.key}
                 scope="col"
                 className={numericColumns.has(c.key) ? "number" : undefined}
                 aria-sort={
@@ -274,6 +295,7 @@ function Table({
               {columns.map((c) => (
                 <td
                   key={c.key}
+                  data-column={c.key}
                   data-label={c.label}
                   className={[c.className, numericColumns.has(c.key) ? "number" : ""].filter(Boolean).join(" ")}
                 >
@@ -392,18 +414,16 @@ function Evidence({ e }) {
   if (!e)
     return <span className="muted small">Chưa đủ bằng chứng cùng nhóm</span>;
   return (
-    <div className="evidence">
-      <strong>
+    <div className="evidence evidence--compact">
+      <div className="evidence-score"><strong>
         {Math.round((e.onTime / e.total) * 100)}%{" "}
-        <span className="muted normal">đúng hẹn</span>
-      </strong>
-      <span className="small muted">
-        {e.onTime}/{e.total} đơn · gồm {e.overdueOpen} đơn quá hạn chưa kết thúc
-      </span>
-      <span className="small muted">{e.group}</span>
-      <span className="small muted">
-        {e.window} · {displayText(e.source)} · chưa xác minh
-      </span>
+      </strong><span>đúng hẹn</span></div>
+      <p className="evidence-sample">{e.onTime}/{e.total} đơn · {e.overdueOpen} quá hạn</p>
+      <details className="evidence-details"><summary>Chi tiết mẫu</summary><dl>
+        <div><dt>Nhóm</dt><dd>{e.group}</dd></div>
+        <div><dt>Thời gian</dt><dd>{e.window}</dd></div>
+        <div><dt>Nguồn</dt><dd>{displayText(e.source)} · chưa xác minh</dd></div>
+      </dl></details>
     </div>
   );
 }

@@ -25,6 +25,7 @@ import {
   Forbidden,
 } from "../components/synera/ui";
 import SyneraLogo from "../components/brand/SyneraLogo";
+import { AccountMenu } from "../components/synera/visual-assets";
 import { Dashboard } from "./views/dashboard";
 import {
   Orders,
@@ -49,8 +50,8 @@ import LineSidebar from "../components/synera/line-sidebar";
 import SwipeToast from "../components/synera/swipe-toast";
 import { useToast } from "../components/synera/use-toast";
 import { mutationFeedback } from "../components/synera/toast-feedback.mjs";
-/** @param {{onLogout?: (() => Promise<void>) | null, logoutPending?: boolean}} props */
-export default function Interface({ onLogout = null, logoutPending = false } = {}) {
+/** @param {{onLogout?: (() => Promise<void>) | null, logoutPending?: boolean, account?: {name?:string,email?:string} | null}} props */
+export default function Interface({ onLogout = null, logoutPending = false, account = null } = {}) {
   const [data, setData] = useState(null),
     [error, setError] = useState(""),
     [route, setRoute] = useState("/"),
@@ -220,6 +221,7 @@ export default function Interface({ onLogout = null, logoutPending = false } = {
       ),
     });
   const ctx = {
+    account,
     data,
     busy,
     send,
@@ -245,6 +247,7 @@ export default function Interface({ onLogout = null, logoutPending = false } = {
       className={"app" + (navCollapsed ? " nav-collapsed" : "")}
       collapsed={navCollapsed} mobile={mobile}
       routeKey={route + "?" + routeSearch} ready={!!data} role={data?.role}
+      data-route={route}
     >
       <a
         className="skip-link"
@@ -307,12 +310,11 @@ export default function Interface({ onLogout = null, logoutPending = false } = {
           href="#/settings"
           title="Cơ sở Tân Bình"
         >
-          <span className="workspace-avatar">TB</span>
+          <span className="workspace-avatar"><Icon name="inventory" size={20} /></span>
           <span className="workspace-label">
             <strong>Cơ sở Tân Bình</strong>
-
           </span>
-          <ChevronsUpDown size={14} aria-hidden="true" />
+          <ChevronRight size={14} aria-hidden="true" />
         </a>
         <nav>
           {navGroups
@@ -414,7 +416,7 @@ export default function Interface({ onLogout = null, logoutPending = false } = {
               {packing > 0 && <span className="notification-dot" />}
             </button>
             <span className="topbar-divider" />
-            {data && <a className="account-link" href="#/settings" aria-label={"Thiết lập · " + (owner ? "Chủ cơ sở" : "Nhân viên kho")}>{owner ? "Chủ cơ sở" : "Nhân viên kho"}</a>}
+            {data && <AccountMenu account={account} owner={owner} onLogout={onLogout ? handleLogout : null} logoutPending={logoutPending} />}
           </div>
         </header>
         <main

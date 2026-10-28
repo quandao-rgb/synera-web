@@ -51,6 +51,6 @@ export default function SiteEntry({ runtime = 'node', initialUser = null }) {
   };
   if (!ready || appRoute && checking && !trackingRoute) return <LoadingSite />;
   // Keep the recipient tracking route under its existing token/session checks.
-  if (trackingRoute || appRoute && user) return <Suspense fallback={<LoadingSite />}><Interface onLogout={logout} logoutPending={loggingOut} /></Suspense>;
+  if (trackingRoute || appRoute && user) return <Suspense fallback={<LoadingSite />}><Interface onLogout={logout} logoutPending={loggingOut} account={user} /></Suspense>;
   return <LandingPage user={user} runtime={runtime} authMode={authMode || (appRoute ? 'login' : null)} openAuth={openAuth} closeAuth={closeAuth} onSuccess={success} onLogout={() => { logout().catch(error => setFeedback(error.message)); }} notice={notice} feedback={feedback} clearFeedback={() => setFeedback('')} />;
 }
