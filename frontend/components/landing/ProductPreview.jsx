@@ -1,14 +1,18 @@
-import { Boxes, Package, Check, Truck, ClipboardList, Users, ArrowRight, Clock3 } from 'lucide-react';
+import { Boxes, Package, Check, Truck, ClipboardList, Users, Clock3 } from 'lucide-react';
 import SyneraLogo from '../brand/SyneraLogo';
+import { useRef } from 'react';
+import { usePreviewMotion } from './useLandingMotion';
 import { DEMO_ORDER as order, DEMO_STOCK as stock, demoFacts, formatMoney, DEMO_ALTERNATIVE as alternative, DEMO_STAGES, DEMO_MILESTONES, DEMO_OVERVIEW as overview } from './landing-data.mjs';
 
 function Chip({ children, tone = 'blue' }) { return <span className={`sl-chip sl-chip--${tone}`}>{children}</span>; }
 function PreviewTable({ headers, rows }) { return <table><thead><tr>{headers.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{rows.map((row, i) => <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>)}</tbody></table>; }
 
-export function ProductPreview({ mode = 'inventory', step = 0, role, compact = false }) {
+export function ProductPreview({ mode = 'inventory', step = 0, role, compact = false, animate = true }) {
+  const root = useRef(null);
+  usePreviewMotion(root, [mode, step], animate);
   const facts = demoFacts();
   const titles = { inventory: 'Gợi ý bổ sung hàng', customers: 'Nhắc mua lại', shipping: 'Chọn dịch vụ & đặt giao', journey: 'Chi tiết đơn hàng', owner: 'Tổng quan cơ sở', warehouse: 'Việc kho cần xử lý' };
-  return <div className={`sl-preview${compact ? ' sl-preview--compact' : ''}`} data-ui="synera-product" data-preview-role={role || mode}>
+  return <div className={`sl-preview${compact ? ' sl-preview--compact' : ''}`} ref={root} data-ui="synera-product" data-preview-role={role || mode}>
     <div className="sl-preview__bar"><span><SyneraLogo light /><span>/ {titles[mode]}</span></span><small>Minh họa</small></div>
     <div className="sl-preview__content" key={`${mode}-${step}`}>
       {mode === 'inventory' && <>
