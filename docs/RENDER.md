@@ -12,6 +12,12 @@ Bản Render dùng cùng giao diện và domain SYNERA. `vite.render.config.mjs`
 - Máy chủ lắng nghe `0.0.0.0` và `PORT` do Render cấp.
 - Blueprint có sẵn tại `render.yaml`. Không chứa API key hoặc cookie.
 
+## Truy cập public và tài khoản
+
+Link: **https://synera-web-mpdu.onrender.com/**. Repository GitHub public là nguồn code; Render phục vụ cả frontend và backend. Chưa gắn synera.com vì chủ dự án chưa có quyền quản lý DNS của tên miền.
+
+Landing cho đăng ký/đăng nhập email và mật khẩu. Server lưu password hash và phiên HttpOnly trong SQLite `.data/accounts.sqlite`; workspace theo từng tài khoản. Chỉ chuyển vào `/#/` sau khi client xác minh phiên. Tài khoản online không tự dùng chung với tài khoản local.
+
 ## Dữ liệu và phiên demo
 
 Mỗi trình duyệt nhận một session ID ngẫu nhiên 256-bit trong cookie HttpOnly/SameSite=Lax, Secure trên Render. API không tin các header danh tính do trình duyệt gửi. Vai trò chủ/kho là bộ chuyển trải nghiệm demo, không phải IAM sản xuất. Mọi dữ liệu đều giả lập; không nhập dữ liệu kinh doanh thật vào bản demo công khai.
@@ -31,6 +37,6 @@ $env:PORT='4180'
 npm.cmd run start:render
 ```
 
-Vào `http://127.0.0.1:4180/`. Bản Render tạo phiên demo tự động; không cần đường dẫn đăng nhập ChatGPT. Các script `build`, `dev` và `start` cũ vẫn phục vụ profile Sites/Cloudflare.
+Lệnh start:render bật cookie Secure khi NODE_ENV=production. Để kiểm tra đăng nhập qua HTTP loopback, dùng npm.cmd run dev:local (cổng mặc định 4182); script local tắt Secure riêng cho loopback. Bản Render public dùng HTTPS và không cần đăng nhập ChatGPT. Các script `build`, `dev` và `start` cũ vẫn phục vụ profile Sites/Cloudflare.
 
 Nguồn: [Render Web Services](https://render.com/docs/web-services), [gói Free](https://render.com/docs/free), [Blueprint](https://render.com/docs/blueprint-spec).

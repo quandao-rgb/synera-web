@@ -1,42 +1,26 @@
-# Xe tự chạy trong dải “Cơ sở phù hợp”
+# Xe chạy nhỏ trong dải “Cơ sở phù hợp”
 
-Theo yêu cầu mới, **đã bỏ hoàn toàn bám chuột và roaming ở góc viewport**. Xe được mount bên trong section `.sl-audience`, ngay dưới hero, chứa câu “Dành cho cơ sở bán sỉ…” và ba nhóm hàng.
+Cập nhật 28/10/2026: khôi phục đường chạy vòng nhỏ trong vùng trống của dải trắng, không chạy hết chiều ngang hoặc tạo làn riêng sát đáy. Giữ xe đỏ, thùng vàng kem và khói phía sau.
 
-## Phạm vi và hành vi
+- Vùng chạy tối đa rộng 520px, tự đo theo khoảng trống. Đo từng đoạn chữ và từng nhãn/icon thực tế, không coi khoảng trắng trong flex container là vật cản.
+- Dùng tọa độ layout để tránh sai vị trí khi chữ đang chạy hiệu ứng xuất hiện GSAP. Xe thu nhỏ vừa phải khi dải thấp, ẩn khi không còn khoảng trống an toàn.
+- Giữ chiều cao và padding ban đầu của section; không đẩy chữ/icon hoặc thêm làn trống. Mobile, coarse pointer và reduced motion tắt hiệu ứng.
+- Overlay absolute, pointer-events:none, overflow:hidden; xe/khói đi cùng section khi cuộn và không chạy ra ngoài.
+- Dừng khi ngoài viewport, window/tab không hoạt động, mở form/menu hoặc giảm chuyển động. Cleanup RAF và observers khi unmount.
+- Atlas WebP 8 góc nhìn, khoảng 49KB. Đây là sprite giả 3D; không thêm Three.js/WebGL. Khói tối đa 24 hạt; không có bám chuột.
 
-- Một xe đỏ, thùng vàng kem tự chạy theo đường cong trong phần trống của chính dải trắng.
-- Không đổi vị trí/copy của chữ, icon, chiều cao hay padding của section. Không thêm đường chạy hoặc UI điều khiển.
-- Đo vùng chữ và nhóm icon bằng DOM, tìm hình chữ nhật trống có khoảng cách an toàn. Nếu không đủ chỗ thì ẩn hiệu ứng, không đẩy nội dung để tạo chỗ.
-- Overlay dùng **position:absolute**, tọa độ local của vùng trống, `overflow:hidden` và `pointer-events:none`. Xe và khói bị clip tại vùng này, không đi sang hero, section khác hoặc bám theo màn hình khi cuộn.
-- Không có listener pointermove/mousemove, tọa độ con trỏ, idle timer hoặc logic chuyển sang follow. Con trỏ hệ thống giữ nguyên.
-- Xe và khói dừng khi section ra khỏi viewport, tab/window không hoạt động, mở account dialog/solutions menu hoặc bật giảm chuyển động. ResizeObserver cập nhật giới hạn khi section/chữ đổi kích thước.
-- Trên mobile/tablet/coarse pointer hoặc không có hover, hiệu ứng vẫn tắt để giữ mật độ và khả năng đọc hiện tại.
+## Video landing
 
-## Hình ảnh và chuyển động
-
-Giữ atlas `/assets/cursor/delivery-truck-directions.webp` (640×280, khoảng 49KB, alpha thật), gồm 8 góc nhìn riêng từ bộ xe người dùng đã cung cấp. Đi lên dùng góc nhìn trên, đi xuống dùng góc trước, các hướng khác chọn view tương ứng. Đây là sprite giả 3D; không thêm model, Three.js hoặc WebGL.
-
-Khói phát từ đuôi theo đúng view, pool tối đa 24 DOM nodes, 560–780ms, vệt tối đa 104px và bị clip cùng xe. Chỉ cập nhật transform/opacity qua RAF, không React state mỗi frame. Nan bánh ở góc ngang quay theo quãng đường; thân rung dưới 0.32px và nghiêng tối đa ±4°.
-
-## File
-
-- `frontend/components/landing/SyneraAudienceTruck.jsx`: renderer thuộc section, đo nội dung, preload, observers, lifecycle và cleanup.
-- `frontend/components/landing/audience-truck-zone.mjs`: tìm vùng trống, đường chạy local có giới hạn.
-- `frontend/components/landing/truck-animation-engine.mjs`: chọn 8 view, khói và chuyển động.
-- `frontend/components/landing/LandingPage.jsx`: mount xe bên trong `.sl-audience`, tắt khi mở account form.
-- `frontend/app/landing.css`: vị trí section/overlay và sprite; không có cursor toàn trang.
-- `tests/truck-animation.test.mjs`, `tests/audience-truck.test.mjs`, `tests/audience-truck-lifecycle.test.mjs`.
-
-Hai module cursor cũ và các kiểm thử follow/idle cũ đã được thay thế. API, xác thực, quyền, route, video và các section khác không đổi.
+Dùng file do chủ dự án cung cấp: C:/tuiii/video_phuc_hoi_nen_tuong_thich.mp4. Asset trong dự án: frontend/public/assets/landing/background-lp.mp4, dung lượng 7,258,084 byte; source dùng ?v=3 để tránh cache clip cũ. Bỏ lớp phủ tối cục bộ từng dùng cho watermark, giữ lớp chuyển tối bên trái để đọc chữ. Video vẫn phủ màn hình đầu, autoplay/muted/loop/playsInline và dừng khi cần giảm chuyển động.
 
 ## Kiểm chứng
 
-62/62 tests đạt: regression hiện có, 8 view/đuôi xe, khói và pool, mô phỏng một phút không ra khỏi dải hoặc chạm chữ/icon ở 1900/1440/1280px, ẩn khi thiếu chỗ. Lifecycle DOM/timer giả lập xác nhận không đăng ký listener chuột và hủy RAF/observer/media handlers khi cần. TypeScript, build Node/Cloudflare và privacy check hai bundle đạt.
+71/71 kiểm thử đạt; TypeScript, build Node và kiểm tra bundle đạt. Kiểm thử Chrome headless dùng server và dữ liệu QA riêng, gồm 19 nhóm kiểm tra: phát video/byte range; đăng ký sai/đúng; giữ phiên khi reload; 14 route sidebar; thu gọn sidebar; tạo đơn, đóng kiện, báo giá, đặt giao, bàn giao không trừ tồn hai lần; chi tiết đơn/nested active; tracking; nhận hoàn; hủy đơn; tạo hàng hóa/khách hàng; quyền kho; đăng xuất; đăng nhập sai/đúng; responsive. Không có HTTP 500 hoặc exception trình duyệt trong các lượt kiểm tra này. Không tạo vận đơn thực.
 
-Đây là kiểm thử tự động và DOM giả lập, chưa thay thế kiểm tra trực quan/FPS thực trên Chrome; công cụ Chrome ở các lượt trước không xác minh URL được. Local: `http://127.0.0.1:4186/`, Ctrl+F5 rồi cuộn tới dải trắng dưới hero.
+## File và backup
 
-## Backup
+Renderer: frontend/components/landing/SyneraAudienceTruck.jsx. Đường chạy: audience-truck-zone.mjs. Khói/chuyển động: truck-animation-engine.mjs. Style: frontend/app/landing.css. Kiểm thử: tests/audience-truck.test.mjs, tests/audience-truck-lifecycle.test.mjs, tests/truck-animation.test.mjs.
 
-Source trước lần đổi này: `C:\SYNERA-backups\SYNERA-before-audience-truck-20261028-165612.zip` (193 entries), gồm cả source chưa commit và atlas. Đã mở lại để xác nhận có component cursor cũ. Không chứa dependencies, build, database, secret hoặc Git metadata. Giải nén vào thư mục riêng để xem/khôi phục, không ghi đè source đang sửa khi chưa lưu.
+Backup trước lần thay video và khôi phục xe: C:/SYNERA-backups/SYNERA-before-clean-video-20261028-221716.zip. Bản trước đường chạy sát đáy: C:/SYNERA-backups/SYNERA-before-bottom-lane-20261028-215826.zip. Giải nén vào folder riêng khi cần khôi phục.
 
-Các backup trước đó vẫn được giữ trong `C:\SYNERA-backups`. Source xe nằm trên branch feat/landing-audience-truck, dựa trên feat/dedicated-login-page (PR #2). Chưa merge main hoặc deploy Render.
+Local: http://localhost:4191/ — Ctrl+F5 rồi cuộn tới dải trắng dưới hero. Source hiện ở local trên branch fix/landing-hero-header cùng phần sửa header/hero. API, xác thực, phân quyền và nghiệp vụ không thay đổi.

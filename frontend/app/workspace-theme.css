@@ -342,17 +342,7 @@ body { font-family: var(--ui-font); font-size: 14px; background: var(--canvas); 
 .command-results [role="option"] { border-radius: 7px; transition: background-color var(--ui-motion), color var(--ui-motion); }
 
 /* Public entry, auth and recipient tracking keep their existing flows. */
-.synera-landing { font-family: var(--ui-font); }
-.synera-landing .sl-header { background: #fff; border-bottom-color: #e4ebf5; }
-.synera-landing .sl-button { border-radius: 7px; transition: color var(--ui-motion), background-color var(--ui-motion), box-shadow var(--ui-motion), transform var(--ui-motion); }
-.synera-landing .sl-button:hover { transform: translateY(-2px); box-shadow: 0 5px 14px #113f6f1c; }
-.synera-landing .sl-button:active { transform: translateY(0) scale(.98); }
-.synera-landing .sl-button svg { transition: transform var(--ui-motion); }
-.synera-landing .sl-button:hover svg { transform: translateX(3px); }
-.synera-landing :is(.sl-plan,.sl-solution-panel,.sl-faq-item) { border-radius: 12px; border-color: #dde7f3; }
-.synera-landing .sl-solution-tabs button { transition: background-color var(--ui-motion), color var(--ui-motion), border-color var(--ui-motion); }
-.synera-landing .sl-solution-panel.is-active { animation: ui-reveal var(--ui-overlay-motion); }
-.synera-landing details[open] > :not(summary) { animation: ui-reveal var(--ui-overlay-motion); }
+/* Landing owns its header, buttons and motion; workspace styles must not override them. */
 .sl-auth { font-family: var(--ui-font); border-radius: 16px; border: 1px solid #dce7f6; }
 .sl-auth input { border-radius: 7px; transition: border-color var(--ui-motion), box-shadow var(--ui-motion); }
 .sl-auth input:focus { border-color: #75a8ec; box-shadow: 0 0 0 3px #1263d612; }
