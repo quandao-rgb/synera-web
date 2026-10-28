@@ -106,7 +106,7 @@ export default function HeroSection({ openAuth }) {
     };
   }, []);
   return <section className="sl-hero" aria-labelledby="sl-hero-title">
-    <video ref={video} className="sl-background-video" aria-hidden="true" autoPlay loop muted playsInline preload="metadata"><source src="/assets/landing/background-lp.mp4?v=2" type="video/mp4" /></video>
+    <video ref={video} className="sl-background-video" aria-hidden="true" autoPlay loop muted playsInline preload="metadata"><source src="/assets/landing/background-lp.mp4?v=3" type="video/mp4" /></video>
     <div className="sl-container sl-hero__grid">
       <div className="sl-hero__copy" data-reveal>
         <span className="sl-eyebrow">Nền tảng quản lý phân phối</span>

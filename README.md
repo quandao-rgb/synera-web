@@ -37,7 +37,7 @@ Bản giao diện v0.2 theo yêu cầu mới: khung quản trị gần Sapo vớ
 
 ## Mở bản demo
 
-- Online: chưa xuất bản. Sites trả về `Sites project not found` khi đọc lại ID đã cấp ở phiên trước. URL dự kiến không phải bằng chứng đã deploy. Giữ nguyên ID trong `.openai/hosting.json` để khôi phục, không đăng ký dự án trùng.
+- Public trên Render: **https://synera-web-mpdu.onrender.com/**. Landing và trang `/login` chạy cùng backend Node. Chọn Đăng ký để tạo tài khoản dùng thử; tài khoản/workspace online độc lập với local.
 - Local dev: `http://127.0.0.1:4177/`. Lần đầu bấm **Đăng nhập để mở demo** để bật danh tính giả lập loopback của starter Sites. Đây không phải tài khoản Sapo.
 - `START-SYNERA.cmd` mở profile Node/local tại cổng 4182; profile Cloudflare ở cổng 4177 chạy bằng lệnh riêng bên dưới. Giữ cửa sổ server trong lúc xem.
 - Góc phải có bộ chuyển vai trò **Chủ cơ sở / Nhân viên kho** để thử giới hạn dữ liệu. Đây là chức năng trải nghiệm demo; chưa phải quản trị nhân viên sản xuất.

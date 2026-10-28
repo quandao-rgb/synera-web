@@ -14,7 +14,7 @@ export default function SyneraAudienceTruck({ disabled = false }) {
     const scene = host.querySelector('.sl-audience-truck__scene');
     const vehicle = host.querySelector('.sl-audience-truck__vehicle'), sprite = host.querySelector('.sl-audience-truck__sprite');
     const wheels = [...host.querySelectorAll('.sl-audience-truck__wheel')], smoke = [...host.querySelectorAll('.sl-audience-truck__smoke')];
-    const content = [...section.querySelectorAll('.sl-container > p,.sl-container > div')];
+    const content = [...section.querySelectorAll('.sl-container > p,.sl-container > div > span')];
     const engine = createTruckAnimationEngine(), asset = new Image();
     const fine = window.matchMedia('(pointer: fine)'), hover = window.matchMedia('(hover: hover)');
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)'), desktop = window.matchMedia('(min-width: 1025px)');
@@ -55,6 +55,8 @@ export default function SyneraAudienceTruck({ disabled = false }) {
       const rect = section.getBoundingClientRect();
       visible = rect.bottom > 0 && rect.top < window.innerHeight;
       const obstacles = content.map(node => {
+        // Measure layout, not the text's temporary GSAP entrance translation.
+        if (node.offsetParent === section) return { left: node.offsetLeft, right: node.offsetLeft + node.offsetWidth, top: node.offsetTop, bottom: node.offsetTop + node.offsetHeight };
         const item = node.getBoundingClientRect();
         return { left: item.left - rect.left, right: item.right - rect.left, top: item.top - rect.top, bottom: item.bottom - rect.top };
       });
