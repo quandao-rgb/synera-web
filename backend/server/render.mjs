@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { createReadStream } from 'node:fs';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { mkdir, readFile, writeFile, rename, stat, readdir } from 'node:fs/promises';
 import { resolve, join, sep, extname } from 'node:path';
@@ -11,7 +12,7 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const COOKIE = 'synera_demo';
 const TTL = 7 * 86400;
 const ID_PATTERN = /^[a-f0-9]{64}$/;
-const MIME = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.webp':'image/webp', '.woff2':'font/woff2', '.ico':'image/x-icon' };
+const MIME = { '.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.svg':'image/svg+xml', '.png':'image/png', '.jpg':'image/jpeg', '.webp':'image/webp', '.woff2':'font/woff2', '.ico':'image/x-icon', '.mp4':'video/mp4', '.webm':'video/webm' };
 const SECURITY = {
   'X-Content-Type-Options':'nosniff',
   'Referrer-Policy':'same-origin',
@@ -131,7 +132,27 @@ export async function createRenderServer({
     else if(!pathname.startsWith('/assets/')&&!['/favicon.svg','/favicon-synera.svg'].includes(pathname))throw new DomainError('Không tìm thấy trang.',404);
     const full=resolve(clientDir,'.'+pathname);
     if(!full.startsWith(clientDir+sep)||pathname.includes('\0')||pathname.includes('\\'))throw new DomainError('Không tìm thấy trang.',404);
-    let bytes;try{const info=await stat(full);if(!info.isFile())throw new DomainError('Không tìm thấy trang.',404);bytes=await readFile(full);}catch(e){if(e.code==='ENOENT'||e.code==='ENOTDIR')throw new DomainError('Không tìm thấy trang.',404);throw e;}
+    let info;try{info=await stat(full);if(!info.isFile())throw new DomainError('Không tìm thấy trang.',404);}catch(e){if(e.code==='ENOENT'||e.code==='ENOTDIR')throw new DomainError('Không tìm thấy trang.',404);throw e;}
+    if(['.mp4','.webm'].includes(extname(full))){
+      const headers={...SECURITY,'Content-Type':MIME[extname(full)],'Accept-Ranges':'bytes','Cache-Control':'public, no-cache'};
+      let start=0,end=info.size-1,status=200;
+      // A single byte range lets browsers fetch metadata and resume playback.
+      const range=req.method==='GET'&&/^bytes=(\d*)-(\d*)$/.exec(req.headers.range||'');
+      if(range&&(range[1]||range[2])){
+        if(range[1]){start=Number(range[1]);if(range[2])end=Number(range[2]);}
+        else {const suffix=Number(range[2]);start=Math.max(0,info.size-suffix);}
+        if(!Number.isSafeInteger(start)||!Number.isSafeInteger(end)||start<0||start>=info.size||end<start){
+          res.writeHead(416,{...headers,'Content-Range':`bytes */${info.size}`,'Content-Length':0});res.end();return;
+        }
+        end=Math.min(end,info.size-1);status=206;
+        headers['Content-Range']=`bytes ${start}-${end}/${info.size}`;
+      }
+      res.writeHead(status,{...headers,'Content-Length':Math.max(0,end-start+1)});
+      if(req.method==='HEAD'||!info.size){res.end();return;}
+      const stream=createReadStream(full,{start,end});
+      stream.on('error',error=>res.destroy(error));res.on('close',()=>stream.destroy());stream.pipe(res);return;
+    }
+    const bytes=await readFile(full);
     res.writeHead(200,{...SECURITY,'Content-Type':MIME[extname(full)]||'application/octet-stream','Content-Length':bytes.length,'Cache-Control':pathname.startsWith('/assets/')?'public, max-age=31536000, immutable':'no-store'});
     res.end(req.method==='HEAD'?undefined:bytes);
   }

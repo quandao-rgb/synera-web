@@ -14,6 +14,12 @@ Tham khảo bộ skill chính thức [greensock/gsap-skills](https://github.com/
 - Animation thuộc context của `useGSAP`; media context quản lý cả callback sự kiện. Dọn listener, ResizeObserver, tween và inline style khi unmount hoặc đổi media query.
 - Không dùng hiệu ứng cuộn chiếm quyền, con trỏ đuổi theo chuột, hoặc vòng lặp trang trí trong màn hình vận hành.
 
+## Landing workflow
+
+- Landing `ContentSection.jsx` dùng stacked cards; cuộn trang không ghim hoặc trượt ngang nội dung. Chọn bước bằng các nút, card được chọn giữ độ tương phản đầy đủ và các card còn lại xếp phía sau.
+- Card workflow tắt hiệu ứng fade của product preview để không hiện mờ khi vừa cuộn tới; `prefers-reduced-motion` vẫn tắt chuyển động xếp lớp.
+- Hiệu ứng này chỉ áp dụng cho phần giới thiệu sản phẩm, không thay đổi stepper hay trạng thái đơn hàng trong ứng dụng.
+
 ## Vị trí chỉnh sửa
 
 - `frontend/components/synera/motion.jsx`: MotionShell, useDialogMotion và vòng đời GSAP.
